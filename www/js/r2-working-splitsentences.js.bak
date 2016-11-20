@@ -1,0 +1,587 @@
+/**
+ * Created by user2 on 2/14/16.
+ */
+
+
+
+window.fx = function fc(){
+    console.log('hamb');
+    function defineUtils() {
+        $.async = function asyncHelper(items, fx, fxAllDone, delay) {
+            var index = 0
+
+            if ( delay == null && $.isNumeric(fxAllDone)) {
+                delay = fxAllDone;
+            }
+
+            function goToNextSpan() {
+                var item = items[index];
+                if (index > items.length - 1) {
+                    if ( fxAllDone ) {
+                        fxAllDone();
+                    }
+                    return;
+                }
+                fx(index, item, fxCallback)
+                index++;
+
+                function fxCallback() {
+                    if (delay) {
+                        setTimeout(goToNextSpan, delay)
+                        return
+                    }
+                    goToNextSpan();
+                }
+            }
+
+            goToNextSpan();
+        }
+    }
+    defineUtils();
+
+    var page = window.$scope.pdfCurrentPage;
+
+
+    var helper = {};
+
+    var $scope = window.$scope;
+    window.helper = helper;
+
+    function defineTransport() {
+        var transport = {};
+        helper.t = transport;
+        helper.transport = transport;
+
+        helper.stop = function stop() {
+            window.iterationMarker = null;
+        };
+        helper.pause = function pause() {
+            $scope.isPlaying = false;
+            $scope.isPaused = true;
+            setTimeout(function applyLater() {
+                $scope.$apply();
+            }, 200)
+
+            helper.pauseId = window.iterationMarker
+            window.iterationMarker = null;
+
+        };
+        helper.play = function play() {
+            $scope.isPlaying = true;
+            $scope.isPaused = false;
+            window.iterationMarker = Math.random();
+            setTimeout(function applyLater() {
+                $scope.$apply();
+            }, 200)
+            if ( helper.playSelection != null ) { //on selection, restart playback from selection
+                helper.playSelectionMode = true;
+                //playPage();
+                window.fx2(true)
+                helper.playSelection = null;
+                return;
+            }
+
+            if (helper.pauseId) { //resume paused player
+                console.log('resumign pause')
+                window.iterationMarker =  helper.pauseId;
+                helper.pauseId = null;
+                window.fxIteration();
+                return;
+            }
+            /*playPage()*/
+            window.fx2(true)
+        };
+        helper.goToNextPage = function nexp() {
+            console.info('jump to play next page');
+            window.$scope.pdfViewerAPI.goToNextPage();
+            setTimeout(function () {
+                console.info('play next page');
+                //playPage()
+                window.fx2(true)
+
+            }, 350)
+        }
+    }
+    defineTransport();
+
+
+    function defineSpeak() {
+        helper.speak = function speak(txt,  fxDone, rate) {
+            var url = 'http://127.0.0.1:8080/speak'
+            var data = {}
+            data.text = txt+'.';
+
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: data,
+                success: function onFinished(dataResp){
+                    // console.log('data', dd)
+                    // UPDATE CURRENT AUDIO SRC
+                    $scope.playerForm.src=dataResp;
+                    //$scope.playerForm.player.src=$scope.trustSrc($scope.playerForm.src);
+                    $scope.playerForm.player.src=$scope.trustSrc('cache/sound.wav');
+                    console.log("new source: "+$scope.playerForm.player.src);
+                    // PLAY !!
+                    $scope.playerForm.player.play();
+
+                    $scope.playerForm.player.onended=function asdf() {
+                        if ( fxDone ) {
+                            fxDone()
+                        }
+                    };
+                },
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //dataType: dataType
+            });
+        }
+    }
+    defineSpeak();
+    //helper.speak('you dog.')
+
+    helper.clearspans;
+
+
+
+
+    function defineS() {
+        var s = {}
+        /**
+         * 3 steps
+         * get all sentences
+         * map spans gto stnetneces
+         * play sentences in random order
+         * @type {Array}
+         */
+
+        s.getAllSentences = function getAllSentences(_sentences) {
+
+            var sentences = $scope.txtPageContent.split(/[.?!#\r\n]+/);
+
+            if ( helper.playSelection ) {
+                var foundIndex = $scope.txtPageContent.indexOf(helper.playSelection)
+                if ( foundIndex != -1 ) {
+                    sentences = $scope.txtPageContent.slice(foundIndex);
+                    //sentences = getAllSentences(sentences)
+
+                    console.log('sp;llit sentence', foundIndex)
+                } else {
+                    console.debug('could not split sentence', foundIndex)
+                }
+            }
+
+
+            //remove '#' codes
+            var content = $scope.txtPageContent.replace(/#/gi, ' ');
+            if ( _sentences ) {
+                var content = _sentences.replace(/#/gi, ' ');
+            }
+            var sentences = content.split(/[.?!]+/);
+            return sentences;
+        }
+
+
+        s.clearAllspans = function clearAllspans() {
+            $('span.highlight').each(function(){
+                var $this=$(this);
+                $this.removeClass('highlight');
+            });
+        }
+
+        s.mapSentences = function mapSentences() {
+            var dictSentToSpan = {};
+            $.each(spans, function dictSpans(k, span) {
+                    var span = $(span);
+                    dictSentToSpan[span.text()] = span;
+                }
+            );
+            return dictSentToSpan;
+        }
+
+        return s;
+    }
+    var s = defineS();
+    helper.s = s;
+
+    return;
+
+    playPage()
+    function playPage() {
+
+        var sentences = s.getAllSentences();
+
+        console.info('sentence', sentences)
+        //helper.getAllSentences = getAllSentences;
+
+
+        s.clearAllspans();
+
+        window.iterationMarker = Math.random();
+        var marker = window.iterationMarker;
+
+        var spans = window.$scope.getSpans();
+
+        function testClearSpans()
+        {
+            $.each(spans, function onX(k, span) {
+                    $(span).addClass('highlight')
+                }
+            )
+            clearAllspans();
+        }
+
+        var dictSentToSpan = s.mapSentences();
+
+        var lastFoundIndex = 0;
+        $.async(sentences, function procSentence(k, sentence, fx) {
+                window.fxIteration = iterationWrapperFx;
+                iterationWrapperFx(); //run so it can be resumed
+                function iterationWrapperFx() {
+                    //sentence = sentence.replace(/#/gi, '');
+                    console.log('looking for', sentence)
+                    clearAllspans()
+                    var count = 1;
+                    $.each(dictSentToSpan, function goThroughSent(k, span) {
+                        count++
+                        var matched = false;
+                        if (k.indexOf(sentence) != -1) {
+                            console.log('select', $(span).text());
+                            $(span).addClass('highlight');
+                            delete dictSentToSpan[k];
+                            matched = true
+                        }
+                        if (sentence.indexOf(k) != -1) {
+                            console.log('select', $(span).text());
+                            $(span).addClass('highlight');
+                            delete dictSentToSpan[k];
+                            matched = true;
+                        }
+                        if (matched == false) {
+                            console.error('no match for', sentence, k)
+                        } else {
+                            //jarring to have screen jump
+                            //$(span).get(0).scrollIntoView({block: "end", behavior: "smooth"});
+                            return false;
+                        }
+                    });
+
+                    if (window.iterationMarker != marker) {
+                        return;
+                    }
+                    // fx();
+
+                    helper.speak(sentence, fx)
+                }
+
+            }, function onDone(){
+                helper.goToNextPage();
+            }, 10
+        )
+
+
+        return
+
+        function goThgouthAllSpans() {
+            var index = 0
+
+            function goToNextSpan() {
+                if (index > spans.length) {
+                    return
+                }
+                if (window.iterationMarker != marker) {
+                    return;
+                }
+
+                clearAllspans()
+                var span = spans[index]
+                index++;
+
+                span = $(span);
+                //var css = span.css()
+                var scaleX = span.css('transform')
+
+                var top = span.position().top;
+                if (top < 40) {
+                    console.log('skip', $(span).text());
+                    return;
+                }
+
+                $(span).addClass('highlight')
+                setTimeout(goToNextSpan, 120)
+                console.log('offset', $(span).position(), scaleX, $(span).text())
+
+            }
+
+            goToNextSpan();
+        }
+
+        goThgouthAllSpans();
+    }
+}
+
+window.fx2 = function fx2 (play) {
+    console.log('the thing', $scope)
+
+    var procHelper = {}
+    var pH = procHelper;
+
+
+    function clearAllspans() {
+        $('span.highlight').each(function(){
+            var $this=$(this);
+            $this.removeClass('highlight');
+        });
+    }
+
+    var spans = window.$scope.getSpans();
+
+    function SortByName(a, b){
+        a = $(a);
+        b = $(b);
+        var aName = a.css('top').replace('px','')
+        var bName = b.css('top').replace('px','')
+        aName = parseFloat(aName)
+        bName = parseFloat(bName)
+        console.log('sss', aName, bName)
+        return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+    }
+
+    spans = spans.sort(SortByName);
+
+    var totalPageHeight = $($(spans[0]).parent()).height();
+    console.log('parent...', totalPageHeight)
+    var txt2 = '';
+    pH.dictSentFragmentsToDivs = {}
+    pH.dictSentToDivs = {};
+    pH.totalPageHeight = totalPageHeight;
+    pH.expectedFooter = 430/480
+    pH.headerRatio = 40/480
+    pH.sentences = [];
+    var currentSentence = ''
+    var currentSentenceSpans = [];
+    $.each(spans, function processSpan(k,v){
+        console.log( '...', v)
+        var span = $(v)
+        var top = span.css('top').replace('px','')
+        top = parseFloat(top);
+        var styles = {};
+        styles.fontFamily = span.css('font-family')
+        styles.fontSize = span.css('font-size')
+        styles.fontSizeAsNumber = span.css('font-size').replace('px','')
+        styles.fontSizeAsNumber =  parseFloat(styles.fontSizeAsNumber)
+        styles.top = top;
+
+        var txt = $(v).html()
+        if ( top/totalPageHeight < pH.headerRatio ) {
+            console.log('skip title ledger ', txt)
+            // addSentenceToList(); //end of line
+            return
+        }
+        if ( top/totalPageHeight > 430/480 ) {
+            console.log('skip ', txt)
+            addSentenceToList(); //end of line
+            return
+        }
+
+
+        var txtOrig = txt;
+        //detect strange formatting with spaces g o d is the b e s t
+        if (txt.indexOf('  ') != -1 && txt.split(' ').length > 12 ) {
+            //txt = txt.replace(/\s\s/gi, ' ');
+            var finalStr = '';
+            var wordOnDblSplit = txtOrig.split('  ')
+            $.each(wordOnDblSplit, function (k,v) {
+                var word = v.split(' ').join('');
+                //   console.error(word, '--', v.split(' '))
+                finalStr += ' ' + word;
+            });
+            //console.log('|',txt,'|-->',finalStr, txtOrig.split(' '));
+            // console.log('|',txt,'|-->',finalStr);
+            txt = finalStr;
+        };
+
+
+
+        function detectReference(){
+            if ( pH.lastStyle == null ){
+                return;
+            }
+            //starts with number
+            //txt.startsWith
+            var number = txt.slice(0,1)
+            if (false ==$.isNumeric(number)) {
+                return false
+            }
+            var expectedTopOfNextLine = pH.lastStyle.top + pH.lastStyle.fontSizeAsNumber*2
+            if ( isNaN(expectedTopOfNextLine)) {
+                return false;
+            }
+            //skipped 1 line
+            if ( styles.top < expectedTopOfNextLine ) {
+
+                return false;
+            }
+            console.error('dbg detect ref', styles.top,
+                expectedTopOfNextLine ,pH.lastStyle.top, pH.lastStyle.fontSize*2)
+            return true
+        }
+
+        function detectReferenceIndicator() {
+            if ( $.isNumeric(txt)) {
+                return true
+            }
+            return false;
+        }
+        if (detectReference() ) {
+            console.log('skip reference', txt)
+            addSentenceToList();
+            return false; //hit false bottom. no more
+        }
+
+        if (detectReferenceIndicator() ) {
+            console.log('skip reference indicator', txt)
+            addSentenceToList();
+            return;
+        }
+
+
+
+        pH.dictSentFragmentsToDivs[txt] = span;
+
+        /*
+         if (styles.fontFamily != ph.LastStyle.fontFamily ||
+         )
+         */
+        if (pH.lastStyle != null ) {
+            if (styles.fontFamily != pH.lastStyle.fontFamily ||
+                styles.fontSize != pH.lastStyle.fontSize   ){
+                addSentenceToList();
+            }
+        }
+
+
+        console.log('processing text ', txt)
+        pH.lastStyle = styles;
+        txt2 += txt + ' ';
+        currentSentence  += txt + ' ';
+        currentSentenceSpans.push(span);
+
+
+        function addSentenceToList() {
+            pH.sentences.push(currentSentence)
+            //if ( prevSentence ) //Page 9 ... issue replaying b/c arthur is used so any times
+            //append number on string
+            pH.dictSentToDivs[currentSentence] = currentSentenceSpans;
+            currentSentence = '';
+            currentSentenceSpans = [];
+        }
+
+
+        //check if contains sentences
+        var endingStr = ['.', '?', '!']
+        $.each(endingStr, function (k,v) {
+            if ( txt.endsWith(v) == false && txt.indexOf(v) != -1 ) {
+                addSentenceToList()
+            }
+        });
+
+
+        var endingStr = ['.', '?', '!']
+        $.each(endingStr, function (k,v) {
+            if ( txt.endsWith(v) ) {
+                addSentenceToList()
+            }
+        });
+
+
+        //console.error('',k,spans.length)
+        if ( k == spans.length -1 ) { //last one
+            addSentenceToList();
+        }
+    });
+
+    //  return;
+    console.log('v', txt2);
+
+    var sentences = window.helper.s.getAllSentences(txt2)
+    console.log('sentences', sentences);
+    console.log('helper', pH);
+    function highlightEachSentence() {
+        var idx = 0
+        function removeAllClassesOfClass(cssclass){
+            $('.'+cssclass).removeClass(cssclass)
+            //console.log('y',  $('.'+cssclass))
+        }
+        removeAllClassesOfClass('highlight2')
+        removeAllClassesOfClass('highlight3')
+        //return
+        $.each(pH.dictSentToDivs, function (k,v) {
+            var isOdd = idx % 2 == 0
+            idx++
+            if ( isOdd ) {
+                //console.log('--Logging', v)
+                $.each(v, function (kI, kV) {
+                    $(kV).addClass('highlight2')
+                })
+            } else {
+                //console.log('-Logging', v  )
+                $.each(v, function (kI, kV) {
+                    $(kV).addClass('highlight3')
+                })
+            }
+        })
+    }
+    highlightEachSentence();
+
+
+    if  ( play ) {
+        playCurPage();
+        function playCurPage() {
+            var lastFoundIndex = 0;
+            var sentences = pH.sentences;
+            var marker = window.iterationMarker;
+            $.async(sentences, function procSentence(k, sentence, fxEnd) {
+
+                    iterationWrapperFx(); //run so it can be resumed
+                    function iterationWrapperFx() {
+                        if (window.iterationMarker != marker) {
+                            debugger
+                            console.error('marker has changed.... aborting loop')
+                            return;
+                        }
+
+                        //sentence = sentence.replace(/#/gi, '');
+                        console.log('looking for', sentence)
+                        clearAllspans()
+                        //pH.clearAllspans();
+                        var divsToHighlight = pH.dictSentToDivs[sentence];
+                        $.each(divsToHighlight, function (kI, kV) {
+                            $(kV).addClass('highlight')
+                        });
+
+                        function fxEndRedirect() {
+                            //window.fxIteration = iterationWrapperFx;
+                            fxEnd()
+                        }
+
+                        helper.speak(sentence, fxEndRedirect)
+                    }
+                    window.fxIteration = iterationWrapperFx;
+
+                }, function onDone(){
+                    helper.goToNextPage();
+                }, 10
+            )
+        }
+
+    }
+
+}
+
+window.fx()
+
+window.fx2()
+
+console.log('doddddddmde2')

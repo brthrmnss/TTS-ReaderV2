@@ -1,0 +1,415 @@
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>Demo</title>
+</head>
+<body>
+
+
+<!-- initially hidden right-click menu -->
+<div class="hideContextMenu" id="rmenu">
+    <ul>
+        <li>
+            <a  onclick="contextMenuHelper.copy()">Copy</a>
+        </li>
+    </ul>
+</div>
+
+
+
+<div class="hideContextMenu" id="contextAddBookmark">
+    <div id="contextAddBookmark_lbl" ></div>
+
+    <textarea id="contextAddBookmark_txt"
+              placeholder="important b/c ... inspires me to ..."
+              style="height: 200px; width: 150px; border: solid 1px white;"></textarea>
+
+    <br />
+    <button id="btnAddNote">Add Notes</button>
+    <button id="btnContextMenuClose">Close</button>
+    <br />
+    <br />
+    <div  id="btnBar" >
+        <button id="btnQuote">Quote</button>
+        <button >Cool</button>
+        <br />
+        <button id="btnTryThis">TODO</button>
+        <br />
+        <button id="btnEpiphany">Epi</button>
+        <button id="btnPainful">Pain</button>
+    </div>
+
+    <span id="contextSentiments" ></span>
+    <br />
+    <div id="txtAreaforBookMark" style="max-height: 100px; max-width: 150px; overflow: auto;" >sdfsdf</div>
+
+</div>
+
+<!--<script src="js/reloader.js"></script>-->
+<script src="js/lib/jquery-1.11.2.min.js"></script>
+<script src="js/lib/js.cookie.js"></script>
+<script src="js/lib/js.params.js"></script>
+<script src="js/speakHTMLText_Cleaned.js"></script>
+<script src="js/contextMenu.js"></script>
+<script src="js/reloader.js"></script>
+<script src="js/dropzone.js"></script>
+
+<script src="js/list.js"></script>
+<script src="js/nlp_compromise.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/js/speak.css">
+<link rel="stylesheet" type="text/css" href="css/layouts.css">
+<script src="js/iframe-loader.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+
+<link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">
+<link rel="stylesheet" type="text/css" href="css/lib/bootstrap.min.css">
+
+<style>
+    body {
+        font-family: Helvetica, Arial;
+    }
+</style>
+<script src="js/lib/bootstrap.min.js"></script>
+
+
+<script type="application/javascript">
+
+    $(document).ready(function () {
+        window.t = new window.SentenceHelper();
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
+
+
+        function breakStringIntoLinesSafe(str) {
+            var split = [];
+            str = str.replace(/(\r\n|\n|\r)/gm, "\n");
+            split = str.split("\n")
+
+
+            var sentences = [];
+            //   $.each(split, function processChar(i,sentence) {
+            var endAt = null;
+            var currentSentence = '';
+
+            var strArr = [];
+            for ( var i = 0; i < str.length; i++) {
+                strArr.push(str[i]);
+            }
+
+            $.each(strArr, function processChar(i, char) {
+                var nextChar = str[i + 1]
+                var valid = ['. ', '! ', '? ', '" ', "\n", ': ']
+                if ( nextChar == null || nextChar.trim() == '' ) {
+                    nextChar = ' ';
+                }
+                var join = char + nextChar;
+                $.each(valid, function compareForEndSent(k, v) {
+                    if (v == join) {
+                        endAt = v;
+                        return false;
+                    }
+                })
+                currentSentence += char
+                if (endAt) {
+                    sentences.push(currentSentence)
+                    /*h.addSentence(currentSentence, h.lastParent[0], 'split inside sentence')
+
+                     h.addSentence2(currentSentence,
+                     _parent,'',
+                     child
+                     )*/
+                    currentSentence = ''
+                    endAt = null;
+                }
+            });
+            //  });
+            //debugger;
+            return sentences
+            return split;
+        }
+        console.log('....asdf.')
+        $("#textarea").on("change keyup paste", pasteStuff)
+        var oldVal = "";
+        function pasteStuff (event, txt) {
+
+            console.log('pasted')
+
+            if ( txt == null ) {
+                var currentVal = $(this).val();
+
+            } else {
+                currentVal = txt;
+            }
+            var txtOrig = currentVal;
+
+            //fix issues with text
+            currentVal = currentVal.replace(//gm, "");
+            currentVal = currentVal.replace(/’/gm, "'");
+
+            if (currentVal == oldVal) {
+                return; //check to prevent multiple simultaneous triggers
+            }
+
+            oldVal = currentVal;
+            console.log('changed', oldVal.length);
+            var lines = breakStringIntoLinesSafe(currentVal);
+
+            var lines2 = [];
+            var lastLine = null;
+            $.each(lines, function (i,v) {
+                if ( lastLine ) {
+                    var firstChar = v.slice(0,1)
+                    if ( firstChar == firstChar.toLowerCase() ) {
+                        var lastCharOfLastLine = lastLine.slice(-1)
+                        var vlidEnds = ['.', '?', '!', "\n"]
+                        if ( vlidEnds.indexOf(lastCharOfLastLine) == -1 ) {
+                            lines2[lines2.length-1] += ' ' + v
+                            lastLine = v;
+                            if ( v != 'reply')
+                                return;
+                            // if ( v == 'reply' == 'END Comment')
+                        }
+                    }
+                }
+                lastLine = v;
+                var y = v.trim();
+                lines2.push(y)
+            })
+
+            var lines3 = [];
+            var repeatLines= 1;
+            // repeatLines = 3;
+            $.each(lines2, function (k, line) {
+                for ( var i =0;i<repeatLines;i++) {
+                    lines3.push(line)
+                }
+            })
+            //debugger;
+
+            lines2 = lines3;
+
+            currentVal = lines2.join("\n")
+
+            currentVal = currentVal.replace('Hacker News new | comments | show | ask | jobs | submit	login', '')
+            currentVal = currentVal.replace('| past | web |', '')
+            currentVal = currentVal.replace(/.[0-9]+.+ago/gi, '')
+
+
+            currentVal = currentVal.replace(/^(\[url=)?(https?:\/\/)?(www\.|\S+?\.)(\S+?\.)?\S+$\s*/mg, '');
+
+            currentVal = currentVal.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+
+            currentVal = currentVal.replace(/add comment/gi, '')
+            currentVal = currentVal.replace('add comment', '')
+
+            //$('#textarea2').val(currentVal)
+            $('#textarea2').html(currentVal)
+            // return
+
+            /* window.t.splitStringIntoSentences(currentVal)
+             window.t.lookFor = window.t.sentences;
+             window.t.el = $('#myTextArea2');
+             window.t.goEach();
+             */
+
+            window.sentenceHelper.resetSentenceHelper()
+            // var toDiv = $(contents.body)
+            var toDiv = $('#textarea2');
+            txtOrig = txtOrig.replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+            var starter = 'MY SUBREDDITS';
+            var ender = '<>X';
+            if ( txtOrig.indexOf(starter) != -1
+                    && txtOrig.indexOf(ender) != -1 ) {
+
+                var indexEnder = txtOrig.indexOf(ender)
+                txtOrig = txtOrig.slice(indexEnder)
+            }
+
+
+            $('#textarea2').html(txtOrig)
+
+                    [
+                    "jump to content",
+                            "MY SUBREDDITS",
+                            "FRONTALLRANDOMASKREDDITFUNNYPICSGIFSVIDEOSMOVIESWORLDNEWSGAMINGNEWSTODAYILEARNEDOLYMPICSSHOWERTHOUGHTSAWWSPORTSNOTTHEONIONJOKESMILDLYINTERESTINGIAMATELEVISIONLIFEPROTIPSEXPLAINLIKEIMFIVETIFUOLDSCHOOLCOOLSCIENCEFOODSPACEMUSICBOOKSPHOTOSHOPBATTLESTWOXCHROMOSOMESCREEPYUPLIFTINGNEWSWRITINGPROMPTSDATAISBEAUTIFULEARTHPORNFUTUROLOGYGETMOTIVATEDNOSLEEPPERSONALFINANCEHISTORYGADGETSDOCUMENTARIESARTDIYASKSCIENCELISTENTOTHISPHILOSOPHYANNOUNCEMENTSINTERNETISBEAUTIFULBLOG",
+                            "MORE »",
+                            "AskReddit AskRedditCOMMENTS",
+                            "Want to join? Log in or sign up in seconds.English",
+                            "search",
+                            "this post was submitted on 08 Aug 2016",
+                            "(83% upvoted)",
+                            //"https://redd.it/4wpl0i",
+                            //"username",
+                            // "password",
+                            "remember mereset passwordlogin",
+                            "Ask A New Question",
+                            "AskReddit",
+                            "Unsubscribe12,794,945 29,965",
+                            "[ SERIOUS ]",
+                            "Rules:",
+                            "You must post a clear and direct question in the title. The title may contain two, short, necessary context sentences. No text is allowed in the textbox. Your thoughts/responses to the question can go in the comments section. more >>",
+                            "Any post asking for advice should be generic and not specific to your situation alone. more >>",
+                            "Askreddit is for open-ended discussion questions. more >>",
+                            "Posting, or seeking, any identifying personal information, real or fake, will result in a ban without a prior warning. more >>",
+                            "Askreddit is not your soapbox, personal army, or advertising platform. more >>",
+                            "Questions seeking professional advice are inappropriate for this subreddit and will be removed. more >>",
+                            "Soliciting money, goods, services, or favours is not allowed. more >>",
+                            "Mods reserve the right to remove content or restrict users' posting privileges as necessary if it is deemed detrimental to the subreddit or to the experience of others. more >>",
+                            "Comment replies consisting solely of images will be removed. more >>",
+                            "If you think your post has disappeared, see spam or an inappropriate post, please do not hesitate to contact the mods, we're happy to help.",
+                            "Tags to use:",
+                            "[Serious]",
+                            "Use a [Serious] post tag to designate your post as a serious, on-topic-only thread.",
+                            "Filter posts by subject:",
+                            "Mod posts Serious posts Megathread Breaking news Unfilter",
+                            "Do you have ideas or feedback for Askreddit? Submit to /r/Ideasforaskreddit.",
+                            "Interested in the amount of traffic /r/AskReddit receives daily/monthly? Check out our traffic stats here!",
+                            "We have spoiler tags, please use them! /spoiler, #spoiler, /s, #s. Use it [like this](/spoiler)",
+                            "Other subreddits you might like:",
+                            "Ask Others	Self & Others",
+                            "Find a subreddit	Learn something",
+                            "Meta Subs	What is this ___",
+                            "AskReddit Offshoots	Offers & Assistance",
+                            "Ever read the reddiquette? Take a peek!",
+                            "a community for 8 years",
+                            "MESSAGE THE MODERATORS",
+                            "MODERATORS",
+                            "...and 47 more »",
+                            "discussions in /r/AskReddit",
+                            "<>X",
+                            "4614 points · 4266 comments",
+                            "All olympians are required to compete while drunk. What sport becomes the most entertaining?",
+                            "5469",
+                            "Whats a big industry secret that isn't supposed to be known by the general public? (self.AskReddit)",
+                            "submitted 6 days ago by versatileRealist",
+                            "34635 commentsshare",
+                            "top 200 commentsshow 500",
+                            "sorted by: best",
+                            "permalinkembedparent",
+                            "[–]",
+                            "load more comments (127 replies)",
+                            "load more comments (18 replies)",
+                            "load more comments (17 replies)",
+                            "load more comments (45 replies)"
+                    ]
+
+
+            window.results = [];
+            //var divScroll = toDiv ;
+            //divScroll = null; //why: scroll page not area
+            window.sentenceHelper.setupSentences(toDiv, toDiv);
+            window.sentenceHelper.data.fxFilterSpeakSentences = function (k, span) {
+                //console.log('do you want this', k, span)
+                if ( window.results.indexOf(k) == -1 )
+                    window.results.push(k)
+                //debugger;
+                if ( k == 'permalinkembedparent')
+                    return false;
+                if ( k == 'permalinkembed')
+                    return false;
+                if ( k.indexOf('[–]') == 0   ) {
+                    if ( k.indexOf(' points ') != -1    ) {
+                        if ( k.indexOf(' ago') != -1    ) {
+                            return false;
+                        }
+                    }
+                }
+                if ( k.indexOf('load more comments') == 0   ) {
+                    return false;
+                }
+                return true;
+            }
+
+
+        } ;
+
+
+        var txt = "This is because of the government's complicated and convoluted exchange rate controls. I won't explain here, because a) I don't really understand them myself, and b) there are plenty of explanatory articles elsewhere written by people who actually know what they're talking about."
+        setTimeout(pasteStuff,1000, null, txt)
+
+    });
+
+    $('html').bind('paste', function onPasteUrlIntoDiv(e) {
+        if ( e.target.tagName != "SPAN" ) {
+
+            console.log('ignore bc', e.target, e.target.name)
+            return
+        }
+        console.log(e.target, e)
+        e.preventDefault();
+        if(e.originalEvent.clipboardData){
+            var text = e.originalEvent.clipboardData.getData("text/plain");
+
+
+            $("#txtUrl").val(text + '\n')
+            $('#txtUrl').trigger(jQuery.Event('keypress', {which: 13}));
+
+        }
+    });
+
+</script>
+
+
+
+<div class="horizontal-layout" style="height: 100%">
+
+    <div class="h-stretch-col hl-small-col"  >
+
+        <div class="vl-stretch-row">
+            <textarea id="textarea"   style="height: 30%; width: 100%; border: solid 0px white;"></textarea>
+        </div>
+
+
+        <div class="vl-stretch-row">
+            <div id="textarea2" class="scrollable" style="max-width: 400px; max-height:70%; ">
+
+            </div>
+        </div>
+
+        <!--
+            Remove line indents
+            <input type="checkbox" id="chLineIndents" checked="true"> <br/>
+            Make array
+            <input type="checkbox" id="chkArray" checked="true"> <br/>
+        -->
+    </div>
+
+    <div class="h-stretch-col" style="height: 100%" >
+        <div id="col2divY" >2</div>
+    </div>
+
+    <div class="h-stretch-col hl-small-col"  >
+        <a href="/articles"
+           target="_blank"
+           title="Blues backing track">articles</a>
+        <div id="col3_ReadingList"></div>
+        <div id="col2_1"></div>
+        <div id="col2_recentList"></div>
+        <div id="col2_words"></div>
+    </div>
+</div>
+
+
+
+
+
+</body>
+
+
+</html>

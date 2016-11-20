@@ -1,0 +1,313 @@
+/**
+ * Created by user2 on 2/14/16.
+ */
+
+
+
+window.fx = function fc(){
+    console.log('hamb');
+    function defineUtils() {
+        $.async = function asyncHelper(items, fx, fxAllDone, delay) {
+            var index = 0
+
+            if ( delay == null && $.isNumeric(fxAllDone)) {
+                delay = fxAllDone;
+            }
+
+            function goToNextSpan() {
+                var item = items[index];
+                if (index > items.length - 1) {
+                    if ( fxAllDone ) {
+                        fxAllDone();
+                    }
+                    return;
+                }
+                fx(index, item, fxCallback)
+                index++;
+
+                function fxCallback() {
+                    if (delay) {
+                        setTimeout(goToNextSpan, delay)
+                        return
+                    }
+                    goToNextSpan();
+                }
+            }
+
+            goToNextSpan();
+        }
+    }
+    defineUtils();
+
+    var page = window.$scope.pdfCurrentPage;
+
+    function clearAllspans() {
+        $('span.highlight').each(function(){
+            var $this=$(this);
+            $this.removeClass('highlight');
+        });
+    }
+
+    var helper = {};
+
+    var $scope = window.$scope;
+    window.helper = helper;
+
+    function defineTransport() {
+        var transport = {};
+        helper.t = transport;
+        helper.transport = transport;
+
+        helper.stop = function stop() {
+            window.iterationMarker = null;
+        };
+        helper.pause = function pause() {
+            $scope.isPlaying = false;
+            $scope.isPaused = true;
+            setTimeout(function applyLater() {
+                $scope.$apply();
+            }, 200)
+
+            helper.pauseId = window.iterationMarker
+            window.iterationMarker = null;
+
+        };
+        helper.play = function play() {
+            $scope.isPlaying = true;
+            $scope.isPaused = false;
+            setTimeout(function applyLater() {
+                $scope.$apply();
+            }, 200)
+            if ( helper.playSelection != null ) { //on selection, restart playback from selection
+                helper.playSelectionMode = true;
+                playPage();
+                helper.playSelection = null;
+                return;
+            }
+
+            if (helper.pauseId) { //resume paused player
+                console.log('resumign pause')
+                window.iterationMarker =  helper.pauseId;
+                helper.pauseId = null;
+                window.fxIteration();
+                return;
+            }
+            playPage()
+        };
+        helper.goToNextPage = function nexp() {
+            console.info('jump to play next page');
+            window.$scope.pdfViewerAPI.goToNextPage();
+            setTimeout(function () {
+                console.info('play next page');
+                playPage()
+            }, 350)
+        }
+    }
+    defineTransport();
+
+
+    function defineSpeak() {
+        helper.speak = function speak(txt,  fxDone, rate) {
+            var url = 'http://127.0.0.1:8080/speak'
+            var data = {}
+            data.text = txt+'.';
+
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: data,
+                success: function onFinished(dataResp){
+                   // console.log('data', dd)
+                    // UPDATE CURRENT AUDIO SRC
+                    $scope.playerForm.src=dataResp;
+                    //$scope.playerForm.player.src=$scope.trustSrc($scope.playerForm.src);
+                    $scope.playerForm.player.src=$scope.trustSrc('cache/sound.wav');
+                    console.log("new source: "+$scope.playerForm.player.src);
+                    // PLAY !!
+                    $scope.playerForm.player.play();
+
+                    $scope.playerForm.player.onended=function asdf() {
+                        if ( fxDone ) {
+                            fxDone()
+                        }
+                    };
+                },
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //dataType: dataType
+            });
+        }
+    }
+    defineSpeak();
+    //helper.speak('you dog.')
+
+    helper.clearspans;
+
+    return;
+
+    playPage()
+    function playPage() {
+        /**
+         * 3 steps
+         * get all sentences
+         * map spans gto stnetneces
+         * play sentences in random order
+         * @type {Array}
+         */
+
+        function getAllSentences(_sentences) {
+            var sentences = $scope.txtPageContent.split(/[.?!#\r\n]+/);
+            //remove '#' codes
+            var content = $scope.txtPageContent.replace(/#/gi, ' ');
+            if ( _sentences ) {
+                var content = _sentences.replace(/#/gi, ' ');
+            }
+            var sentences = content.split(/[.?!]+/);
+            return sentences;
+        }
+        var sentences = getAllSentences();
+        if ( helper.playSelection ) {
+            var foundIndex = $scope.txtPageContent.indexOf(helper.playSelection)
+            if ( foundIndex != -1 ) {
+                sentences = $scope.txtPageContent.slice(foundIndex);
+                sentences = getAllSentences(sentences)
+
+                console.log('sp;llit sentence', foundIndex)
+            } else {
+                console.debug('could not split sentence', foundIndex)
+            }
+        }
+        console.info('sentence', sentences)
+        //helper.getAllSentences = getAllSentences;
+
+
+        clearAllspans()
+
+        window.iterationMarker = Math.random();
+        var marker = window.iterationMarker;
+
+        var spans = window.$scope.getSpans();
+
+        function testClearSpans()
+        {
+            $.each(spans, function onX(k, span) {
+                    $(span).addClass('highlight')
+                }
+            )
+            clearAllspans();
+        }
+
+
+       function mapSentences() {
+            var dictSentToSpan = {};
+            $.each(spans, function dictSpans(k, span) {
+                    var span = $(span);
+                    dictSentToSpan[span.text()] = span;
+                }
+            );
+            return dictSentToSpan;
+        }
+        var dictSentToSpan = mapSentences();
+
+
+
+        var lastFoundIndex = 0;
+        $.async(sentences, function procSentence(k, sentence, fx) {
+                window.fxIteration = iterationWrapperFx;
+                iterationWrapperFx(); //run so it can be resumed
+                function iterationWrapperFx() {
+                    //sentence = sentence.replace(/#/gi, '');
+                    console.log('looking for', sentence)
+                    clearAllspans()
+                    var count = 1;
+                    $.each(dictSentToSpan, function goThroughSent(k, span) {
+                        count++
+                        var matched = false;
+                        if (k.indexOf(sentence) != -1) {
+                            console.log('select', $(span).text());
+                            $(span).addClass('highlight');
+                            delete dictSentToSpan[k];
+                            matched = true
+                        }
+                        if (sentence.indexOf(k) != -1) {
+                            console.log('select', $(span).text());
+                            $(span).addClass('highlight');
+                            delete dictSentToSpan[k];
+                            matched = true;
+                        }
+                        if (matched == false) {
+                            console.error('no match for', sentence, k)
+                        } else {
+                            //jarring to have screen jump
+                            //$(span).get(0).scrollIntoView({block: "end", behavior: "smooth"});
+                            return false;
+                        }
+                    });
+
+                    if (window.iterationMarker != marker) {
+                        return;
+                    }
+                    // fx();
+
+                    helper.speak(sentence, fx)
+                }
+
+            }, function onDone(){
+                helper.goToNextPage();
+            }, 10
+        )
+
+
+        return
+
+        function goThgouthAllSpans() {
+            var index = 0
+
+            function goToNextSpan() {
+                if (index > spans.length) {
+                    return
+                }
+                if (window.iterationMarker != marker) {
+                    return;
+                }
+
+                clearAllspans()
+                var span = spans[index]
+                index++;
+
+                span = $(span);
+                //var css = span.css()
+                var scaleX = span.css('transform')
+
+                var top = span.position().top;
+                if (top < 40) {
+                    console.log('skip', $(span).text());
+                    return;
+                }
+
+                $(span).addClass('highlight')
+                setTimeout(goToNextSpan, 120)
+                console.log('offset', $(span).position(), scaleX, $(span).text())
+
+            }
+
+            goToNextSpan();
+        }
+
+        goThgouthAllSpans();
+    }
+}
+
+window.fx2 = function () {
+    console.log('the thing', $scope)
+
+    function clearAllspans() {
+        $('span.highlight').each(function(){
+            var $this=$(this);
+            $this.removeClass('highlight');
+        });
+    }
+}
+console.log('doddddddmde2')
+window.fx()

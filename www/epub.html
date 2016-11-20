@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <!--<script src="js/reloader.js"></script>-->
+    <script type="application/javascript" src="js/lib/jquery-1.11.2.min.js"></script>
+    <script src="js/lib/js.cookie.js"></script>
+    <script src="js/utilsX.js"></script>
+    <script src="js/speakHTMLText.js"></script>
+    <script src="js/contextMenu.js"></script>
+    <script src="js/reloader.js"></script>
+    <script src="js/dropzone.js"></script>
+
+
+    <script src="js/list.js"></script>
+    <script src="js/nlp_compromise.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/js/speak.css">
+    <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+
+    <style>
+        .highlight {
+            background-color: #FFC619;
+            opacity: 0.3;
+            opacity: 0.9;
+        }
+        .highlight2 {
+            background-color: #FFC619;
+            opacity: 0.5;
+        }
+
+        .highlight3 {
+            background-color: #14CCA0;
+            opacity: 0.5;
+        }
+
+
+        .highlight4 {
+            background-color: #a94442;
+            opacity: 0.5;
+        }
+
+
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            align-content: stretch;
+            align-items: flex-start;
+        }
+
+        .col1 {
+            order: 0;
+            flex: 10 1 60%;
+            align-self: auto;
+            width: 60%
+        }
+
+        .col2 {
+            order: 0;
+            flex: 0 1 40%;
+            align-self: auto;
+            /*background-color: red;*/
+        }
+        .colFLoating{
+            top: 0px;
+            position: fixed;
+            right: 10px;
+            width:             30%;
+        }
+
+        .flex-container2 {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            align-content: center;
+            align-items: center;
+        }
+
+        .row1 {
+            order: 0;
+            flex: 10 1 30%;
+            align-self: auto;
+        }
+
+        .row2 {
+            order: 0;
+            flex: 0 1 30%;
+            align-self: auto;
+        }
+
+        .row3 {
+            order: 0;
+            flex: 0 1 30%;
+            align-self: auto;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: Arial;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- initially hidden right-click menu -->
+<div class="hideContextMenu" id="rmenu">
+    <ul>
+        <li>
+            <a  onclick="contextMenuHelper.copy()">Copy</a>
+        </li>
+        <li>
+            <a  onclick="contextMenuHelper.play()">play</a>
+        </li>
+        <li>
+            <a  onclick="contextMenuHelper.pause()">pause</a>
+        </li>
+    </ul>
+</div>
+
+
+
+<div class="hideContextMenu" id="contextAddBookmark">
+    <div id="contextAddBookmark_lbl" ></div>
+
+    <textarea id="contextAddBookmark_txt"
+              placeholder="important b/c ... inspires me to ..."
+              style="height: 200px; width: 150px; border: solid 1px white;"></textarea>
+
+    <br />
+    <button id="btnAddNote">Add Notes</button>
+    <button id="btnContextMenuClose">Close</button>
+    <br />
+    <br />
+    <div  id="btnBar" >
+        <button id="btnQuote">Quote</button>
+        <button >Cool</button>
+        <br />
+        <button id="btnTryThis">TODO</button>
+        <br />
+        <button id="btnEpiphany">Epi</button>
+        <button id="btnPainful">Pain</button>
+    </div>
+
+    <span id="contextSentiments" ></span>
+    <br />
+    <div id="txtAreaforBookMark" style="max-height: 100px; max-width: 150px; overflow: auto;" >sdfsdf</div>
+
+</div>
+
+
+
+<link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
+<!--<link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">-->
+<script src="dist/js/lib/bootstrap.min.js"></script>
+
+<div  id="bookHolderContainerCloneContainere"  class="flex-container">
+    <div  id="bookHolderContainerClone"  class="col1">
+
+    </div>
+ 
+
+ 
+
+    <div  id="col2Container"  class="col2">
+
+        <div id="upload-widget" style="background-color: #d2d2d2; height: 20px; width:200px;"></div>
+
+        <script>
+            var myDropzone = new Dropzone("#upload-widget", { url: "/upload"});
+            myDropzone.on('success', function( file, resp ){
+                //...
+            });
+            myDropzone.on('addedfile', function( file, resp ){
+                console.error('asdfasdf', file)
+            });
+            myDropzone.on('sending', function( file, resp ){
+                console.error('asdfasdf', file)
+            });
+            myDropzone.on('success', function( file, data ){
+                //var response = $.parseJSON(data.xhr.response);
+                console.error(  file, data)
+                //debugger
+                //window.location.href = "http://stackoverflow.com";
+
+                window.location.href  = "/epub.html/"+ file.name
+            });
+            myDropzone.on('error', function( file, data2, data ){
+                var response = $.parseJSON(data.xhr.response);
+                console.error('asdfasdf', file)
+            });
+        </script>
+
+
+        <!-- HTML heavily inspired by http://blueimp.github.io/jQuery-File-Upload/ -->
+        <div class="table table-striped" class="files" id="previews">
+
+            <div id="template" class="file-row">
+                <!-- This is used as the file preview template -->
+                <div>
+                    <span class="preview"><img data-dz-thumbnail /></span>
+                </div>
+                <div>
+                    <p class="name" data-dz-name></p>
+                    <strong class="error text-danger" data-dz-errormessage></strong>
+                </div>
+                <div>
+                    <p class="size" data-dz-size></p>
+                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-primary start">
+                        <i class="glyphicon glyphicon-upload"></i>
+                        <span>Start</span>
+                    </button>
+                    <button data-dz-remove class="btn btn-warning cancel">
+                        <i class="glyphicon glyphicon-ban-circle"></i>
+                        <span>Cancel</span>
+                    </button>
+                    <button data-dz-remove class="btn btn-danger delete">
+                        <i class="glyphicon glyphicon-trash"></i>
+                        <span>Delete</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="js/dropzone2.js"></script>
+
+        <div id="col2"  class="colFLoating">
+            <div id="col2_1"></div>
+            <div id="col2_recentList"></div>
+            <div id="col2_words"></div>
+
+            <div id="iframeThing">
+                <a id="export" class="export" >Export</a><br/>
+                <br/>
+                <iframe id="xIframe"
+                        notKeep="true"
+                        src="--https://www.washingtonpost.com/world/asia_pacific/china-tried-to-drive-a-furry-mammal-to-extinction-maybe-that-wasnt-such-a-good-idea/2016/07/21/97759d34-3ed2-11e6-9e16-4cf01a41decb_story.html" id="youtubeHolder1"></iframe>
+                <div id="xIdFrame"   notKeep="true">Export</div>
+                <input  id="inputUrl"   >
+
+                <script type="application/javascript" >
+                    function onChange() {
+                        var val =  $('#inputUrl').val();
+                        $('#xIframe').attr('src',val)
+                        $('#xIframe')[0].src = val
+                    }
+                    $("#inputUrl").on("change keyup paste", onChange);
+                </script>
+                <br />
+                <a href="https://www.youtube.com/watch?v=5BTTA09Qlzk&index=101&list=PL6jb--mldytlzksWTOWk7GJXaDyMsvhPu"
+                    target="_blank"
+                >music</a>
+                <a href="https://www.youtube.com/watch?v=9H2oY_85q8U"
+                   target="_blank"
+                   title="Blues backing track">blues</a>
+                <a href="/recent"
+                   target="_blank"
+                   title="Recent books opened on machine">recent</a>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<div id="bookHolderContainer" style="height: 150px; overflow: auto;" >
+    ---yyy---
+</div>
+
+<script>
+    console.log('...')
+
+    // window.$scope  = {};
+    // window.$scope.getSpans = function () { return [] }
+    // window.fx();
+    // window.fx2();
+
+    $('a').each(function() {
+
+        var href = this.href;
+        if ( 0 == href.indexOf('http') ) {
+                return;
+        };
+        if (  href == null  ) {
+            return;
+        };
+
+        if (  href == ''  ) {
+            return;
+        };
+
+
+        console.log(href, this)
+        $(this).attr('href', 'http://www.somesitename.com/filter' + this.href);
+    });
+
+    $('a').each(function() {
+        //console.log('link',  this.href)
+        if ( this.href && this.href.indexOf('#') != -1 ) {
+            var rep = '#'+this.href.split('#')[1]
+            //console.log('#'+rep)
+            $(this).attr('href', rep);
+        }
+
+    });
+</script>
+</body>
+</html>

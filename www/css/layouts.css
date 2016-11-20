@@ -1,0 +1,77 @@
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-content: stretch;
+    align-items: flex-start;
+}
+
+.col1 {
+    order: 0;
+    flex: 10 1 60%;
+    align-self: auto;
+    width: 60%
+}
+
+.col2 {
+    order: 0;
+    flex: 0 1 40%;
+    align-self: auto;
+    /*background-color: red;*/
+}
+
+
+.horizontal-layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-content: stretch;
+    align-items: flex-start;
+}
+
+.h-stretch-col {
+    order: 0;
+    flex: 8 1 40%;
+    align-self: auto;
+    /*background-color: red;*/
+}
+
+
+.hl-small-col {
+    flex: 0 1 20%;
+}
+
+
+
+
+.vertical-layout {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-content: stretch;
+    align-items: flex-start;
+}
+
+.vl-stretch-row {
+    order: 0;
+    flex: 0 1 50%;
+    align-self: auto;
+}
+
+
+
+.scrollable {
+    overflow: auto;
+    max-height: 100%;
+}
+
+
+
+.highlight {
+    background-color: #D2E0E6;
+    background-color: yellow;
+    opacity: 0.5;
+}

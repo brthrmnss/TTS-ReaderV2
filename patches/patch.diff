@@ -1,0 +1,261 @@
+Index: www/tinymce.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- www/tinymce.html   (date 1476214725000)
++++ www/tinymce.html   (revision )
+@@ -2,7 +2,7 @@
+
+ <head>
+     <meta charset="utf-8"/>
+-    <title>TinyMCE</title>
++    <title>TinyMCE Reader</title>
+
+     <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+     <script src="js/lib/jquery-1.11.2.min.js"></script>
+@@ -129,71 +129,150 @@
+                 editor.on('keyup',function(e) {
+                     console.debug('Key up event: ' + e.keyCode);
+                     var content = tinyMCE.get('mainContent').getContent();
+-                    Cookies.set('prevContent', content)
++                    Cookies.set('prevContent', content);
++
++
++                    if (e.keyCode == 86 && e.ctrlKey ) {
++                        console.debug('paste')
++                        c.pasted = true;
++                        setTimeout(function playAllSenctencesLater(){
++                            tHelper.playAllSentences();
++                        }, 300)
++                        return;
++                    }
++
++                    console.debug(e.keyCode, e.ctrlKey)
++                   return
++
+                     play2()
+                 });
+
+                 editor.on('dblclick',function(e) {
+                     console.debug('dblclick: ' + e.keyCode);
+                     c.status('doubleclick')
++                    helper.playAllSentences();
++                });
++
++
++
++                editor.on('nodeChange', function onNodeChanged(e, wait) {
++                    if ( wait != false ) {
++                        setTimeout(function waitFewSecs(){
++                            onNodeChanged(e, false)
++                        },100)
++                        return;
++                    }
++                    console.log('node event', e.element, c.pasted);
++                    if ( c.pasted == true ) {
++                        c.pasted = false;
++                        return;
++                    }
++                    if (  c.element == e.element ) {
++                        return
++                    }
++                    c.element = e.element
++                    var ui = $(e.element);
++
++
++                    $('#txtEdit').text(ui.text())
++                    c.removeHighlight()
++                    window.speak({text:ui.text() })
++                    ui.addClass('highlight')
++                });
++            }
++        });
++
++        function reverse() {
++            var val = Cookies.get('prevContent');
++            console.log('set to ', val)
++            tinyMCE.get('mainContent').setContent(val)
++        }
++
++
++        var tHelper = {};
++        window.tHelper = tHelper;
++
++        tHelper.setupPaste = function setupPaste() {
++            $("body").on("change keyup paste", tHelper.pasteHandle)
++        }
++
++        tHelper.pasteHandle = function pasteHandle  (event, txt) {
++
++                console.log('pasted')
++
++                if ( txt == null ) {
++                    var currentVal = $(this).val();
++
++                } else {
++                    currentVal = txt;
++                }
++                var txtOrig = currentVal;
++
++                //fix issues with text
++                currentVal = currentVal.replace(//gm, "");
++                currentVal = currentVal.replace(/’/gm, "'");
++
++                if (currentVal == oldVal) {
++                    return; //check to prevent multiple simultaneous triggers
++                }
++        }
++
++        tHelper.playAllSentences = function readText() {
+-                    var tiny = tinyMCE.get('mainContent');
+-                    var content = tinyMCE.get('mainContent').getContent();
+-                    var b = $(tinyMCE.get('mainContent').getBody());
+-                    var content = b.text();
+-                    var children = b.children();
+-                    var foundElement = false;
++            var tiny = tinyMCE.get('mainContent');
++            var content = tinyMCE.get('mainContent').getContent();
++            var b = $(tinyMCE.get('mainContent').getBody());
++            var content = b.text();
++            var children = b.children();
++            var foundElement = false;
+-                    console.debug('dblclick: ' + e.keyCode, children);
++            console.debug('dblclick: ', children);
+-                    var text = '';
++            var text = '';
+
+-                    var toDiv = $($('iframe')[1]).contents().find('body')
+-                    window.sentenceHelper.setupSentences(toDiv,toDiv);
++            var toDiv = $($('iframe')[1]).contents().find('body')
++            window.sentenceHelper.setupSentences(toDiv,toDiv);
++            window.speak('paste command')
++            window.speak('paste')
++            setTimeout(function call() {
++                console.debug('go play all ..')
++                window.sentenceHelper.onPlay2UI()
+-                    return;
++                return;
++                setTimeout(function call() {
++                    console.debug('go play all ..')
++                    window.sentenceHelper.onPlay2UI()
++                },200)
++            },700)
++
++            return;
+-                    $.each(children, function addEachChild(k,v) {
+-                        var ui = $(v)
+-                        var p = $(c.element).parent()[0]
+-                        console.log(v, ui, p)
+-                        if ( v == c.element )
+-                            foundElement = true
+-                        if ( v == p )
+-                            foundElement = true
+-                        if ( foundElement )
+-                            text +=  ui.text().trim() +  ' ';
+-                    })
++            $.each(children, function addEachChild(k,v) {
++                var ui = $(v)
++                var p = $(c.element).parent()[0]
++                console.log(v, ui, p)
++                if ( v == c.element )
++                    foundElement = true
++                if ( v == p )
++                    foundElement = true
++                if ( foundElement )
++                    text +=  ui.text().trim() +  ' ';
++            })
+
+-                   // var ui = $(c.element)
+-                   // var text = ui.text()
+-                    // debugger;
+-                   // console.debug(text, content.split(text)[1]);
+-                   // var final = text  + content.split(text)[1];
+-                    console.debug('txt to speac', text);
+-                    window.speak(text)
+-                    // play2()
++            // var ui = $(c.element)
++            // var text = ui.text()
++            // debugger;
++            // console.debug(text, content.split(text)[1]);
++            // var final = text  + content.split(text)[1];
++            console.debug('txt to speac', text);
++            window.speak(text)
++            // play2()
+-                });
+-
+-
+-
+-                editor.on('nodeChange', function(e) {
+-                    console.log('node event', e.element);
+-                    if (  c.element == e.element ) {
+-                        return
+-                    }
++        }
+-                    c.element = e.element
+-                    var ui = $(e.element);
+
++     //   debugger
++        tHelper.setupPaste()
+
+-                    $('#txtEdit').text(ui.text())
+-                    c.removeHighlight()
+-                    window.speak({text:ui.text() })
+-                    ui.addClass('highlight')
+-                });
++        tHelper.setupControlBox = function setup() {
++            //utils.addCheckbox('Speak On Paste')
++            //utils.ignoreAddLinkThings('Speak On Paste')
+-            }
++        }
+-        });
++        tHelper.setupControlBox();
+
+-        function reverse() {
+-            var val = Cookies.get('prevContent');
+-            console.log('set to ', val)
+-            tinyMCE.get('mainContent').setContent(val)
+-        }
+     </script>
+
+
+@@ -323,7 +402,7 @@
+ <span id="speakingBox">speaking</span>
+ <div id="txtConsole" >sttaus</div>
+ <button onclick="reverse()">asdf</button>
+-
++<div id="controlBox"> </div>
+ </body>
+
+
+\ No newline at end of file
+Index: www/js/speakHTMLText_Cleaned.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- www/js/speakHTMLText_Cleaned.js    (date 1476214725000)
++++ www/js/speakHTMLText_Cleaned.js    (revision )
+@@ -330,7 +330,8 @@
+             }
+
+             p.onPlay2UI = function onPlay2UI() {
+-                p.onPlay2(null, false, null, true, true)
++                p.onPlay2(null, false, null, true, false);
++                //keep play statse if false
+             }
+             p.onPlay2 = function onPlay2(event, justScrollToPosition,
+                                          changeIndex, force, keepPlayState) {
+@@ -2012,7 +2013,10 @@
+
+             cfg.text = cfg.text.trim();
+             cfg.text = cfg.text.replace(/&nbsp;/gi,' ');
+-            console.log('trim',  cfg.text.trim().endsWith('reply'), cfg.text)
++            cfg.text = cfg.text.replace(/OMG/g,' oh-my-god ');
++            cfg.text = cfg.text.replace(/UX/g,' you-eye ');
++            cfg.text = cfg.text.replace(/UI/g,' you-x ');
++            console.log('speak:', 'trim',  cfg.text.trim().endsWith('reply'), cfg.text)
+             var speakOnce = false
+             var date = new Date();
+             $.ajax({
+\ No newline at end of file

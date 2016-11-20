@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/html2canvas.js"></script>
+    <script type="text/javascript" src="js/jquery.plugin.html2canvas.js"></script>
+    <script type="text/javascript" src="js/screenCapture.js"></script>
+
+</head>
+<body>
+<div id="target" style="background-color: blue;">
+    <!-- Render your page inside of this div. -->
+    asdf<br />
+    <span>s
+    sdfsdf</span>
+    lOREN
+</div>
+
+
+
+<script>
+
+    var s = new ScreenCapture();
+    s.init()
+    setTimeout(function cap(){
+        s.capture('#target', {name:"testcapture"})
+    }, 2000)
+</script>
+</body>
+</html>

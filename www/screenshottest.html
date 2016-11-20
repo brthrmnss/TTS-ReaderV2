@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/html2canvas.js"></script>
+    <script type="text/javascript" src="js/jquery.plugin.html2canvas.js"></script>
+
+</head>
+<body>
+<div id="target" style="background-color: blue;">
+    <!-- Render your page inside of this div. -->
+    asdf<br />
+    <span>s
+    sdfsdf</span>
+    lOREN
+</div>
+
+<iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe"></iframe>
+
+
+<input type="submit" value="Take Screenshot Of Div"
+       target="dummyframe"
+       onclick="capture();" />
+<form method="POST" onSubmit="captureForm()"
+      enctype="multipart/form-data"
+      action="http://127.0.0.1:6006/doUp2/"
+      id="myForm">
+    <input type="hidden" name="img_val" id="img_val" value="" />
+</form>
+
+<script>
+    function capture() {
+        $('#target').html2canvas({
+            onrendered: function (canvas) {
+                //Set hiddeen field's value to image data (base-64 string)
+                $('#img_val').val(canvas.toDataURL("image/png"));
+                //Submit the form manually
+               /* document.getElementById('myForm').onsubmit=function() {
+                    alert('hi');
+                    return false;
+                }*/
+                var d = document.getElementById("myForm").submit
+                $('#myForm').submit(function () {
+                   // sendContactForm();
+                    console.log('go')
+                    var formData = new FormData($(this)[0]);
+                    $.ajax({
+                        url: "http://127.0.0.1:6006/doUp2/",
+                        type: 'POST',
+                        data: formData,
+                        async: false,
+                        success: function (data) {
+                            alert(data)
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+
+
+                    return false;
+                });
+                $('#myForm').submit()
+
+                (function () {
+                    // sendContactForm();
+                    console.log('go')
+                    //return false;
+                });
+              //   debugger
+                return;
+                document.getElementById("myForm").submit(
+                        function (e) {
+                            e.f
+                            console.error(e)
+                            return false });
+
+                //document.body.appendChild(canvas);
+            }
+        });
+    }
+
+    setTimeout(capture, 2000)
+</script>
+</body>
+</html>
