@@ -1043,6 +1043,54 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
                 }
             }
 
+            utils.scrollToElement = function (target) {
+                target = $(target);
+
+                if ( self.data.autoScrollingEnabled == false ) {
+                    return;
+                }
+
+                if (target.length) {
+                    var scrollBody = $('html,body')
+
+                    var scrollTop = target.offset().top-200;
+                    if ( self.data.toDiv )  {
+                        scrollBody = self.data.toDiv
+                        var scrollTop = target.offset().top
+                            - target.parent().offset().top-200;
+
+                        var scrollTop =  target.parent().offset().top;
+
+                        if ( target.parent().offset().top == target.parent().parent().offset().top) {
+                            var scrollTop = target.parent().offset().top
+                                - target.parent().parent().offset().top-200;
+                        }
+
+                        scrollTop =  scrollBody.scrollTop() + target.offset().top // - 200
+                        scrollTop -= target.height()
+                        scrollTop -= 100
+                        scrollTop -= 200
+
+                        if ( scrollTop > target.height() ) {
+                            console.log('scroll top fix, is this an iframe?',
+                                target.offset().top )
+                            scrollTop = target.offset().top-100;
+                        }
+                    }
+
+                    console.log('scroll to top', scrollTop,target.height(),
+                        scrollBody.scrollTop(),  target.offset().top,
+                        target.offset().top , target.parent().offset().top)
+
+                    scrollBody.clearQueue();
+                    scrollBody.stop();
+                    scrollBody.animate({
+                        scrollTop:scrollTop
+                    }, 500);
+                    //return false;
+                }
+            }
+
             utils.findSentencesInHtml = function findSentencesInHtml(parent) {
 
                 window.parent = parent;

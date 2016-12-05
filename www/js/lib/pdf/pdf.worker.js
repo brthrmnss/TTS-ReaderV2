@@ -10813,10 +10813,14 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
     },
 
     handleText: function PartialEvaluator_handleText(chars, state) {
+      //  debugger; bookmark: where to get all the text on the page
       var font = state.font;
       var glyphs = font.charsToGlyphs(chars);
       var isAddToPathSet = !!(state.textRenderingMode &
                               TextRenderingMode.ADD_TO_PATH_FLAG);
+        console.log(chars)
+        console.debug(glyphs )
+      //  console.log(  font, state, font.name)
       if (font.data && (isAddToPathSet || PDFJS.disableFontFace)) {
         var buildPath = function (fontChar) {
           if (!font.renderer.hasBuiltPath(fontChar)) {

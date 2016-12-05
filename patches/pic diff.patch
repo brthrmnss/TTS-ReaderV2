@@ -1,0 +1,389 @@
+Index: www/js/lib/pdf/image updates.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- www/js/lib/pdf/image updates.txt	(revision )
++++ www/js/lib/pdf/image updates.txt	(revision )
+@@ -0,0 +1,35 @@
++
++    paintInlineImageXObject:
++      function CanvasGraphics_paintInlineImageXObject(imgData) {
++      var width = imgData.width;
++      var height = imgData.height;
++      var ctx = this.ctx;
++
++      this.save();
++      // scale the image to the unit square
++      ctx.scale(1 / width, -1 / height);
++
++      var currentTransform = ctx.mozCurrentTransformInverse;
++      var a = currentTransform[0], b = currentTransform[1];
++      var widthScale = Math.max(Math.sqrt(a * a + b * b), 1);
++      var c = currentTransform[2], d = currentTransform[3];
++      var heightScale = Math.max(Math.sqrt(c * c + d * d), 1);
++
++      var imgToPaint, tmpCanvas;
++      // instanceof HTMLElement does not work in jsdom node.js module
++      if (imgData instanceof HTMLElement || !imgData.data) {
++        imgToPaint = imgData;
++      } else {
++        tmpCanvas = CachedCanvases.getCanvas('inlineImage', width, height);
++        var tmpCtx = tmpCanvas.context;
++        putBinaryImageData(tmpCtx, imgData);
++        imgToPaint = tmpCanvas.canvas;
++
++
++      //bookmark: store a picture
++        var img = document.createElement("img");
++        img.src = imgToPaint.toDataURL("image/png");
++        //document.body.appendChild(img);
++
++
++      }
+\ No newline at end of file
+Index: www/templates/player.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- www/templates/player.html	(date 1476211446000)
++++ www/templates/player.html	(revision )
+@@ -112,6 +112,7 @@
+ 			<div class="inline" style="width: 90%">
+ 				<span style="font-size: 18px;" class="unselectable">
+ 					<span class="glyphicon glyphicon-menu-hamburger control" ng-click="onHamburger()"></span>
++					<span class="glyphicon glyphicon-menu-hamburger control" ng-click="onHamburger2()" title="2"></span>
+ 					<span ng-click="onBackToLibrary()"> Back to library </span>
+ 				</span>
+ 			</div>
+\ No newline at end of file
+Index: node_modules/shelpers/lib/shelpers.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- node_modules/shelpers/lib/shelpers.js	(date 1476211446000)
++++ node_modules/shelpers/lib/shelpers.js	(revision )
+@@ -99,7 +99,7 @@
+
+ function removeFromArray(array, value, clone ) {
+     var index = array.indexOf(value)
+-    if ( index == 0 )
++    if ( index == -1 )
+         return array;
+
+     array.splice(index, 1);
+Index: www/js/r2.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- www/js/r2.js	(date 1476211446000)
++++ www/js/r2.js	(revision )
+@@ -2,10 +2,11 @@
+  * Created by user2 on 2/14/16.
+  */
+
++// alert('whs')
+
+-
+-window.fx = function fc(){
+-    //console.log('hamb');
++window.fx = function onProcessPageAndDefineUtils(){
++    console.log('reloadYYY');
++    //debugger
+     function defineUtils() {
+         $.async = function asyncHelper(items, fx, fxAllDone, delay, playIndex) {
+             //var index = 0
+@@ -286,13 +287,7 @@
+         };
+     }
+     defineSpeak();
+-    //helper.speak('you dog.')
+-
+-    helper.clearspans;
+-
+-
+-
+-
++    //helper.speak('hello from reader.')
+ }
+
+ window.fx2 = function fx2 (play, playIndex) {
+@@ -301,6 +296,7 @@
+
+     var procHelper = {}
+     var pH = procHelper;
++    window.pH = pH;
+     pH.defineUtils = function defineUtils() {
+         pH.utils = {};
+         pH.utils.getFontSize = function getFontSize(span) {
+@@ -351,6 +347,7 @@
+         //l('lll', window.$scope)
+         //return
+
++        pH.currentPage = window.$scope.pdfCurrentPage;
+         var id = 'page_Y_' + (window.$scope.pdfCurrentPage - 1)
+         var page = $('#page_' + (window.$scope.pdfCurrentPage - 1));
+         var page_ = page.find('#XLayer')
+@@ -374,9 +371,9 @@
+         var psans = pageCustom.children('span')
+         return psans
+     }
+-
++
+     pH.createPageDocument = function createPageFromDocument() {
+-       // var spans = $('body').children();
++        // var spans = $('body').children();
+         var body = $("#frameX").contents().find("body");
+         var body = $("#frameX").contents().find("body");
+         $("#frameX").contents().find('.coverFlowX').remove();
+@@ -386,17 +383,21 @@
+         newBody.html(html)
+         newBody.css({'top':'-10px', /*, 'left':'0px', */'position':'absolute'})
+         body.append(newBody)
+-      //  debugger
++        //  debugger
+         var spans = newBody.children();
+         return spans;
+     }
+
+-    if (window.$scope.playerForm.documentMode == false) {
++    //TODO: Shelve changes for non document mode ...
++    //this app has too many problems
++    //if (window.$scope.playerForm.documentMode == false) {
+-        spans = pH.createPage();
++    spans = pH.createPage();
+-    } else {
+-        spans = pH.createPageDocument();
+-    }
++    // } else {
++    //     spans = pH.createPageDocument();
++    // }
+
++    //debugger;
++
+     pH.sortSpans = function sortSpans(_spans) {
+         //why: spans come in strange order. this will order they by y then x
+         function sortByY(a, b){
+@@ -792,7 +793,7 @@
+                     if ( cSH.lastStyle &&
+                         cSH.lastStyle.fontSize == styles.fontSize &&
+                         cSH.lastStyle.top + styles.fontSizeAsNumber < styles.top //new line (refernces are never on new line)
+-                    ) {
++                        ) {
+                         //log(gave size, not a foot note
+                         //switches.footNotesMustChangeSize
+                         //debugger;
+@@ -1065,9 +1066,116 @@
+     }
+     pH.playCurPage(play,playIndex)
+
++
++    // window.uploadCurrentPage()
+     return;
+
+ }
++
++
++
++window.run5Pages = function run5Pages() {
++    //console.clear();
++    console.log('run 5 pages')
++}
++
++window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
++    //console.clear();
++    console.log('uploadCurrentPage')
++
++
++    var url = 'http://127.0.0.1:6006/upBook';
++    var data = {}
++    data.book_name = 'xb'
++    data.page = window.pH.currentPage;
++    data.contents = window.pH.cSH.sentences;
++
++
++    //if ( window.screenCaputerer ==null ) {
++        var s = new ScreenCapture();
++        s.init()
++        window.screenCaputerer = s;
++   // }
++    s = window.screenCaputerer;
++
++    function onstep2() {
++
++        // setTimeout(function cap(){
++        // s.capture('pdf-viewer',
++        s.capture(
++            {
++                target:'#container_pdf',
++                fx:  onDone_Step2
++            },
++            {name: data.page,
++                dir:data.book_name})
++        // }, 2000)
++
++    }
++
++    function onDone_Step2 ( config ) {
++
++        var page = window.$scope.pdfCurrentPage
++        window.$scope.pdfViewerAPI.goToNextPage()
++
++        setTimeout(function goToNextPage(){
++            window.fx2();
++        }, 2000)
++
++
++        if ( _fxPageComplete ) {
++            setTimeout(function fxDone2(){
++                var config_ = config;
++                var currentPage = window.$scope.pdfCurrentPage
++
++                console.log('seeing',page, currentPage,  config_.data, config_)
++                if ( page == currentPage ) {
++                    console.error('over')
++                    return;
++                }
++                _fxPageComplete();
++            }, 4000)
++        }
++
++
++
++
++    }
++
++    onDone_Step1();
++    function onDone_Step1() {
++        $.ajax({
++            url: url,
++            type: 'post',
++            data: data,
++            success: onWavDataResponseRecieved,
++            headers: {
++                "Content-Type": "application/x-www-form-urlencoded"
++            }
++            //dataType: dataType
++        });
++
++        function onWavDataResponseRecieved() {
++            console.info('done')
++
++            onstep2()
++
++        }
++
++    }
++}
++
++
++
++window.uploadAllPages = function  uploadAllPages() {
++    window.uploadCurrentPage(goToNextPage_Loop)
++    function goToNextPage_Loop() {
++        //debugger;
++        window.uploadCurrentPage(goToNextPage_Loop)
++    }
++}
++
++
+
+ window.fx()
+
+\ No newline at end of file
+Index: www/js/lib/pdf/patch for extracting images.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- www/js/lib/pdf/patch for extracting images.txt	(revision )
++++ www/js/lib/pdf/patch for extracting images.txt	(revision )
+@@ -0,0 +1,85 @@
++*** C:\Users\morriste\train\train_drive\trash\TTS-Reader2\TTS-Reader-master\TTS-Reader-master\www\js\lib\pdf\pdf.js	2016-08-19 11:24:58.000000000 -0400
++--- C:\Users\morriste\train\train_drive\trash\TTS-Reader2-live\TTS-Reader\www\js\lib\pdf\pdf.js	2016-10-11 11:41:05.000000000 -0400
++***************
++*** 18,30 ****
++  /* globals PDFJS */
++
++  // Initializing PDFJS global object (if still undefined)
++  if (typeof PDFJS === 'undefined') {
++    (typeof window !== 'undefined' ? window : this).PDFJS = {};
++  }
++!
++  PDFJS.version = '1.0.907';
++  PDFJS.build = 'e9072ac';
++
++  (function pdfjsWrapper() {
++    // Use strict in our context only - users might not want it
++    'use strict';
++--- 18,30 ----
++  /* globals PDFJS */
++
++  // Initializing PDFJS global object (if still undefined)
++  if (typeof PDFJS === 'undefined') {
++    (typeof window !== 'undefined' ? window : this).PDFJS = {};
++  }
++! console.log('image test')
++  PDFJS.version = '1.0.907';
++  PDFJS.build = 'e9072ac';
++
++  (function pdfjsWrapper() {
++    // Use strict in our context only - users might not want it
++    'use strict';
++***************
++*** 2575,2586 ****
++--- 2575,2587 ----
++          var pageProxy = this.pageCache[pageIndex];
++          var imageData;
++          if (pageProxy.objs.hasData(id)) {
++            return;
++          }
++
+++        console.log('image processing')
++          switch (type) {
++            case 'JpegStream':
++              imageData = data[3];
++              loadJpegStream(id, imageData, pageProxy.objs);
++              break;
++            case 'Image':
++***************
++*** 3539,3545 ****
++--- 3540,3555 ----
++      var totalChunks = Math.ceil(fracChunks);
++      var partialChunkHeight = height - fullChunks * fullChunkHeight;
++
++      var chunkImgData = ctx.createImageData(width, fullChunkHeight);
++      var srcPos = 0, destPos;
++      var src = imgData.data;
+++     /*
+++     var image = document.createElement('img');
+++     image.src = 'data:image/png;base64,' + src;
+++     document.appendChild(image);*/
++
++
++
++
++
++      var dest = chunkImgData.data;
++***************
++*** 5056,5063 ****
++--- 5069,5084 ----
++          tmpCanvas = CachedCanvases.getCanvas('inlineImage', width, height);
++          var tmpCtx = tmpCanvas.context;
++          putBinaryImageData(tmpCtx, imgData);
++          imgToPaint = tmpCanvas.canvas;
++
++
+++       //bookmark: store a picture
+++         var img = document.createElement("img");
+++         img.src = imgToPaint.toDataURL("image/png");
+++         //document.body.appendChild(img);
++
++
++        }
++
++        var paintWidth = width, paintHeight = height;
++        var tmpCanvasId = 'prescale1';

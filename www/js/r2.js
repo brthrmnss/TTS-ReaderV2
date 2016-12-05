@@ -2,10 +2,11 @@
  * Created by user2 on 2/14/16.
  */
 
+// alert('whs')
 
-
-window.fx = function fc(){
-    //console.log('hamb');
+window.fx = function onProcessPageAndDefineUtils(){
+    console.log('reloadYYY');
+    //debugger
     function defineUtils() {
         $.async = function asyncHelper(items, fx, fxAllDone, delay, playIndex) {
             //var index = 0
@@ -58,6 +59,10 @@ window.fx = function fc(){
     }
     defineUtils();
 
+    if ( window.$scope == null ) {
+        console.debug('not ready yet, $scope is null')
+        return
+    }
     var page = window.$scope.pdfCurrentPage;
 
 
@@ -286,21 +291,22 @@ window.fx = function fc(){
         };
     }
     defineSpeak();
-    //helper.speak('you dog.')
-
-    helper.clearspans;
-
-
-
-
+    //helper.speak('hello from reader.')
 }
-
+//window.showImages = true
+//window.showImages2 = true;
 window.fx2 = function fx2 (play, playIndex) {
+ 
+    if ( typeof $scope === 'undefined') {
+        console.debug('not ready yet, $scope is null')
+        return;
+    }
     console.clear()
     console.log('the thing', $scope)
 
     var procHelper = {}
     var pH = procHelper;
+    window.pH = pH;
     pH.defineUtils = function defineUtils() {
         pH.utils = {};
         pH.utils.getFontSize = function getFontSize(span) {
@@ -352,6 +358,7 @@ window.fx2 = function fx2 (play, playIndex) {
         //l('lll', window.$scope)
         //return
 
+        pH.currentPage = window.$scope.pdfCurrentPage;
         var id = 'page_Y_' + (window.$scope.pdfCurrentPage - 1)
         var page = $('#page_' + (window.$scope.pdfCurrentPage - 1));
         var page_ = page.find('#XLayer')
@@ -377,7 +384,7 @@ window.fx2 = function fx2 (play, playIndex) {
     }
     
     pH.createPageDocument = function createPageFromDocument() {
-       // var spans = $('body').children();
+        // var spans = $('body').children();
         var body = $("#frameX").contents().find("body");
         var body = $("#frameX").contents().find("body");
         $("#frameX").contents().find('.coverFlowX').remove();
@@ -387,16 +394,20 @@ window.fx2 = function fx2 (play, playIndex) {
         newBody.html(html)
         newBody.css({'top':'-10px', /*, 'left':'0px', */'position':'absolute'})
         body.append(newBody)
-      //  debugger
+        //  debugger
         var spans = newBody.children();
         return spans;
     }
 
-    if (window.$scope.playerForm.documentMode == false) {
-        spans = pH.createPage();
-    } else {
-        spans = pH.createPageDocument();
-    }
+    //TODO: Shelve changes for non document mode ...
+    //this app has too many problems
+    //if (window.$scope.playerForm.documentMode == false) {
+    spans = pH.createPage();
+    // } else {
+    //     spans = pH.createPageDocument();
+    // }
+
+    //debugger;
 
     pH.sortSpans = function sortSpans(_spans) {
         //why: spans come in strange order. this will order they by y then x
@@ -793,7 +804,7 @@ window.fx2 = function fx2 (play, playIndex) {
                     if ( cSH.lastStyle &&
                         cSH.lastStyle.fontSize == styles.fontSize &&
                         cSH.lastStyle.top + styles.fontSizeAsNumber < styles.top //new line (refernces are never on new line)
-                    ) {
+                        ) {
                         //log(gave size, not a foot note
                         //switches.footNotesMustChangeSize
                         //debugger;
@@ -965,6 +976,12 @@ window.fx2 = function fx2 (play, playIndex) {
     //pH.cSH.spans = []
     pH.highlightSpans(pH.cSH.spans);
     //console.clear()
+    var sentencesX = pH.createSentences(spans);
+    console.log('sentencesX', 'k', sentencesX);
+    console.log('cSH', pH.cSH);
+    //pH.cSH.spans = []
+    pH.highlightSpans(pH.cSH.spans);
+    //console.clear()
     //console.error('food...')
 
     pH.testSelectAllSentences =  function highlightEachSentence(_sentences) {
@@ -1072,13 +1089,24 @@ window.fx2 = function fx2 (play, playIndex) {
 
 }
 
+
+
+window.run5Pages = function run5Pages() {
+    //console.clear();
+    console.log('run 5 pages')
+}
+
 window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
+    //console.clear();
+    console.log('uploadCurrentPage')
+
 
     var url = 'http://127.0.0.1:6006/upBook';
     var data = {}
     data.book_name = 'xb'
     data.page = window.pH.currentPage;
     data.contents = window.pH.cSH.sentences;
+
 
     //if ( window.screenCaputerer ==null ) {
     var s = new ScreenCapture();
@@ -1152,36 +1180,6 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
         }
 
     }
-
-
-    var url = 'http://127.0.0.1:6006/upBook';
-    var data = {}
-    data.book_name = 'xb'
-    data.page = window.pH.currentPage;
-    data.contents = window.pH.cSH.sentences;
-
-
-    //if ( window.screenCaputerer ==null ) {
-    var s = new ScreenCapture();
-    s.init()
-    window.screenCaputerer = s;
-    // }
-    s = window.screenCaputerer;
-
-    function onstep2() {
-
-        // setTimeout(function cap(){
-        // s.capture('pdf-viewer',
-        s.capture(
-            {
-                target:'#container_pdf',
-                fx:  onDone_Step2
-            },
-            {name: data.page,
-                dir:data.book_name})
-        // }, 2000)
-
-    }
 }
 
 
@@ -1196,11 +1194,9 @@ window.uploadAllPages = function  uploadAllPages() {
 
 
 
-
-
-
-
 window.fx()
 
 window.fx2()
+
+window.processPage = window.fx2;
 console.log('doddddddmde2')

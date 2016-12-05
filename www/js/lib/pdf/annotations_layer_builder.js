@@ -118,7 +118,7 @@ var AnnotationsLayerBuilder = (function AnnotationsLayerBuilderClosure() {
             element.style.left = rect[0] + 'px';
             element.style.top = rect[1] + 'px';
             element.style.position = 'absolute';
-
+debugger;
             CustomStyle.setProp('transform', element, transformStr);
             var transformOriginStr = -rect[0] + 'px ' + -rect[1] + 'px';
             CustomStyle.setProp('transformOrigin', element, transformOriginStr);

@@ -3543,11 +3543,16 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     var chunkImgData = ctx.createImageData(width, fullChunkHeight);
     var srcPos = 0, destPos;
     var src = imgData.data;
-    /*
-    var image = document.createElement('img');
-    image.src = 'data:image/png;base64,' + src;
-    document.appendChild(image);*/
-
+    if ( window.showImages ) {
+      console.log('what is the image information', '...', src)
+    }
+    if (  window.showImages2 ) {
+      var image = document.createElement('img');
+      image.src = 'data:image/png;base64,' + src;
+      document.appendChild(image);
+      $('body').append(image);
+      //.appendChild(image);
+    }
 
 
 
@@ -5075,7 +5080,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       //bookmark: store a picture
         var img = document.createElement("img");
         img.src = imgToPaint.toDataURL("image/png");
-        //document.body.appendChild(img);
+        if ( window.showImages )
+        document.body.appendChild(img);
 
 
       }
@@ -7249,6 +7255,7 @@ var SVGGraphics = (function SVGGraphicsClosure() {
 
       current.xcoords = [];
       current.tspan = document.createElementNS(NS, 'svg:tspan');
+      debugger
       current.tspan.setAttributeNS(null, 'font-family', current.fontFamily);
       current.tspan.setAttributeNS(null, 'font-size',
                                    pf(current.fontSize) + 'px');
@@ -7273,7 +7280,9 @@ var SVGGraphics = (function SVGGraphicsClosure() {
       var current = this.current;
       this.current.x = this.current.lineX += x;
       this.current.y = this.current.lineY += y;
-
+debugger;
+      console.log('move text',this.current.x,
+      this.current.y , current.tspan.innerHTML, current.tspan)
       current.xcoords = [];
       current.tspan = document.createElementNS(NS, 'svg:tspan');
       current.tspan.setAttributeNS(null, 'font-family', current.fontFamily);
@@ -7329,6 +7338,7 @@ var SVGGraphics = (function SVGGraphicsClosure() {
                                    current.xcoords.map(pf).join(' '));
       current.tspan.setAttributeNS(null, 'y', pf(-current.y));
       current.tspan.setAttributeNS(null, 'font-family', current.fontFamily);
+      debugger;
       current.tspan.setAttributeNS(null, 'font-size',
                                    pf(current.fontSize) + 'px');
       if (current.fontStyle !== SVG_DEFAULTS.fontStyle) {
@@ -7341,6 +7351,7 @@ var SVGGraphics = (function SVGGraphicsClosure() {
         current.tspan.setAttributeNS(null, 'fill', current.fillColor);
       }
 
+      
       current.txtElement.setAttributeNS(null, 'transform',
                                         pm(current.textMatrix) +
                                         ' scale(1, -1)' );
@@ -7363,7 +7374,7 @@ var SVGGraphics = (function SVGGraphicsClosure() {
         this.cssStyle.setAttributeNS(null, 'type', 'text/css');
         this.defs.appendChild(this.cssStyle);
       }
-
+      debugger
       var url = PDFJS.createObjectURL(fontObj.data, fontObj.mimetype);
       this.cssStyle.textContent +=
         '@font-face { font-family: "' + fontObj.loadedName + '";' +

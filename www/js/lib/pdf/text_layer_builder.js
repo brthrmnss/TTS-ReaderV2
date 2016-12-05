@@ -95,7 +95,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
           lastFontSize = fontSize;
           lastFontFamily = fontFamily;
         }
-
+//debugger
         var width = ctx.measureText(textDiv.textContent).width;
         if (width > 0) {
           textLayerFrag.appendChild(textDiv);

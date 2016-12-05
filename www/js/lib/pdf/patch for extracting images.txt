@@ -1,0 +1,85 @@
+*** C:\Users\morriste\train\train_drive\trash\TTS-Reader2\TTS-Reader-master\TTS-Reader-master\www\js\lib\pdf\pdf.js	2016-08-19 11:24:58.000000000 -0400
+--- C:\Users\morriste\train\train_drive\trash\TTS-Reader2-live\TTS-Reader\www\js\lib\pdf\pdf.js	2016-10-11 11:41:05.000000000 -0400
+***************
+*** 18,30 ****
+  /* globals PDFJS */
+
+  // Initializing PDFJS global object (if still undefined)
+  if (typeof PDFJS === 'undefined') {
+    (typeof window !== 'undefined' ? window : this).PDFJS = {};
+  }
+!
+  PDFJS.version = '1.0.907';
+  PDFJS.build = 'e9072ac';
+
+  (function pdfjsWrapper() {
+    // Use strict in our context only - users might not want it
+    'use strict';
+--- 18,30 ----
+  /* globals PDFJS */
+
+  // Initializing PDFJS global object (if still undefined)
+  if (typeof PDFJS === 'undefined') {
+    (typeof window !== 'undefined' ? window : this).PDFJS = {};
+  }
+! console.log('image test')
+  PDFJS.version = '1.0.907';
+  PDFJS.build = 'e9072ac';
+
+  (function pdfjsWrapper() {
+    // Use strict in our context only - users might not want it
+    'use strict';
+***************
+*** 2575,2586 ****
+--- 2575,2587 ----
+          var pageProxy = this.pageCache[pageIndex];
+          var imageData;
+          if (pageProxy.objs.hasData(id)) {
+            return;
+          }
+
++        console.log('image processing')
+          switch (type) {
+            case 'JpegStream':
+              imageData = data[3];
+              loadJpegStream(id, imageData, pageProxy.objs);
+              break;
+            case 'Image':
+***************
+*** 3539,3545 ****
+--- 3540,3555 ----
+      var totalChunks = Math.ceil(fracChunks);
+      var partialChunkHeight = height - fullChunks * fullChunkHeight;
+
+      var chunkImgData = ctx.createImageData(width, fullChunkHeight);
+      var srcPos = 0, destPos;
+      var src = imgData.data;
++     /*
++     var image = document.createElement('img');
++     image.src = 'data:image/png;base64,' + src;
++     document.appendChild(image);*/
+
+
+
+
+
+      var dest = chunkImgData.data;
+***************
+*** 5056,5063 ****
+--- 5069,5084 ----
+          tmpCanvas = CachedCanvases.getCanvas('inlineImage', width, height);
+          var tmpCtx = tmpCanvas.context;
+          putBinaryImageData(tmpCtx, imgData);
+          imgToPaint = tmpCanvas.canvas;
+
+
++       //bookmark: store a picture
++         var img = document.createElement("img");
++         img.src = imgToPaint.toDataURL("image/png");
++         //document.body.appendChild(img);
+
+
+        }
+
+        var paintWidth = width, paintHeight = height;
+        var tmpCanvasId = 'prescale1';
