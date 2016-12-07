@@ -78,5 +78,55 @@ function ScreenCapture() {
     }
 
 
+
 }
 
+
+
+function uploadPicture(data, name) {
+    // sendContactForm();
+    var cdata = {}
+    cdata.data = data;
+    cdata.name = name;
+    //debugger;
+    /*
+
+     $.ajax({
+     type: "POST",
+     url: "script.php",
+     data: {
+     imgBase64: dataURL
+     }
+     }).done(function(o) {
+     console.log('saved');
+     // If you want the file to be visible in the browser
+     // - please modify the callback in javascript. All you
+     // need is to return the url to the file, you just saved
+     // and than put the image in your browser.
+     });
+
+     */
+
+    $.ajax({
+        url: "http://127.0.0.1:6006/doUp3/",
+        type: 'POST',
+        data: cdata,
+        data : JSON.stringify(cdata),
+        contentType : 'application/json',
+        // async: true,
+        success: function (data) {
+            console.log('save', name)
+            // alert(data)
+            //if ( config.fx ) config.fx(config)
+        },
+        error: function onError(a,b,c) {
+            console.error(a,b,c)
+        },
+        cache: false,
+        //contentType: false,
+        //contentType: 'json',
+        processData: false
+    });
+}
+
+window.uploadPicture = uploadPicture

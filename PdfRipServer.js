@@ -39,9 +39,18 @@ function PdfRipServer() {
         var bodyParser  = require("body-parser");
         var multer = require('multer');
 
-        app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
-        app.use(bodyParser.json());                                     // parse application/json
+        app.use(bodyParser.json({limit: '50mb'}));
+
+        app.use(bodyParser.urlencoded({
+            limit: '50mb',
+            extended: true
+        }));
+
+        //app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
+       // app.use(bodyParser.json());                                     // parse application/json
         app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+
+
 
         /*app.use(express.bodyParser());
          app.use(express.json());
@@ -108,6 +117,56 @@ function PdfRipServer() {
             });
         });
 
+
+        app.post('/doUp3',function(req,res){
+
+
+            function decodeBase64Image(dataString) {
+                var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
+                    response = {};
+
+                if (matches.length !== 3) {
+                    return new Error('Invalid input string');
+                }
+
+                response.type = matches[1];
+                response.data = new Buffer(matches[2], 'base64');
+
+                return response;
+            }
+
+
+
+
+            var p = req.body;
+            //console.log(imageBuffer, p);
+            var data = p.data;
+            var imageBuffer = decodeBase64Image(data);
+            console.log('bpp')
+            var name = p.name;
+            sh.writeFile(name, imageBuffer.data, 'base64')
+            res.send('done')
+            return;
+            upload(req,res,function(err) {
+                console.error('what...', 5, req.headers)
+                if(err) {
+                    return res.end("Error uploading file.");
+                }
+                if ( req.body.img_val ) {
+                    var base64Data = req.body.img_val.replace(/^data:image\/png;base64,/, "");
+                    var base = 'x'
+                    if ( req.body.name != null ) {
+                        base = req.body.name;
+                    }
+                    var filename = base + '.png'
+                    var fileName = __dirname + '/' + 'uploads/' + filename
+                    require("fs").writeFileSync(fileName, base64Data, 'base64' );
+
+                    //sh.writeFile(fileName, req.body.img_val, true, true)
+                }
+                res.end("File is uploaded");
+            });
+        });
 
 
         app.listen(self.settings.port, function () {

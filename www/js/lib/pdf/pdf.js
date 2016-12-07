@@ -3517,6 +3517,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
   }
 
   function putBinaryImageData(ctx, imgData) {
+    //debugger;
     if (typeof ImageData !== 'undefined' && imgData instanceof ImageData) {
       ctx.putImageData(imgData, 0, 0);
       return;
@@ -3540,6 +3541,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     var totalChunks = Math.ceil(fracChunks);
     var partialChunkHeight = height - fullChunks * fullChunkHeight;
 
+    console.log('putBinaryImageData', 'stuff')
+    //debugger;
     var chunkImgData = ctx.createImageData(width, fullChunkHeight);
     var srcPos = 0, destPos;
     var src = imgData.data;
@@ -3553,6 +3556,15 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       $('body').append(image);
       //.appendChild(image);
     }
+
+    //bookmark.wher to start upload
+  //  window.uploadPicture(chunkImgData.data, 'chunked1.png')
+  /*  var b64encoded = btoa(String.fromCharCode.apply(null, chunkImgData.data));
+    window.uploadPicture(b64encoded, 'chunked2.png')*/
+
+ //   window.uploadPicture(imgData.data, 'chunked1b.png')
+  //  var b64encoded = btoa(String.fromCharCode.apply(null, imgData.data));
+//    window.uploadPicture(imgData.data, 'chunked2b.png')
 
 
 
@@ -3646,13 +3658,23 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           dest[destPos++] = src[srcPos++];
           dest[destPos++] = 255;
         }
+
+
+       
+
+
         ctx.putImageData(chunkImgData, 0, i * fullChunkHeight);
       }
     } else {
       error('bad image kind: ' + imgData.kind);
     }
 
-
+    return;
+    //bookark.fail .. nto sure what is happening here
+    var dataURL = ctx.toDataURL();
+   // var b64encoded = btoa(String.fromCharCode.apply(null, chunkImgData.data));
+   // b64encoded = 'data:image/png;base64,' + b64encoded;
+    window.uploadPicture(dataURL, 'chunked2.png')
 
   }
 
@@ -5076,10 +5098,16 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         putBinaryImageData(tmpCtx, imgData);
         imgToPaint = tmpCanvas.canvas;
 
+        var dataURL = imgToPaint.toDataURL("image/png");
+        // var b64encoded = btoa(String.fromCharCode.apply(null, chunkImgData.data));
+        // b64encoded = 'data:image/png;base64,' + b64encoded;
+        window.uploadPicture(dataURL, 'chunked2.png')
 
+       // return;
       //bookmark: store a picture
         var img = document.createElement("img");
         img.src = imgToPaint.toDataURL("image/png");
+
         if ( window.showImages )
         document.body.appendChild(img);
 
@@ -7351,7 +7379,7 @@ debugger;
         current.tspan.setAttributeNS(null, 'fill', current.fillColor);
       }
 
-      
+
       current.txtElement.setAttributeNS(null, 'transform',
                                         pm(current.textMatrix) +
                                         ' scale(1, -1)' );
@@ -7695,7 +7723,7 @@ debugger;
       imgEl.setAttributeNS(null, 'y', pf(-h));
       imgEl.setAttributeNS(null, 'transform',
                            'scale(' + pf(1 / w) + ' ' + pf(-1 / h) + ')');
-
+debugger;
       this.tgrp.appendChild(imgEl);
       if (current.pendingClip) {
         this.cgrp.appendChild(this.tgrp);

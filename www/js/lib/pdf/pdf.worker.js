@@ -10818,8 +10818,8 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       var glyphs = font.charsToGlyphs(chars);
       var isAddToPathSet = !!(state.textRenderingMode &
                               TextRenderingMode.ADD_TO_PATH_FLAG);
-        console.log(chars)
-        console.debug(glyphs )
+     //   console.log(chars)
+      //  console.debug(glyphs )
       //  console.log(  font, state, font.name)
       if (font.data && (isAddToPathSet || PDFJS.disableFontFace)) {
         var buildPath = function (fontChar) {

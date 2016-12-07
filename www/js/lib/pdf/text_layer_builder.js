@@ -95,10 +95,13 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
           lastFontSize = fontSize;
           lastFontFamily = fontFamily;
         }
-//debugger
+
         var width = ctx.measureText(textDiv.textContent).width;
         if (width > 0) {
           textLayerFrag.appendChild(textDiv);
+          //textDiv.setAttribute('asdf', '33rrwf')
+          //bookmark.last place touched
+          //debugger;
           var transform;
           if (textDiv.dataset.canvasWidth !== undefined) {
             // Dataset values come of type string.
@@ -183,6 +186,15 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
       textDiv.style.fontSize = fontHeight + 'px';
       textDiv.style.fontFamily = style.fontFamily;
 
+      //debugger;
+      //console.log(geom.str, geom.fontName, geom.transform)
+      //bookmark.where to see styles
+     // console.log(/*geom.str, */geom.fontName, geom.transform, geom.str)
+      // console.log(style)
+      //textDiv.setAttribute('asdf', '33rrwf')
+      textDiv.setAttribute('origFont', geom.fontName)
+      //debugger;
+
       textDiv.textContent = geom.str;
       // |fontName| is only used by the Font Inspector. This test will succeed
       // when e.g. the Font Inspector is off but the Stepper is on, but it's
@@ -222,7 +234,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
       var bidiTexts = this.textContent.items;
       var end = bidiTexts.length - 1;
       var queryLen = (this.findController === null ?
-                      0 : this.findController.state.query.length);
+          0 : this.findController.state.query.length);
       var ret = [];
 
       for (var m = 0, len = matches.length; m < len; m++) {
@@ -277,11 +289,11 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
       var prevEnd = null;
       var pageIdx = this.pageIdx;
       var isSelectedPage = (this.findController === null ?
-        false : (pageIdx === this.findController.selected.pageIdx));
+          false : (pageIdx === this.findController.selected.pageIdx));
       var selectedMatchIdx = (this.findController === null ?
-                              -1 : this.findController.selected.matchIdx);
+          -1 : this.findController.selected.matchIdx);
       var highlightAll = (this.findController === null ?
-                          false : this.findController.state.highlightAll);
+          false : this.findController.state.highlightAll);
       var infinity = {
         divIdx: -1,
         offset: undefined
@@ -325,7 +337,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
 
         if (this.findController) {
           this.findController.updateMatchPosition(pageIdx, i, textDivs,
-                                                  begin.divIdx, end.divIdx);
+              begin.divIdx, end.divIdx);
         }
 
         // Match inside new div.
@@ -342,10 +354,10 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
 
         if (begin.divIdx === end.divIdx) {
           appendTextToDiv(begin.divIdx, begin.offset, end.offset,
-                          'highlight' + highlightSuffix);
+              'highlight' + highlightSuffix);
         } else {
           appendTextToDiv(begin.divIdx, begin.offset, infinity.offset,
-                          'highlight begin' + highlightSuffix);
+              'highlight begin' + highlightSuffix);
           for (var n0 = begin.divIdx + 1, n1 = end.divIdx; n0 < n1; n0++) {
             textDivs[n0].className = 'highlight middle' + highlightSuffix;
           }
@@ -390,7 +402,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
       // Convert the matches on the page controller into the match format
       // used for the textLayer.
       this.matches = this.convertMatches(this.findController === null ?
-        [] : (this.findController.pageMatches[this.pageIdx] || []));
+          [] : (this.findController.pageMatches[this.pageIdx] || []));
       this.renderMatches(this.matches);
     }
   };
