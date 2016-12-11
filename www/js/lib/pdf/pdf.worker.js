@@ -880,7 +880,6 @@ var PageViewport = PDFJS.PageViewport = (function PageViewportClosure() {
       offsetCanvasX - rotateA * scale * centerX - rotateC * scale * centerY,
       offsetCanvasY - rotateB * scale * centerX - rotateD * scale * centerY
     ];
-
     this.width = width;
     this.height = height;
     this.fontScale = scale;
@@ -4925,10 +4924,11 @@ var Annotation = (function AnnotationClosure() {
       // TODO(mack): currently only supporting rgb; need support different
       // colorspaces
       data.color = color;
+
     } else {
       data.color = [0, 0, 0];
     }
-
+      debugger; ///asdf.color
     // Some types of annotations have border style dict which has more
     // info than the border array
     if (dict.has('BS')) {
@@ -11126,6 +11126,11 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       var preprocessor = new EvaluatorPreprocessor(stream, xref, stateManager);
       var timeSlotManager = new TimeSlotManager();
 
+
+        var rev = {}
+        $.each(OPS, function conc(k,v){
+            rev[v] = k;
+        })
       return new Promise(function next(resolve, reject) {
         timeSlotManager.reset();
         var stop, operation = {}, i, ii, cs;
@@ -11140,6 +11145,10 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
           }
           var args = operation.args;
           var fn = operation.fn;
+
+
+        //bookmark.where is color set?
+         //   console.log('b', fn, '.', rev[fn])
 
           switch (fn | 0) {
             case OPS.paintXObject:
@@ -11249,6 +11258,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
             case OPS.setStrokeColorSpace:
               stateManager.state.strokeColorSpace =
                 ColorSpace.parse(args[0], xref, resources);
+
               continue;
             case OPS.setFillColor:
               cs = stateManager.state.fillColorSpace;
@@ -11379,6 +11389,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
         items: [],
         styles: Object.create(null)
       };
+        
       var bidiTexts = textContent.items;
       var SPACE_FACTOR = 0.35;
       var MULTI_SPACE_FACTOR = 1.5;
@@ -11423,6 +11434,8 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
         var bidiResult = PDFJS.bidi(str, -1, textState.font.vertical);
         textChunk.str = bidiResult.str;
         textChunk.dir = bidiResult.dir;
+          //debugger
+          // //bookmark.dir ser
         return textChunk;
       }
 

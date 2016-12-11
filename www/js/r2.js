@@ -296,7 +296,7 @@ window.fx = function onProcessPageAndDefineUtils(){
 //window.showImages = true
 //window.showImages2 = true;
 window.fx2 = function fx2 (play, playIndex) {
- 
+
     if ( typeof $scope === 'undefined') {
         console.debug('not ready yet, $scope is null')
         return;
@@ -382,7 +382,7 @@ window.fx2 = function fx2 (play, playIndex) {
         var psans = pageCustom.children('span')
         return psans
     }
-    
+
     pH.createPageDocument = function createPageFromDocument() {
         // var spans = $('body').children();
         var body = $("#frameX").contents().find("body");
@@ -751,6 +751,7 @@ window.fx2 = function fx2 (play, playIndex) {
                 styles.fontSizeAsNumber = _span.css('font-size').replace('px','')
                 styles.fontSizeAsNumber =  parseFloat(styles.fontSizeAsNumber)
                 styles.top = top;
+                styles.fontFamilyOrig = _span.attr('origFont');
                 //console.log('skipDivs', cSI.currentText)
 
                 cSH.currentStyle = styles;
@@ -804,7 +805,7 @@ window.fx2 = function fx2 (play, playIndex) {
                     if ( cSH.lastStyle &&
                         cSH.lastStyle.fontSize == styles.fontSize &&
                         cSH.lastStyle.top + styles.fontSizeAsNumber < styles.top //new line (refernces are never on new line)
-                        ) {
+                    ) {
                         //log(gave size, not a foot note
                         //switches.footNotesMustChangeSize
                         //debugger;
@@ -856,6 +857,19 @@ window.fx2 = function fx2 (play, playIndex) {
                     cSI.addSentenceToList('fonts different ' + arr);
                 }
             }
+
+
+            if (cSH.lastStyle != null ) {
+                if (cSH.currentStyle.fontFamilyOrig != cSH.lastStyle.fontFamilyOrig    ){
+                    var arr = [
+                        cSH.currentStyle.fontFamilyOrig,
+                        cSH.lastStyle.fontFamilyOrig,
+                        cSH.currentStyle.fontFamily , cSH.lastStyle.fontFamily ,
+                        cSH.currentStyle.fontSize, cSH.lastStyle.fontSize]
+                    cSI.addSentenceToList('fonts Orig different ' + arr);
+                }
+            }
+
 
             cSI.getHTML = function getHTML(){
                 var html = span.html();
@@ -1100,12 +1114,16 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
     //console.clear();
     console.log('uploadCurrentPage')
 
+    window.processPage();
 
     var url = 'http://127.0.0.1:6006/upBook';
     var data = {}
     data.book_name = 'xb'
+    data.book_name = window.$scope.pdfURL;
     data.page = window.pH.currentPage;
     data.contents = window.pH.cSH.sentences;
+
+
 
 
     //if ( window.screenCaputerer ==null ) {
@@ -1119,13 +1137,17 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
 
         // setTimeout(function cap(){
         // s.capture('pdf-viewer',
-        s.capture(
-            {
-                target:'#container_pdf',
-                fx:  onDone_Step2
-            },
-            {name: data.page,
-                dir:data.book_name})
+        function uploadScreen() {
+            s.capture(
+                {
+                    target:'#container_pdf',
+                    fx:  onDone_Step2
+                },
+                {name: data.page,
+                    dir:data.book_name})
+
+        }
+        onDone_Step2()
         // }, 2000)
 
     }
@@ -1136,23 +1158,30 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
         window.$scope.pdfViewerAPI.goToNextPage()
 
         setTimeout(function goToNextPage(){
-            window.fx2();
+
+
+
+            if ( _fxPageComplete ) {
+                _fxPageComplete();
+                /*    setTimeout(function fxDone2(){
+                 var config_ = config;
+                 var currentPage = window.$scope.pdfCurrentPage
+
+                 console.log('seeing',page, currentPage,  config_.data, config_)
+                 if ( page == currentPage ) {
+                 console.error('over')
+                 return;
+                 }
+                 _fxPageComplete();
+                 }, 4000)*/
+                return;
+            }
+
+            window.processPage();
         }, 2000)
 
 
-        if ( _fxPageComplete ) {
-            setTimeout(function fxDone2(){
-                var config_ = config;
-                var currentPage = window.$scope.pdfCurrentPage
 
-                console.log('seeing',page, currentPage,  config_.data, config_)
-                if ( page == currentPage ) {
-                    console.error('over')
-                    return;
-                }
-                _fxPageComplete();
-            }, 4000)
-        }
 
 
 
@@ -1185,9 +1214,24 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
 
 
 window.uploadAllPages = function  uploadAllPages() {
+    var cfg = {};
+    cfg.maxPageCount = 2;
+    cfg.pageCount = 0;
+
     window.uploadCurrentPage(goToNextPage_Loop)
     function goToNextPage_Loop() {
+        var page = window.$scope.pdfCurrentPage
         //debugger;
+        cfg.pageCount++
+        if ( cfg.pageCount > cfg.maxPageCount ) {
+            console.log('ended', page, cfg.pageCount, cfg.maxPageCount)
+            return;
+        }
+
+        if ( page = cfg.lastPage ) {
+            console.log('ended early', page, cfg.pageCount, cfg.maxPageCount)
+            return;
+        }
         window.uploadCurrentPage(goToNextPage_Loop)
     }
 }
@@ -1200,3 +1244,7 @@ window.fx2()
 
 window.processPage = window.fx2;
 console.log('doddddddmde2')
+
+
+
+//window.handlePage()

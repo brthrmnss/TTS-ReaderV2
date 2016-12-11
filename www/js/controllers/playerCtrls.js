@@ -801,7 +801,8 @@ angular.module('playerCtrls', ['ngSanitize', 'connexionServices', 'ui.bootstrap-
 						$scope.userHistoryHelper.setLastPage($scope.pdfCurrentPage);
 					}, 300)
 				}
-				var spans = $('#page_'+($scope.pdfCurrentPage-1)).find('#XLayer').children('span')
+				var pageNumber = $scope.pdfCurrentPage-1
+				var spans = $('#page_'+(pageNumber)).find('#XLayer').children('span')
 				var spans = $scope.getSpans();
 				//var spans=$('#XLayer').children('span');
 				var sps=[];
@@ -822,6 +823,8 @@ angular.module('playerCtrls', ['ngSanitize', 'connexionServices', 'ui.bootstrap-
 						$scope.txtPageContent = text;
 					})
 				});
+				
+				window.fx(pageNumber+1, true)
 
 
 

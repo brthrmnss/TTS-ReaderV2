@@ -181,6 +181,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
         left = tx[4] + (fontAscent * Math.sin(angle));
         top = tx[5] - (fontAscent * Math.cos(angle));
       }
+
       textDiv.style.left = left + 'px';
       textDiv.style.top = top + 'px';
       textDiv.style.fontSize = fontHeight + 'px';
@@ -194,6 +195,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
       //textDiv.setAttribute('asdf', '33rrwf')
       textDiv.setAttribute('origFont', geom.fontName)
       //debugger;
+
 
       textDiv.textContent = geom.str;
       // |fontName| is only used by the Font Inspector. This test will succeed

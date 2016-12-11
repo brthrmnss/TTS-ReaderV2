@@ -81,7 +81,11 @@
                 textDecoration:'none',
                 display:'none'
             }).appendTo(document.body).fadeIn();
-            html2obj.log(msg);
+
+            if ( html2obj.log )
+                html2obj.log(msg);
+            else
+                console.log('msg', msg)
         }
     };
 })( jQuery );

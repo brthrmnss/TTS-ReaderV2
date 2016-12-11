@@ -59,8 +59,9 @@ function ScreenCapture() {
                         type: 'POST',
                         data: formData,
                         async: true,
-                        success: function (data) {
+                        success: function onSuccess(data) {
                             // alert(data)
+                            console.log('uploaded ....')
                             if ( config.fx ) config.fx(config)
                         },
                         cache: false,

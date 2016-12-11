@@ -146,7 +146,8 @@
 		this.canvas = angular.element("<canvas></canvas>");
 		this.textLayer = angular.element("<div id='XLayer' layers class='text-layer'></div>");
 
-		
+//		console.log('color here....', 'where are tranforms made?')
+		//debugger
 		this.pdfPage = pdfPage;
 		this.textContent = textContent;
 		this.rendered = false;
@@ -273,6 +274,10 @@
 				if(self.textContent) {
 					console.log("pdf: "+self.textContent);
 					// Render the text layer...
+
+//bookmark.before rendering
+					//return;
+
 					var textLayerBuilder = new TextLayerBuilder({
 						textLayerDiv: self.textLayer[0],
 						pageIndex: self.id,
