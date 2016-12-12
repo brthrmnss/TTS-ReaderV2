@@ -337,15 +337,18 @@ window.fx2 = function fx2 (play, playIndex) {
             yTop = Math.floor(yTop);
             return yTop;
         }
+
+
+        pH.utils.clearAllspans = function clearAllspans() {
+            $('span.highlight').each(function () {
+                var $this = $(this);
+                $this.removeClass('highlight');
+            });
+        }
     }
     pH.defineUtils();
 
-    function clearAllspans() {
-        $('span.highlight').each(function () {
-            var $this = $(this);
-            $this.removeClass('highlight');
-        });
-    }
+
 
     var spans = window.$scope.getSpans();
 
@@ -653,6 +656,7 @@ window.fx2 = function fx2 (play, playIndex) {
 
         var cSH  = {};
         cSH.sentences = [];
+        cSH.uiElements = [];
         cSH.currentSentence = ''
         cSH.dictSentencesToSpans = {};
         cSH.currentSentenceSpans = [];
@@ -718,14 +722,43 @@ window.fx2 = function fx2 (play, playIndex) {
                  currentSentence = '';
                  currentSentenceSpans = [];*/
                 //debugger
-                console.log('why add sentence?', why, cSH.currentSentence)
-                if ( addCurrentSpan != false )
+                console.log('why add sentence?', why, cSH.currentSentence);
+                var spanCopiedProps = span.clone();
+                spanCopiedProps.css('fontFamily', span.attr('origFont'));
+                if ( cSH.uiElement == null ) {
+                    var uiEl = uiUtils.tag('p');
+                    uiUtils.utils.copyStyles(span, uiEl);
+                    cSH.uiElement = uiEl;
+                    cSH.uiElements.push(uiEl);
+                    uiEl.append( cSH.currentSentence + ' ')
+                } else {
+                    uiEl = cSH.uiElement;
+                };
+
+                if ( uiUtils.utils.stylesDifferent(uiEl, span, true)) {
+                    uiEl = uiUtils.tag('p');
+                    uiUtils.utils.copyStyles(span, uiEl);
+
+                    var uiEl = uiUtils.tag('p');
+                    uiUtils.utils.copyStyles(span, uiEl);
+                    cSH.uiElement = uiEl;
+                    cSH.uiElements.push(uiEl);
+                    uiEl.append( cSH.currentSentence + ' ')
+                } else {
+                   // uiEl.append( 'ZZZ'+cSH.currentSentence + ' ')
+                }
+
+
+
+                if ( addCurrentSpan != false ) {
                     cSH.currentSentenceSpans.push(span);
+                }
                 if ( cSH.foundReferences != true) {
                     cSH.currentSentence = cSH.currentSentence.replace(/“/gi,'"')
                     cSH.currentSentence = cSH.currentSentence.replace(/”/gi,'"')
                     cSH.sentences.push(cSH.currentSentence)
                     cSH.dictSentencesToSpans[cSH.currentSentence] = cSH.currentSentenceSpans;
+
                 }
                 if (cSH.currentSelectedSpan ) {
                     cSH.playbackIndexSelectedSpan = cSH.currentSentenceSpans.length -1;
@@ -980,9 +1013,23 @@ window.fx2 = function fx2 (play, playIndex) {
         }
 
 
-
+        window.cSH = cSH;
+        cSH.printUI = function printUIElements() {
+           // cSH.uiElements = $(cSH.uiElements);
+            console.log('length', cSH.uiElements.length)
+           // var list = [];
+            $.each(cSH.uiElements, function onP(k,v){
+               // list.push(v[0]);
+                //console.log(v.html())
+                console.log(v[0].outerHTML)
+            });
+          //  cSH.uiElements = $(list);
+        }
         return cSH.sentences;
     }
+
+
+
 
     var sentencesX = pH.createSentences(spans);
     console.log('sentencesX', 'k', sentencesX);
@@ -1048,6 +1095,7 @@ window.fx2 = function fx2 (play, playIndex) {
         var marker = window.iterationMarker;
         var async = $.async(sentences, function procSentence(k, sentence, fxEnd, controller) {
                 iterationWrapperFx(); //run so it can be resumed
+
                 function iterationWrapperFx() {
                     if (window.iterationMarker != marker) {
                         //debugger
@@ -1057,7 +1105,7 @@ window.fx2 = function fx2 (play, playIndex) {
 
                     //sentence = sentence.replace(/#/gi, '');
                     console.log('looking for', sentence)
-                    clearAllspans()
+                    pH.utils.clearAllspans()
                     //pH.clearAllspans();
                     var divsToHighlight = dictSentToDivs[sentence];
                     $.each(divsToHighlight, function (kI, kV) {
@@ -1078,7 +1126,7 @@ window.fx2 = function fx2 (play, playIndex) {
                 }
                 window.fxIteration = iterationWrapperFx;
 
-            }, function onDone(){
+            }, function onDone_Sent(){
                 helper.goToNextPage();
             }, 10,
             playIndex)
