@@ -66,16 +66,21 @@ function PdfRipServer() {
             var bookName = body.book_name;
             var page = body.page
             var file = page + '.txt'
+            var fileHTML = page + '.html'
             console.log(req.body)
             var contents = req.body.contents;
             if ( sh.isArray(contents) ) {
                 contents = contents.join('\n')
             }
-
+            var htmlContents = req.body.htmlContents;
+            
             var dirBook = __dirname+'/'+'rips/'+bookName;
             sh.mkdirp(__dirname+'/'+'rips')
             sh.mkdirp(dirBook)
-            sh.writeFile(dirBook+'/'+file,  contents)
+            sh.writeFile(dirBook+'/'+file,  contents);
+
+            htmlContents = sh.html.wrapInHTMLTag(htmlContents, 'html');
+            sh.writeFile(dirBook+'/'+fileHTML,  htmlContents);
 
             res.send('Hello World!');
         });

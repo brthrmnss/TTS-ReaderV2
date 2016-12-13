@@ -657,6 +657,7 @@ window.fx2 = function fx2 (play, playIndex) {
         var cSH  = {};
         cSH.sentences = [];
         cSH.uiElements = [];
+        cSH.uiElement = null
         cSH.currentSentence = ''
         cSH.dictSentencesToSpans = {};
         cSH.currentSentenceSpans = [];
@@ -723,30 +724,49 @@ window.fx2 = function fx2 (play, playIndex) {
                  currentSentenceSpans = [];*/
                 //debugger
                 console.log('why add sentence?', why, cSH.currentSentence);
+                var dbgWhyAdding = false;
                 var spanCopiedProps = span.clone();
-                spanCopiedProps.css('fontFamily', span.attr('origFont'));
+                //spanCopiedProps.css('fontFamily', span.attr('origFont'));
+                // debugger
+                var t = "\t"
+                var n = "\n"
                 if ( cSH.uiElement == null ) {
                     var uiEl = uiUtils.tag('p');
                     uiUtils.utils.copyStyles(span, uiEl);
                     cSH.uiElement = uiEl;
                     cSH.uiElements.push(uiEl);
-                    uiEl.append( cSH.currentSentence + ' ')
+                    // console.log('why add', n,n,n,n,n,n)
+                    // console.clear()
+                    //uiEl.append( cSH.currentSentence + ' ')
                 } else {
                     uiEl = cSH.uiElement;
                 };
 
-                if ( uiUtils.utils.stylesDifferent(uiEl, span, true)) {
+
+                var isDifferent = uiUtils.utils.stylesDifferent(uiEl, span, true)
+                if ( dbgWhyAdding) {
+                    console.error(t, 'why add sentence? compareTwo', isDifferent,
+                        n, t, cSH.currentSentence,
+                        n, t, cSH.uiElement[0].outerHTML,
+                        n, t, span[0].outerHTML);
+                }
+                if (  isDifferent || why.includes('fonts Orig')) {
                     uiEl = uiUtils.tag('p');
                     uiUtils.utils.copyStyles(span, uiEl);
 
-                    var uiEl = uiUtils.tag('p');
-                    uiUtils.utils.copyStyles(span, uiEl);
+                    console.log(t, 'why add', 'changed')
+                    //var uiEl = uiUtils.tag('p');
+                    //uiUtils.utils.copyStyles(span, uiEl);
                     cSH.uiElement = uiEl;
                     cSH.uiElements.push(uiEl);
-                    uiEl.append( cSH.currentSentence + ' ')
+                    // uiEl.append( cSH.currentSentence + ' ')
                 } else {
-                   // uiEl.append( 'ZZZ'+cSH.currentSentence + ' ')
+                    console.error(t,  'why add sentence?',
+                        n,t, cSH.uiElement[0].outerHTML,
+                        n,t, span[0].outerHTML );
                 }
+
+
 
 
 
@@ -765,8 +785,15 @@ window.fx2 = function fx2 (play, playIndex) {
                     cSH.currentSelectedSpan = false;
                 }
 
+
+                uiEl.append( cSH.currentSentence + ' ')
+                console.debug("\t", 'why add sentence?', cSH.uiElement.html(),
+                    span.html());
+
                 cSH.currentSentenceSpans = [];
                 cSH.currentSentence = ''
+
+                //  console.error("\t", 'why add current span', cSH.currentSentence );
 
             }
 
@@ -985,7 +1012,8 @@ window.fx2 = function fx2 (play, playIndex) {
             cSH.lastStyle = cSH.currentStyle;
             console.log('getSentV20', 'k', cSH.currentStyle, span.html(), cSI.currentText, k, spans.length );
 
-            if ( k == spans.length -1 ) {
+            var atLastSpan = k == spans.length -1;
+            if ( atLastSpan ) {
                 if ( cSH.currentSentence.indexOf("\n") != -1 ) {
                     //split sentence
                     debugger;
@@ -1014,17 +1042,24 @@ window.fx2 = function fx2 (play, playIndex) {
 
 
         window.cSH = cSH;
-        cSH.printUI = function printUIElements() {
-           // cSH.uiElements = $(cSH.uiElements);
+        cSH.printUI = function printUIElements(display) {
+            // cSH.uiElements = $(cSH.uiElements);
             console.log('length', cSH.uiElements.length)
-           // var list = [];
+            window.cSH.pageHTML = ''
+            // var list = [];
             $.each(cSH.uiElements, function onP(k,v){
-               // list.push(v[0]);
+                // list.push(v[0]);
                 //console.log(v.html())
-                console.log(v[0].outerHTML)
+                var html = v[0].outerHTML;
+                if ( display != false )
+                    console.log(html);
+                window.cSH.pageHTML += html + "\n"
             });
-          //  cSH.uiElements = $(list);
+            //  cSH.uiElements = $(list);
         }
+
+        cSH.printUI(false)
+        setTimeout(cSH.printUI, 1500)
         return cSH.sentences;
     }
 
@@ -1170,7 +1205,9 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
     data.book_name = window.$scope.pdfURL;
     data.page = window.pH.currentPage;
     data.contents = window.pH.cSH.sentences;
+    data.htmlContents = window.pH.cSH.pageHTML;
 
+    console.log('pageHTML', data)
 
 
 
@@ -1202,6 +1239,9 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
 
     function onDone_Step2 ( config ) {
 
+        if ( _fxPageComplete == null ) {
+            return;
+        }
         var page = window.$scope.pdfCurrentPage
         window.$scope.pdfViewerAPI.goToNextPage()
 
@@ -1263,7 +1303,7 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete) {
 
 window.uploadAllPages = function  uploadAllPages() {
     var cfg = {};
-    cfg.maxPageCount = 2;
+    cfg.maxPageCount = 500;
     cfg.pageCount = 0;
 
     window.uploadCurrentPage(goToNextPage_Loop)

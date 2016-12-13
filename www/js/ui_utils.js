@@ -585,16 +585,22 @@ function defineUtils() {
 	function defineComparison() {
 		p.utils.copyStyles = function copyStyles(from, to) {
 			//console.info('copy the thing', from.text())
-			var styleList = ['fontFamily', 'fontSize', 'color', 'fontStyle', 'fontWeight']
+			var styleList = ['fontFamily', 'fontSize',
+			//	'transform',
+				'color', 'fontStyle', 'fontWeight']
 			$.each(styleList, function copyProp(k,v){
 				var val = from.css(v)
 				to.css(v, val);
 				//console.info('copy prop', v, val)
 			})
+			var prop = 'origFont';
+			to.attr(prop, from.attr(prop))
 		}
 
 		p.utils.stylesDifferent = function stylesDifferent(a ,b, dbg) {
-			var styleList = ['fontFamily', 'fontSize', 'color', 'fontStyle', 'fontWeight']
+			var styleList = ['fontFamily', 'fontSize',
+			//	'transform',
+				'color', 'fontStyle', 'fontWeight'];
 			var equal = true
 			$.each(styleList, function copyProp(k,v){
 				var val = a.css(v);
@@ -608,6 +614,16 @@ function defineUtils() {
 					return false
 				}
 			})
+			var prop = 'origFont';
+			var val  =  a.attr(prop);
+			var valB =  b.attr(prop);
+			//console.info('origFont', prop, val, valB, val != valB)
+			if ( equal == true && val != valB ){
+				equal = false;
+				if ( dbg){
+					console.info('failed on origFont', prop, val, valB, b.text());
+				}
+			}
 			return !equal;
 		}
 	}
