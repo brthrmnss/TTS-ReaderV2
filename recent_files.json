@@ -1,15 +1,123 @@
 [
 	{
-		"originalUrl": "/epub.html/Rise%20of%20the%20Robots_%20Technology%20-%20Martin%20Ford.epub",
+		"originalUrl": "/epub.html/Why%20Nations%20Fail_%20The%20Origins%20o%20-%20Daron%20Acemoglu.epub",
 		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Rise of the Robots_ Technology  Martin Fordepub/epub.html",
-		"name": "Rise of the Robots_ Technology  Martin Ford"
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Why Nations Fail_ The Origins o  Daron Acemogluepub/epub.html",
+		"name": "Why Nations Fail_ The Origins o  Daron Acemoglu"
+	},
+	{
+		"originalUrl": "/epub.html/Lend%20Me%20Your%20Ears,%20Great%20Speeches%20in%20History%20-%20Safire,%20William%20[SRG].epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Lend Me Your Ears Great Speeches in History  Safire William SRGepub/epub.html",
+		"name": "Lend Me Your Ears Great Speeches in History  Safire William SRG"
+	},
+	{
+		"originalUrl": "/epub.html/A%20Curious%20History%20of%20Vegetables%20-%20Wolf%20D.%20Storl.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/A Curious History of Vegetables  Wolf D Storlepub/epub.html",
+		"name": "A Curious History of Vegetables  Wolf D Storl"
+	},
+	{
+		"originalUrl": "/epub.html/Food52%20Vegan_%2060%20Vegetable-Driv%20-%20Gena%20Hamshaw.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Food52 Vegan_ 60 VegetableDriv  Gena Hamshawepub/epub.html",
+		"name": "Food52 Vegan_ 60 VegetableDriv  Gena Hamshaw"
+	},
+	{
+		"originalUrl": "/epub.html/Meat%20on%20the%20Side%20-%20Nikki%20Dinki.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Meat on the Side  Nikki Dinkiepub/epub.html",
+		"name": "Meat on the Side  Nikki Dinki"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Power%20of%20Presence%20-%20Kristi%20Hedges.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Power of Presence  Kristi Hedgesepub/epub.html",
+		"name": "The Power of Presence  Kristi Hedges"
+	},
+	{
+		"originalUrl": "/epub.html/30%20Days%20Grain-Free%20-%20Cara%20Comini.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/30 Days GrainFree  Cara Cominiepub/epub.html",
+		"name": "30 Days GrainFree  Cara Comini"
+	},
+	{
+		"originalUrl": "/epub.html/Adaptogens%20-%20Noveille,%20Agatha;.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Adaptogens  Noveille Agathaepub/epub.html",
+		"name": "Adaptogens  Noveille Agatha"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Brain%20Warrior's%20Way%20Cookboo%20-%20Amen,%20Daniel%20G_.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Brain Warriors Way Cookboo  Amen Daniel G_epub/epub.html",
+		"name": "The Brain Warriors Way Cookboo  Amen Daniel G_"
+	},
+	{
+		"originalUrl": "/epub.html/Hello,%20Startup%20-%20Yevgeniy%20Brikman.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Hello Startup  Yevgeniy Brikmanepub/epub.html",
+		"name": "Hello Startup  Yevgeniy Brikman"
+	},
+	{
+		"originalUrl": "/epub.html/Palestine%20on%20a%20Plate%20-%20Joudie%20Kalla.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Palestine on a Plate  Joudie Kallaepub/epub.html",
+		"name": "Palestine on a Plate  Joudie Kalla"
+	},
+	{
+		"originalUrl": "/epub.html/How%20to%20Write%20Short%20Stories%20in%206%20-%20KS%20Tan.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/How to Write Short Stories in 6  KS Tanepub/epub.html",
+		"name": "How to Write Short Stories in 6  KS Tan"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Allergy%20Solution_%20Unlock%20th%20-%20Leo%20Galland%20M.D_.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Allergy Solution_ Unlock th  Leo Galland MD_epub/epub.html",
+		"name": "The Allergy Solution_ Unlock th  Leo Galland MD_"
+	},
+	{
+		"originalUrl": "/epub.html/NLP_%20Neuro%20Linguistic%20Programmi%20-%20Fred%20Cremone.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/NLP_ Neuro Linguistic Programmi  Fred Cremoneepub/epub.html",
+		"name": "NLP_ Neuro Linguistic Programmi  Fred Cremone"
 	},
 	{
 		"originalUrl": "/epub.html/Leadership_%2035%20Persuasive%20And%20E%20-%20Travis%20Goodwin.epub",
 		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Leadership_ 35 Persuasive And E  Travis Goodwinepub/epub.html",
 		"name": "Leadership_ 35 Persuasive And E  Travis Goodwin"
+	},
+	{
+		"originalUrl": "/epub.html/How%20To%20Analyze%20People_%20Get%20The%20-%20Kevin%20Bradnik.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/How To Analyze People_ Get The  Kevin Bradnikepub/epub.html",
+		"name": "How To Analyze People_ Get The  Kevin Bradnik"
+	},
+	{
+		"originalUrl": "/epub.html/Leadership_%20The%20Comprehensive%20G%20-%20David%20Barron.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Leadership_ The Comprehensive G  David Barronepub/epub.html",
+		"name": "Leadership_ The Comprehensive G  David Barron"
+	},
+	{
+		"originalUrl": "/epub.html/WriteCraft_%20Short%20Stories%20and%20F%20-%20Rick%20Frazier.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/WriteCraft_ Short Stories and F  Rick Frazierepub/epub.html",
+		"name": "WriteCraft_ Short Stories and F  Rick Frazier"
+	},
+	{
+		"originalUrl": "/epub.html/History's%20Most%20Powerful%20Wizards%20-%20Desmond%20Wilde.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Historys Most Powerful Wizards  Desmond Wildeepub/epub.html",
+		"name": "Historys Most Powerful Wizards  Desmond Wilde"
+	},
+	{
+		"originalUrl": "/epub.html/Rise%20of%20the%20Robots_%20Technology%20-%20Martin%20Ford.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Rise of the Robots_ Technology  Martin Fordepub/epub.html",
+		"name": "Rise of the Robots_ Technology  Martin Ford"
 	},
 	{
 		"originalUrl": "/epub.html/Declutter%20Your%20Mind%20(2016).epub",
@@ -160,12 +268,6 @@
 		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Tell Everyone_ Why We Share and  Alfred Hermidaepub/epub.html",
 		"name": "Tell Everyone_ Why We Share and  Alfred Hermida"
-	},
-	{
-		"originalUrl": "/epub.html/Food52%20Vegan_%2060%20Vegetable-Driv%20-%20Gena%20Hamshaw.epub",
-		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Food52 Vegan_ 60 VegetableDriv  Gena Hamshawepub/epub.html",
-		"name": "Food52 Vegan_ 60 VegetableDriv  Gena Hamshaw"
 	},
 	{
 		"originalUrl": "/epub.html/Guerilla%20Furniture%20Design%20-%20Will%20Holman.epub",

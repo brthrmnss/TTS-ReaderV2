@@ -114,20 +114,12 @@ function MergeEpub() {
             return;
         }
 
-
-        self.fileOutput = self.settings.dir + '/' + 'epub.html'; //rewrite
-
-        var dir2 = '';
-        //after fileOutput set, set working dir
         if (sh.fileExists(fileToc)  ) {
-            var dirs = fileToc.split('/').slice(0,-1)
-            var dir2 = dirs.join('/')+'/'
-            dir2 = dir2.split('/extracted/')[1]
-            dir2 = dir2.split('/').slice(1).join('/')
-            //dir2 = dir2.replace(__dirname.split('\\').join('/'), '')
-            self.data.dirOEBPS = dir2;
-            //self.settings.dir = dir;
+            var dirs = file.split('/').slice(0,-1)
+            dir = dirs.join('/')
+            self.settings.dir = dir;
         }
+        self.fileOutput = self.settings.dir + '/' + 'epub.html'; //rewrite
 
         var parser = new xml2js.Parser();
         var data = fs.readFileSync(fileToc) //, function(err, data) {
@@ -143,7 +135,7 @@ function MergeEpub() {
             sh.each(x, function onAddEachFile(k, v) {
                 var fileSrc = v.content[0].$.src;
 
-                 fileSrc = dir2+fileSrc.split('#')[0];
+                fileSrc = fileSrc.split('#')[0];
 
                 self.proc(sh.toJSONString(v.content[0]))
                 if (files.indexOf(fileSrc) != -1) {
@@ -155,7 +147,7 @@ function MergeEpub() {
                 sh.each(v.navPoint, function onAddEachFile(k, v) {
                     var fileSrc = v.content[0].$.src;
 
-                    fileSrc = dir2+fileSrc.split('#')[0];
+                    fileSrc = fileSrc.split('#')[0];
 
                     self.proc(sh.toJSONString(v.content[0]))
                     if (files.indexOf(fileSrc) != -1) {
@@ -200,9 +192,6 @@ function MergeEpub() {
 
         var fileOutput = dir + '/' + 'epub.html';
         var dirOEBPS = dir+'/'+'OEBPS/'
-        if ( self.data.dirOEBPS ) {
-            dirOEBPS = self.data.dirOEBPS;
-        }
 
 
         var contents = '';
