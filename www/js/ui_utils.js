@@ -47,6 +47,57 @@ function throwIfNull(prop, msg) {
 	}
 }
 
+function defineUtils2() {
+	$.async = function asyncHelper(items, fx, fxAllDone, delay, playIndex) {
+		//var index = 0
+		var asyncController = {};
+		asyncController.index = 0;
+		asyncController.getNext = function getNextItem() {
+			var next = items[asyncController.index+1];
+			return next;
+		}
+		if(playIndex>0){
+			asyncController.index = playIndex;
+		}
+		if(playIndex<0){
+			asyncController.index = items.length-1+playIndex;
+		}
+
+		asyncController.length = items.length;
+
+		if ( delay == null && $.isNumeric(fxAllDone)) {
+			delay = fxAllDone;
+		}
+
+		function goToNextSpan() {
+			var item = items[asyncController.index];
+			console.log('playindex', asyncController.index)
+			if (asyncController.index > items.length - 1) {
+				if ( fxAllDone ) {
+					fxAllDone();
+				}
+				return;
+			}
+			fx(/*asyncController.index,*/ item, fxCallback, asyncController, asyncController.index)
+			asyncController.index++;
+
+			function fxCallback() {
+				if (delay) {
+					setTimeout(goToNextSpan, delay);
+					return;
+				}
+				goToNextSpan();
+			}
+		}
+
+		goToNextSpan();
+		asyncController.runIteration = function runIteration() {
+			goToNextSpan();
+		}
+		return asyncController;
+	}
+}
+defineUtils2();
 
 
 var uiUtils = {};
@@ -64,28 +115,44 @@ function defineUtils() {
 		return typeof objectOrString == 'string'
 	}
 
+
+	self.clone = function clone(e) {
+		var eee = JSON.stringify(e)
+		return JSON.parse(eee)
+	}
+
 	uiUtils.makePanel = function makePanel(cfg) {
 		throwIfNull(cfg.id, 'need an id')
 		u.cfg.fixId(cfg)
 		var existingUI = $(cfg.id);
 
+
+		if ( cfg.clearOld &&  cfg.id ) {
+			$( cfg.id).remove();
+		}
+
 		if ( existingUI.length > 0 ) {
-			if ( existingUI.length > 1) {
+			if ( existingUI.length > 0) {
 				console.warn('you have multiple things')
 			}
-			//if ( cfg.toggleMode != false ) {
-
-			//		}
-			existingUI.show();
-			var cfg = uiUtils.dictCfg[cfg.id]
-			debugger;
-			return existingUI.cfg;
+			if ( cfg.clearIfFound !== true ) {
+				//if ( cfg.toggleMode != false ) {
+				//		}
+				existingUI.show();
+				var cfg = uiUtils.dictCfg[cfg.id]
+				//debugger;
+				return existingUI.cfg;
+			} else {
+				console.warn('removing existing version')
+				existingUI.remove();
+			}
 		}
 
 
 
 		cfg = dv(cfg,{});
 		uiUtils.dictCfg[cfg.id] = cfg;
+
 
 		var panel = $('<div />')//
 		// style="position: fixed; bottom: 10px; right: 10px;display: none; color:red; " id="testLogPanel">asdf  </div>')
@@ -159,20 +226,43 @@ function defineUtils() {
 		return isFound;
 	}
 
-	uiUtils.addLabel = function addLabel(cfg) {
-		cfg = u.cfg.str(cfg, 'text')
+	uiUtils.addDefaultCfg = function addDefaultCfg(cfg) {
+		uiUtils.flagCfg = cfg;
+	}
+	uiUtils.addLabel = function addLabel(cfg, id) {
+		cfg = u.cfg.str(cfg, 'text');
+		u.cfg.addToCfg(cfg, 'id', id);
 		cfg.tag = dv(cfg.tag, 'span');
 		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
 
 		var lbl = u.tag(cfg.tag)
 		lbl.html(cfg.text)
 		//$('<span/>')
-
-		//debugger;
-		if ( cfg.addTo ) {
-			//debugger;
-			cfg.addTo.append(lbl)
+		if (cfg.width){
+			if ( $.isNumeric(cfg.width) ) {
+				cfg.width = cfg.width+'px';
+			}
+			lbl.css('width', cfg.width);
+			lbl.css('display', 'inline-block');
 		}
+		lbl.css('user-select', 'none');
+		u.addUI(cfg, lbl);
+		return cfg;
+	}
+	uiUtils.addHeadingLabel = function addLabel(cfg) {
+		cfg.tag = 'h3'
+		uiUtils.addLabel(cfg)
+		return cfg;
+	}
+	uiUtils.addDiv = function addDiv(cfg) {
+		cfg = u.cfg.str(cfg, 'id')
+		cfg.tag = dv(cfg.tag, 'div');
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+
+		var ui = u.tag(cfg.tag)
+		ui.html(cfg.text)
+		u.addUI(cfg, ui);
+		return cfg;
 	}
 	p.addTitle =function addtitle(cfg) {
 		cfg = u.cfg.str(cfg, 'text')
@@ -185,10 +275,10 @@ function defineUtils() {
 	}
 
 	uiUtils.scrollToBottom = function scrollToBottom(jq){
-			//$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
-			$(jq).clearQueue();
-			$(jq).stop(true, true);
-			$(jq).animate({ scrollTop: $(jq).prop("scrollHeight")}, 10);
+		//$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
+		$(jq).clearQueue();
+		$(jq).stop(true, true);
+		$(jq).animate({ scrollTop: $(jq).prop("scrollHeight")}, 10);
 	}
 
 	uiUtils.addBtn = function addBtn(cfg, fxD) {
@@ -207,17 +297,127 @@ function defineUtils() {
 		}
 
 		btn[0].onclick = cfg.fxDone
+
+		if ( cfg.addSpacer ) {
+			uiUtils.spacer();
+		}
+
+		btn.addClass('btn')
+		btn.addClass('btn-primary btn-sm')
 		//btn.on('click', cfg.fxDone)
 	}
 	p.addButton = u.addBtn;
 
 
-	uiUtils.br = function addBtn(cfg, fxD) {
+	uiUtils.addTextInput = function addTextInput(cfg, fxD) {
+		cfg = u.cfg.str(cfg, 'text')
+		cfg.tag = dv(cfg.tag, 'input');
+		cfg.fxDone = dv(cfg.fxDone, fxD);
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+
+		var ui = u.tag(cfg.tag);
+		ui.val(cfg.text)
+
+		if ( cfg.id ) {
+			ui.attr('id', cfg.id);
+		}
+
+		ui.attr('placeholder',cfg.placeholder);
+		if ( cfg.onDebounce ) {
+			u.onChangeDebounced(ui, cfg.onDebounce)
+		}
+
+		//ui.addClass('form-control')
+		ui.addClass('input-sm')
+		u.addUI(cfg, ui);
+		cfg.ui = ui;
+		return cfg;
+	}
+
+	uiUtils.addSelect = function addSelect(cfg, fxD) {
+		cfg = u.cfg.str(cfg, 'text')
+		cfg.tag = dv(cfg.tag, 'select');
+		cfg.fxDone = dv(cfg.fxDone, fxD);
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+
+		var ui = u.tag(cfg.tag)
+		ui.html(cfg.text)
+
+		if ( cfg.id ) {
+			ui.attr('id', cfg.id);
+		}
+		ui.on('change', function onChange() {
+			console.error('y',  this.value );
+		})
+		u.addUI(cfg, ui)
+	}
+
+
+	uiUtils.addImage = function addBtn(cfg, id) {
+		cfg = u.cfg.str(cfg, 'src')
+		u.cfg.addToCfg(cfg, 'id', id);
+		cfg.tag = dv(cfg.tag, 'img');
+		//cfg.fxDone = dv(cfg.fxDone, fxD);
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+
+		var ui = u.tag(cfg.tag)
+		ui.attr('src', cfg.src)
+
+		u.addUI(cfg, ui)
+
+		uiUtils.lastUI = ui;
+	}
+
+	uiUtils.addClick = function addClick(fxD) {
+		uiUtils.lastUI[0].onclick = fxD;
+	}
+	uiUtils.addTooltip = function addTooltip(title) {
+		uiUtils.lastUI.attr('title', title)
+	}
+
+
+
+
+	uiUtils.br = function addBr(cfg, fxD) {
 		cfg = dv(cfg, {})
 		cfg = u.cfg.str(cfg, 'text')
 		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
 		var btn = u.tag('br')
 		u.addUI(cfg, btn)
+	}
+
+	uiUtils.ws = function ws(cfg, fxD) {
+		cfg = dv(cfg, {})
+		cfg = u.cfg.str(cfg, 'text')
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+		var ui = u.tag('span')
+		ui.html(' ')
+		u.addUI(cfg, ui)
+	}
+	
+	uiUtils.hr = function addBr(cfg, fxD) {
+		cfg = dv(cfg, {})
+		cfg = u.cfg.str(cfg, 'text')
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+		var btn = u.tag('hr')
+		u.addUI(cfg, btn)
+	}
+
+	uiUtils.spacer = function spacer(cfg, fxD) {
+		cfg = dv(cfg, {})
+		cfg = u.cfg.str(cfg, 'text')
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+		var btn = u.tag('div')
+		btn.css('width', '10px')
+		btn.css('display', 'inline-block');
+		u.addUI(cfg, btn)
+	}
+	uiUtils.disable = function disable(id, fxD) {
+		$(id).css('opacity', 0.3);
+	}
+
+	uiUtils.enable = function enable(id, fxD) {
+		$(id).css('opacity', 1);
 	}
 
 	uiUtils.waitFor = function waitFor(id, fxD, count) {
@@ -243,6 +443,13 @@ function defineUtils() {
 			_cfg[prop] = cfg;
 			cfg = _cfg;
 		}
+		return cfg;
+	};
+
+	p.cfg.addToCfg = function addToCfg(cfg, prop, val) {
+		if ( val != null ){
+			cfg[prop] = val;
+		};
 		return cfg;
 	}
 
@@ -281,19 +488,178 @@ function defineUtils() {
 
 
 	p.addUI = function addUI(cfg, ui ) {
+		if ( cfg.addSpacerBefore ) {
+			u.spacer()
+		}
 		if ( cfg.addTo ) {
 			cfg.addTo.append(ui)
 		}
+
+		if ( cfg.id ) {
+			cfg.jid = cfg.id;
+			ui.attr('id', cfg.id);
+			cfg.id = '#'+cfg.id;
+		}
+		cfg.ui = ui;
+		u.lastCfg = cfg;
 	}
 	p.tag = function createTag(type) {
 		return $('<'+type+'/>');
 	}
 
+
+	p.lastId = function lastId(type) {
+		return u.lastCfg.id;
+	}
+
+
+	function defineSetValues() {
+		p.setText = function setText(jq, val) {
+			var ui = $(jq)
+			//console.log('what is ', jq, ui, val)
+			if ( ui.length == 0 ) {
+				console.warn('cannot set', jq, 'to', val, 'empty query set')
+			}
+			ui.val(val)
+			if ( ui.is('span')) {
+				ui.text(val)
+			}
+		}
+		p.setHtml = function setHtml(jq, val) {
+			var ui = $(jq)
+			//console.log('what is ', jq, ui, val)
+			if ( ui.length == 0 ) {
+				console.warn('cannot set', jq, 'to', val, 'empty query set')
+			}
+			ui.html(val)
+		}
+		p.glyph = function addGlyphIcon(iconName, val) {
+			var  iconHTML = '<span class="glyphicon glyphicon-'+iconName+'" aria-hidden="true"></span>'
+			var icon = $(iconHTML);
+			return icon; 
+		}
+
+		p.setSelect = function setSelect(jq, vals, keyProp, valProp) {
+			var ui = $(jq)
+
+			//debugger
+
+			ui.empty();
+
+			$.each(vals, function addVal(k,v) {
+				var option = $("<option />")
+				if ( $.isString(v)) {
+					var val = v;
+					var key = v;
+				}
+				if ( keyProp) {
+					key = v[keyProp]
+				}
+
+				if ( valProp) {
+					val = v[valProp]
+				}
+
+				option.val(val)
+				option.text(key);
+				ui.append(option)
+
+			});
+		}
+
+
+		uiUtils.updateSelect = function updateSelect(id, newOptions) {
+			var ui = id;
+
+			if ( $.isString(id)){
+				if ( id.includes('#') == false ) {
+					id = '#'+id;
+				}
+
+				var ui = $(id)
+			}
+
+			ui.empty(); // remove old options
+			$.each(newOptions, function(key,value) {
+
+				ui.append($("<option></option>")
+					.attr("value", value).text(key));
+			});
+
+		}
+
+		uiUtils.getVal2 = function getVal2(id, newOptions) {
+			var ui = id;
+			if ( $.isString(id)){
+				if ( id.includes('#') == false ) {
+					id = '#'+id;
+				}
+				var ui = $(id);
+			}
+			return ui.val()
+		}
+
+
+
+
+		uiUtils.later = function later(fx, argumentRest) {
+			var args = convertArgumentsToArray(arguments)
+			args = args.slice(1)
+			function calledLater() {
+				fx.apply(fx, args)
+			}
+			setTimeout(calledLater, 500);
+		}
+		uiUtils.callMethodRepeat = function callMethodRepeat(
+			fx, secs, obj, prop, fxDone
+
+		) {
+			var cfg = {};
+			cfg.fx = fx;
+			cfg.secs = secs;
+			cfg.obj = obj;
+			cfg.prop = prop;
+			cfg.fxDone = fxDone;
+			cfg.countRepeat = 0;
+			function fxRepeatThing(repeat, fxDone) {
+				if (cfg.obj && cfg.prop && cfg.obj[cfg.prop] != true) {
+					console.warn('done with this task', cfg.fx.name);
+					return;
+				}
+				cfg.countRepeat++;
+				if ( cfg.log != null )
+					console.info('fxRepeatThing', cfg.log, cfg.fx.name,  cfg.secs);
+
+				if (repeat) {
+					setTimeout(fxRepeatThing, cfg.secs * 1000, true)
+				}
+
+				fx() //(function onSaved(){
+				//console.log('autosaved...')
+				//})
+			}
+
+			fxRepeatThing(true)
+
+			return cfg;
+		}
+
+
+	}
+	defineSetValues();
+
+
+
+
 	p.utils = {};
-	p.utils.mergeIn = function mergeIn(a, b ) {
+	p.utils.mergeIn = function mergeIn(a, b, overwriteVals ) {
 		if ( b == null ) { return }
 		//function copyProps(from, to) {
 		$.each(a, function(k,v){
+			var existingVal  = b[k];
+			if ( existingVal && overwriteVals != true ) {
+				return;
+			}
 			b[k]=v;
 		});
 		//	}
@@ -403,8 +769,11 @@ function defineUtils() {
 			 */
 
 			var params = uiUtils.utils.getParams();
-			console.debug('addToUrl','params', window.location.hash, window.location.search,
-				params)
+
+			var dbg = false;
+			if ( dbg )
+				console.debug('addToUrl','params', window.location.hash,
+					window.location.search, params)
 			if ( params[key] == val.toString() ) {
 				return;
 			}
@@ -420,10 +789,11 @@ function defineUtils() {
 			if ( urlFinal.includes('#')) {
 				urlFinal = urlFinal.split('#')[0];
 			}
-
-			console.debug('addToUrl', 'start', urlFinal)
+			if ( dbg )
+				console.debug('addToUrl', 'start', urlFinal)
 			var isEmptyHash = hash.slice(0,2) == '#?';
-			console.debug('addToUrl','hash', hash)
+			if ( dbg )
+				console.debug('addToUrl','hash', hash)
 			if ( isEmptyHash ) {
 				urlFinal +=  ''
 			} else if ( hash != ''  ) {
@@ -581,12 +951,20 @@ function defineUtils() {
 	}
 	defineUI()
 
+	p.t = function setTimeoutShorten(){
+		var args = convertArgumentsToArray(arguments);
+		if ( args.length == 1 )
+			args.push(500);
+		//debugger
+		setTimeout.apply(null, args)
+	}
+
 
 	function defineComparison() {
 		p.utils.copyStyles = function copyStyles(from, to) {
 			//console.info('copy the thing', from.text())
 			var styleList = ['fontFamily', 'fontSize',
-			//	'transform',
+				//	'transform',
 				'color', 'fontStyle', 'fontWeight']
 			$.each(styleList, function copyProp(k,v){
 				var val = from.css(v)
@@ -599,7 +977,7 @@ function defineUtils() {
 
 		p.utils.stylesDifferent = function stylesDifferent(a ,b, dbg) {
 			var styleList = ['fontFamily', 'fontSize',
-			//	'transform',
+				//	'transform',
 				'color', 'fontStyle', 'fontWeight'];
 			var equal = true
 			$.each(styleList, function copyProp(k,v){
@@ -629,16 +1007,207 @@ function defineUtils() {
 	}
 	defineComparison();
 
-	p.getVal = function getVal(key) {
-		var val = localStorage.getItem(key)
-		var json = JSON.parse(val);
-		return json
+	function defineUrl() {
+		p.getUrl = function getUrl(url, data, fxDone) {
+			if ( $.isFunction(data)) {
+				fxDone = data;
+			}
+
+			$.ajax({
+				url: url,
+				data: data,
+				success: function (data) {
+					callIfDefined(fxDone, data)
+				},
+				error: function (a,b,c) {
+					console.error('request failed', a,b,c)
+					//gUtils.remoteFailed(a,b,c)
+				}
+			});
+		}
+
+		p.postUrl = function getUrl(url, data, fxDone) {
+			if ( $.isFunction(data)) {
+				fxDone = data;
+			}
+
+			$.ajax({
+				url: url,
+				type: 'post',
+				data: data,
+				success: function (data) {
+					callIfDefined(fxDone, data)
+				},
+				error: function (a,b,c) {
+					console.error('request failed', a,b,c)
+					//gUtils.remoteFailed(a,b,c)
+				}
+			});
+		}
+
+	}
+	defineUrl();
+
+	function defineCookies() {
+		p.getVal = function getVal(key) {
+			var val = localStorage.getItem(key)
+			var json = JSON.parse(val);
+			return json
+		}
+
+		p.setVal = function setVal(key, val) {
+			var json = JSON.stringify(val)
+			localStorage.setItem(key, json)
+		}
+	}
+	defineCookies();
+
+
+	function defineFX() {
+		u.onChangeDebounced = function onChangeDebounced(jquery, fx, time) {
+			if (time == null) time = 500;
+
+			var ui = $(jquery);
+			//console.log('sdf', jquery, ui.length);
+			if ( ui.length == 0 ) {
+				throw new Error(['not found', jquery].join(' '))
+			}
+
+
+			var d = {}
+			d.debounce = function debounce(fx) {
+				if (d.waiting) {
+					clearTimeout(d.waiting)
+				}
+				//console.log('waiting', fx.name)
+				//d.waiting = true;
+				d.waiting = setTimeout(function onDebounced() {
+					fx(ui.val(), ui)
+				}, time)
+			}
+
+			ui.keyup(function onKeyUp (e) {
+
+				//console.log('keyup', e)
+				d.debounce(fx, time)
+				//startWaiting()
+
+			});
+		}
+
 	}
 
-	p.setVal = function setVal(key, val) {
-		var json = JSON.stringify(val)
-		localStorage.setItem(key, json)
+	defineFX();
+
+
+	function ifHelpers() {
+		u.ifFxReplace = function ifFxReplace(potFx, fxShoudlBeNull) {
+			if ( $.isFunction(potFx) && fxShoudlBeNull ) {
+				return potFx;
+			}
+			return fxShoudlBeNull;
+		}
 	}
+	ifHelpers()
+
+	
+	p.fadeInOnHover = function fadeInOnHover(ui) {
+		$(ui).css('opacity', 0.0)
+		$(ui).hover(
+			function onHover() {
+				$(ui).animate({
+					opacity:1
+				}, 300);
+				//console.log('fade in')
+			},
+			function onHoverOut() {
+				$(ui).animate({
+					opacity: 0.0
+				}, 300);
+			}
+		);
+	}
+	function defineLookAt() {
+		var gUtils = uiUtils
+		gUtils.setLocationHash = function setLocationHash(newHashVal) {
+			setTimeout(function setLocationLater(){
+				//window.location.hash = e;// '#listDialog';
+				uiUtils.setHash(newHashVal);
+			}, 0);
+		}
+		gUtils.setFocus = function setFocus(e) {
+			setTimeout(function setFocus(){
+				$(e).focus();
+			}, 0);
+		}
+		gUtils.hide = function hide(jq) {
+			$(jq).hide()
+		}
+		gUtils.show = function show(jq) {
+			$(jq).show()
+		}
+		gUtils.ifShow = function show(exp, jq) {
+			if ( exp ) {
+				//console.error('addi', exp, 'show')
+				$(jq).show();
+			} else {
+				//	console.error('addi', exp, 'hide')
+				$(jq).hide();
+			}
+		}
+		gUtils.ifHide = function ifExpIsTrueHide(exp, jq) {
+			gUtils.ifShow(!exp,jq);
+		}
+		gUtils.off = function off(jq) {
+			$(jq).off()
+		}
+		gUtils.offChildren = function offChildren(jq) {
+			$(jq).off()
+			$(jq).find('*').off()
+		}
+
+		gUtils.addToken = function addToken(jq) {
+			if ( jq == null ){ return }
+			var uiHolder = $(jq);
+			uiHolder.html('');
+			var token = uiUtils.tag('span');
+			token.attr('id', uiHolder.attr('id')+'Token');
+			uiHolder.append(token);
+		}
+
+		gUtils.lorem = function lorem() {
+			var times = 150
+			var txt = ''
+			var things = ['Rock', 'Paper', 'Scissor'];
+			for (var i = 0; i < times; i++) {
+				var word = things[Math.floor(Math.random() * things.length)];
+				txt += word + ' ';
+			}
+			return txt;
+		}
+
+
+		gUtils.onEnter = function onenter(jquery, fx) {
+			$(jquery).keypress(function (e) {
+				if (e.which == 13) {//Enter key pressed
+					fx();
+				}
+			});
+		}
+		gUtils.onClick = function onClick(jquery, fx, gY) {
+
+			throwIfNull(fx, 'need a function for ' +  jquery)
+			throwIfNull(jquery, 'need a jquery for ' +  jquery, fx.name)
+			$(jquery).click(function onClick(e) {
+				fx();
+			});
+		}
+		gUtils.makeBtn = function onClick(jquery, tooltip) {
+			$(jquery).attr('title', tooltip);
+			$(jquery).css('cursor', 'pointer')
+		}
+	}
+	defineLookAt(); 
 }
 
 defineUtils();

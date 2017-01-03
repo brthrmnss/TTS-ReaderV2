@@ -109,7 +109,7 @@
             var content = b.text();
             var children = b.children();
             var children = b.find('*');
-            children.removeClass('highlight');
+            children.removeClass('highlight')
         }
 
         tinymce.init({ selector:'textarea',
@@ -121,6 +121,7 @@
             setup: function(editor) {
                 editor.on('change', function(e) {
                     console.log('change event', e);
+
                 });
                 editor.on('undo', function(e) {
                     console.log('undo event', e);
@@ -132,6 +133,10 @@
                     var content = tinyMCE.get('mainContent').getContent();
                     Cookies.set('prevContent', content);
 
+                    //console.log('what is content after keyup', content);
+                    if ( window.t) {
+                        window.t.keyup(content, e)
+                    }
 
                     if (e.keyCode == 86 && e.ctrlKey ) {
                         console.debug('paste')
@@ -379,6 +384,43 @@ jQuery(head).append(css);
 <div id="txtConsole" >sttaus</div>
 <button onclick="reverse()">asdf</button>
 <div id="controlBox"> </div>
+
+
+<div id="divSaveArea" >
+
+</div>
+
+
+
+<script src="js/ui_utils.js" ></script>
+<script src="js/tinymce_autosave.js" ></script>
+<script src="http://localhost:14002/socket.io-1.2.0.js" ></script>
+<script src="http://localhost:10110/reloader.js" ></script>
+<script>
+    function onReloader() {
+        reloader.reloadWhen('tinymce_autosave.html');
+        reloader.filter = '/TTS-Reader/';
+        reloader.reloadWhenFx('tinymce_autosave.js', function onTestOneJs(a, b, c) {
+            console.log('reload it', a,b,c);
+            //window.drawPBJS.go();
+        })
+        reloader.reloadWhenFx('ui_utils.js', function onTestOneJs(a, b, c) {
+            console.log('reload it', a,b,c);
+            window.bendIt()
+        })
+
+        //C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/test3/testFramework.js
+        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/', '')
+        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/delegation/Reader/TTS-Reader/www/', '')
+        //reloader
+    }
+    try {
+        onReloader()
+    } catch ( e) {
+        console.log('e', e)
+    }
+</script>
+
 </body>
 
 

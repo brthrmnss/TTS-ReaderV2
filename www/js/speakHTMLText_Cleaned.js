@@ -1591,6 +1591,10 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
         function defineNLP() {
             p.utils.nlp = function nlp(sentence) {
 
+                if ( window.nlp_compromise == null ) {
+                    console.log('no nlp')
+                    return;
+                }
                 var y =  nlp_compromise.text(sentence).nouns()
 
                 var values = []
@@ -2044,14 +2048,14 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
             }
             cfg.fx = fx;
             if ( cfg.rate == null ) {
-                cfg.rate  = $('#inputRate').val()
+                cfg.rate  = $('#inputRate').val();
             }
             if ( cfg.rate == null ) {
                 cfg.rate  = 6
             }
 
             if ( cfg.voice == null ) {
-                cfg.voice =  'IVONA 2 Brian'
+                cfg.voice =  'IVONA 2 Brian';
             }
 
             cfg.text = cfg.text.trim();
@@ -2062,6 +2066,9 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
             console.log('speak:', 'trim',  cfg.text.trim().endsWith('reply'), cfg.text)
             var speakOnce = false
             var date = new Date();
+
+            cfg.text = cfg.text.replace('->', ' refers to ');
+
             $.ajax({
                 url: "http://localhost:4444/say",
                 data: {

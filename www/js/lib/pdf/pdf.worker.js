@@ -220,6 +220,11 @@ var OPS = PDFJS.OPS = {
   constructPath: 91
 };
 
+    var rev = {}
+    $.each(OPS, function revStyle(k,v){
+        rev[v] = k ;
+    })
+
 // A notice for devs. These are good for things that are helpful to devs, such
 // as warning that Workers were disabled, which is important to devs but not
 // end users.
@@ -11376,6 +11381,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
         for (i = 0, ii = preprocessor.savedStatesDepth; i < ii; i++) {
           operatorList.addOp(OPS.restore, []);
         }
+         // operatorList.addOp('gdfgdfgdf', []);
         resolve();
       });
     },
@@ -11410,6 +11416,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       function newTextChunk() {
         var font = textState.font;
         if (!(font.loadedName in textContent.styles)) {
+          //  debugger; bookmark.asdf
           textContent.styles[font.loadedName] = {
             fontFamily: font.fallbackName,
             ascent: font.ascent,
@@ -11557,6 +11564,13 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
           textState = stateManager.state;
           var fn = operation.fn;
           args = operation.args;
+
+            var opType = rev[fn]
+            if (opType != 'lineTo') {
+                if ( window.showPDFWorkerOperations )
+                console.log('b', fn, '.', rev[fn])
+            }
+
 
           switch (fn | 0) {
             case OPS.setFont:

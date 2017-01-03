@@ -1010,7 +1010,8 @@ angular.module('playerCtrls', ['ngSanitize', 'connexionServices', 'ui.bootstrap-
 				}
 				//debugger;
 				$scope.dataForm.playbackRate =  c.lastRate*10;
-				$scope.playerForm.player.playbackRate = c.lastRate;
+				if ( isNaN(c.lastRate) == false )
+					$scope.playerForm.player.playbackRate = c.lastRate;
 			}
 			helper.setLastRate = function setLastRate(page) {
 				helper.storeProp('lastRate', page)

@@ -73,12 +73,17 @@ function PdfRipServer() {
                 contents = contents.join('\n')
             }
             var htmlContents = req.body.htmlContents;
+
             
             var dirBook = __dirname+'/'+'rips/'+bookName;
             sh.mkdirp(__dirname+'/'+'rips')
             sh.mkdirp(dirBook)
             sh.writeFile(dirBook+'/'+file,  contents);
 
+            htmlContents = sh.html.wrapInHTMLTag(htmlContents, 'html');
+            sh.writeFile(dirBook+'/'+fileHTML,  htmlContents);
+
+            htmlContents = sh.replace(htmlContents, 'color: rgba(0, 0, 0, 0);', '')
             htmlContents = sh.html.wrapInHTMLTag(htmlContents, 'html');
             sh.writeFile(dirBook+'/'+fileHTML,  htmlContents);
 

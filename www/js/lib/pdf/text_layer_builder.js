@@ -155,6 +155,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
       var style = styles[geom.fontName];
       var textDiv = document.createElement('span');	// XYZ
       this.textDivs.push(textDiv);
+     // debugger //bookmark.x portion
       if (isAllWhitespace(geom.str)) {
         textDiv.dataset.isWhitespace = true;
         return;

@@ -77,17 +77,20 @@ textarea{
 }
 
 .highlight2 {
-	background-color: #FFC619;
-	opacity: 0.5;
+	xbackground-color: #FFC619;
+	background-color: rgba(255, 198, 25, 0.5);
+	xopacity: 0.5;
 }
 
 .highlight3 {
-	 background-color: #14CCA0;
-	 opacity: 0.5;
+	 xbackground-color: #14CCA0;
+	background-color: rgba(20, 204, 160, 0.5);
+	 xopacity: 0.5;
  }
 
 
 .highlight4 {
-	background-color: #a94442;
-	opacity: 0.5;
+	xbackground-color: #a94442;
+	background-color: rgba(169, 68, 66, 0.5);
+	xopacity: 0.5;
 }

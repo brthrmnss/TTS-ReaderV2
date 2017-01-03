@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>TinyMCE Reader</title>
+
+    <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+    <script src="js/lib/jquery-1.11.2.min.js"></script>
+    <script src="js/list.js"></script>
+    <script src="js/nlp_compromise.js"></script>
+
+</head>
+<body>
+
+
+<div id="divSaveArea" >
+
+</div>
+
+
+
+<script src="js/ui_utils.js" ></script>
+<script src="js/JSONFileHelper.js" ></script>
+<script src="js/autosave_session.js" ></script>
+<script src="http://localhost:14002/socket.io-1.2.0.js" ></script>
+<script src="http://localhost:10110/reloader.js" ></script>
+<script>
+    function onReloader() {
+        reloader.reloadWhen('autosave_session.html');
+        reloader.filter = '/TTS-Reader/';
+        reloader.reloadWhenFx('autosave_session.js', function onTestOneJs(a, b, c) {
+            console.log('reload it', a,b,c);
+            //window.drawPBJS.go();
+        })
+        reloader.reloadWhenFx('ui_utils.js', function onTestOneJs(a, b, c) {
+            console.log('reload it', a,b,c);
+            window.bendIt()
+        })
+
+        //C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/test3/testFramework.js
+        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/', '')
+        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/delegation/Reader/TTS-Reader/www/', '')
+        //reloader
+    }
+    try {
+        onReloader()
+    } catch ( e) {
+        console.log('e', e)
+    }
+</script>
+
+</body>
+
+
+</html>
