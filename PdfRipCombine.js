@@ -34,10 +34,21 @@ function PdfRipCombine() {
 
     p.p2 = function p2() {
 
-        var dir = self.data.dir  + '/uploads/Artificial Intelligence for Games, Second Edition.pdf'
+        var dir = self.data.dir  + self.settings.dirBook;
         dir +=  '/';
 
         var filesInput = sh.fs.getFilesInDirectory2(dir )
+        filesInput = filesInput.sort(function onSortNumbers(a,b){
+            function c(input) {
+                var last = input.split('/').slice(-1)[0]
+                last = last.replace('.html', '')
+                return parseInt(last)
+
+            }
+            a = c(a)
+            b = c(b)
+            return a - b
+        })
         var files = [];
         var foundStartAt = false;
         sh.each(filesInput, function filterFiltes(k,v) {
@@ -51,16 +62,22 @@ function PdfRipCombine() {
                     }
                 }
             }
-            if ( files.length > 10 ) return;
+            if ( self.settings.maxPages ) {
+                if (files.length > self.settings.maxPages) return;
+            }
             files.push(v)
         })
         console.log('files', files)
 
-
-        var fileOutput = dir.slice(0,-1)+'.html'
+        var cheerio = require('cheerio');
+        var fileOutput = dir.slice(0,-1)+'.'+files.length+'.html'
         var contents = ''
         sh.each(files, function combineItems(k,v) {
-            contents += sh.readFile(v);
+            var body = sh.readFile(v);
+            var $ = cheerio.load(body);
+            var d = $('pre').remove()
+            var html = $.html();
+            contents += html
         })
         sh.writeFile(fileOutput, contents)
         console.log('files', files.length)
@@ -96,7 +113,11 @@ if (module.parent == null) {
     var options = {}
     //options.port = 7789
 
-    options.startAt = 318;
+   /* options.startAt = 318;
+    options.maxPages = 10*/
+
+    options.dirBook =  '/uploads/Artificial Intelligence for Games, Second Edition.pdf'
+
     t.loadConfig(options);
     return;
 

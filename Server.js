@@ -320,7 +320,11 @@ app.get("/epub.html/*",function onEditEpub(req,res){
 			//epub = epub.replace(new RegExp('/src="../', "gi"), 'src="')
 			fileContent = fileContent.replace(new RegExp("src=\"\.\.\/", "gi"), 'src="')
 
-			
+			var j = new JSONFileHelper();
+			var config = {};
+			config.file = __dirname + '/'+'recent_files.json';
+			j.init(config);
+
 			var bookJSON = {
 				originalUrl:req.originalUrl,
 				fileHtml:fileEpubHtml,
@@ -331,6 +335,7 @@ app.get("/epub.html/*",function onEditEpub(req,res){
 			j.add(bookJSON, true, 'originalUrl');
 
 			//epub = epub.replace(/src="\.\.\//gi, '~~~~')
+		ver.js
 			if ( req.query.endAt != null ) {
 				var endAt = parseFloat(req.query.endAt)
 				console.log('end at ', endAt)

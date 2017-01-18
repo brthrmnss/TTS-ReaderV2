@@ -229,6 +229,40 @@ function defineUtils() {
 	uiUtils.addDefaultCfg = function addDefaultCfg(cfg) {
 		uiUtils.flagCfg = cfg;
 	}
+	uiUtils.makeCheckbox = function makeCheckbox(cfg, id) {
+		cfg = u.cfg.str(cfg, 'text');
+		u.cfg.addToCfg(cfg, 'id', id);
+		cfg.tag = dv(cfg.tag, 'input');
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+
+		var ui = u.tag(cfg.tag)
+		ui.attr('type', 'checkbox')
+		ui.html(cfg.text)
+
+		if ( cfg.windowProp) {
+			var val = eval('window.'+cfg.windowProp);
+			ui.prop('checked', val);
+		}
+
+		ui.click(onChangeOptions);
+		function onChangeOptions(event) {
+			console.log('...', cfg.windowProp)
+			var val = ui.is(':checked')
+			if ( cfg.windowProp) {
+				var val = eval('window.'+cfg.windowProp+'='+val );
+				//ui.prop('checked', val);
+			}
+		}
+
+		//	lbl.css('user-select', 'none');
+		u.addUI(cfg, ui);
+
+		if ( cfg.label ) {
+			uiUtils.addLabel(cfg.label)
+		}
+
+		return cfg;
+	}
 	uiUtils.addLabel = function addLabel(cfg, id) {
 		cfg = u.cfg.str(cfg, 'text');
 		u.cfg.addToCfg(cfg, 'id', id);
@@ -394,7 +428,7 @@ function defineUtils() {
 		ui.html(' ')
 		u.addUI(cfg, ui)
 	}
-	
+
 	uiUtils.hr = function addBr(cfg, fxD) {
 		cfg = dv(cfg, {})
 		cfg = u.cfg.str(cfg, 'text')
@@ -536,7 +570,7 @@ function defineUtils() {
 		p.glyph = function addGlyphIcon(iconName, val) {
 			var  iconHTML = '<span class="glyphicon glyphicon-'+iconName+'" aria-hidden="true"></span>'
 			var icon = $(iconHTML);
-			return icon; 
+			return icon;
 		}
 
 		p.setSelect = function setSelect(jq, vals, keyProp, valProp) {
@@ -1094,6 +1128,27 @@ function defineUtils() {
 
 			});
 		}
+		
+		
+		u.debouncer = function debouncer(fx, name, time) {
+			//if ( time )
+			var d = {}
+			d.debounce = function debounce(fx2) {
+				if (d.waiting) {
+					clearTimeout(d.waiting)
+				}
+				//console.log('waiting', fx.name)
+				//d.waiting = true;
+				d.waiting = setTimeout(function onDebounced() {
+					if(fx2) {
+						fx2();
+						return;
+					}
+					fx()
+				}, time)
+			}
+			return d; 
+		}
 
 	}
 
@@ -1110,7 +1165,7 @@ function defineUtils() {
 	}
 	ifHelpers()
 
-	
+
 	p.fadeInOnHover = function fadeInOnHover(ui) {
 		$(ui).css('opacity', 0.0)
 		$(ui).hover(
@@ -1207,7 +1262,7 @@ function defineUtils() {
 			$(jquery).css('cursor', 'pointer')
 		}
 	}
-	defineLookAt(); 
+	defineLookAt();
 }
 
 defineUtils();

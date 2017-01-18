@@ -10,6 +10,12 @@
     <script src="js/list.js"></script>
     <script src="js/nlp_compromise.js"></script>
     <script src="js/lib/js.cookie.js"></script>
+
+
+<!--
+    <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
+    &lt;!&ndash;<link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">&ndash;&gt;
+    <script src="dist/js/lib/bootstrap.min.js"></script>-->
     <!--<script src="js/reloader.js"></script>-->
     <!-- <script src="js/lib/jquery-1.11.2.min.js"></script>
      <script src="js/lib/js.cookie.js"></script>
@@ -122,6 +128,11 @@
                 editor.on('change', function(e) {
                     console.log('change event', e);
 
+                    if ( window.speakWhenNodeChanged ) {
+                       window.editSpeakDebouncer.debounce(function speakCurrentNode(){
+                           window.speak({text:c.elementUI.text() })
+                       })
+                    }
                 });
                 editor.on('undo', function(e) {
                     console.log('undo event', e);
@@ -146,7 +157,11 @@
                         }, 300)
                         return;
                     }
-
+                    if ( window.speakWhenNodeChanged ) {
+                        window.editSpeakDebouncer.debounce(function speakCurrentNode(){
+                            window.speak({text:c.elementUI.text() })
+                        })
+                    }
                     console.debug(e.keyCode, e.ctrlKey)
                    return
 
@@ -195,6 +210,7 @@
                     }
                     c.element = e.element
                     var ui = $(e.element);
+                    c.elementUI = ui;
 
 
                     $('#txtEdit').text(ui.text())
@@ -380,7 +396,7 @@ jQuery(head).append(css);
 <div id="txtEdit">
 
 </div>
-<span id="speakingBox">speaking</span>
+<!--<span id="speakingBox">speaking</span>-->
 <div id="txtConsole" >sttaus</div>
 <button onclick="reverse()">asdf</button>
 <div id="controlBox"> </div>
@@ -389,7 +405,6 @@ jQuery(head).append(css);
 <div id="divSaveArea" >
 
 </div>
-
 
 
 <script src="js/ui_utils.js" ></script>
@@ -420,6 +435,17 @@ jQuery(head).append(css);
         console.log('e', e)
     }
 </script>
+
+
+
+<script>
+    uiUtils.makeCheckbox({name:'speakWhenNodeChanged',
+                        windowProp:'speakWhenNodeChanged'})
+
+    window.editSpeakDebouncer = uiUtils.debouncer(null, 'debounce name', 800); //window.speakCurrentNode)
+
+</script>
+
 
 </body>
 

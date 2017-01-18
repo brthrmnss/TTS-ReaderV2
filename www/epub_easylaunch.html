@@ -55,8 +55,7 @@
             order: 0;
             flex: 10 1 60%;
             align-self: auto;
-            width: 60%;
-            padding-left:10px;
+            width: 60%
         }
 
         .col2 {
@@ -169,32 +168,6 @@
 
     <div  id="col2Container"  class="col2">
 
-        <div id="upload-widget" style="background-color: #d2d2d2; height: 20px; width:200px;"></div>
-
-        <script>
-            var myDropzone = new Dropzone("#upload-widget", { url: "/upload"});
-            myDropzone.on('success', function( file, resp ){
-                //...
-            });
-            myDropzone.on('addedfile', function( file, resp ){
-                console.error('asdfasdf', file)
-            });
-            myDropzone.on('sending', function( file, resp ){
-                console.error('asdfasdf', file)
-            });
-            myDropzone.on('success', function( file, data ){
-                //var response = $.parseJSON(data.xhr.response);
-                console.error(  file, data)
-                //debugger
-                //window.location.href = "http://stackoverflow.com";
-
-                window.location.href  = "/epub.html/"+ file.name
-            });
-            myDropzone.on('error', function( file, data2, data ){
-                var response = $.parseJSON(data.xhr.response);
-                console.error('asdfasdf', file)
-            });
-        </script>
 
 
         <!-- HTML heavily inspired by http://blueimp.github.io/jQuery-File-Upload/ -->
@@ -278,6 +251,42 @@
 <div id="bookHolderContainer" style="height: 150px; overflow: auto;" >
     ---yyy---
 </div>
+
+
+<div id="upload-widget" style="background-color: #d2d2d2;
+position: fixed;
+height:50%; width:100%">upload</div>
+
+
+
+
+<script>
+    var myDropzone = new Dropzone("#upload-widget", { url: "/upload"});
+    myDropzone.on('success', function( file, resp ){
+        //...
+    });
+    myDropzone.on('addedfile', function( file, resp ){
+        console.error('asdfasdf', file)
+    });
+    myDropzone.on('sending', function( file, resp ){
+        console.error('asdfasdf', file)
+    });
+    myDropzone.on('success', function( file, data ){
+        //var response = $.parseJSON(data.xhr.response);
+        console.error(  file, data)
+        //debugger
+        //window.location.href = "http://stackoverflow.com";
+        window.open("/epub.html/"+ file.name, '_blank', 'toolbar=yes, location=yes, status=yes, menubar=yes, scrollbars=yes');
+        return;
+        window.location.href  = "/epub.html/"+ file.name
+    });
+    myDropzone.on('error', function( file, data2, data ){
+        var response = $.parseJSON(data.xhr.response);
+        console.error('asdfasdf', file)
+    });
+</script>
+
+
 
 <script>
     console.log('...')

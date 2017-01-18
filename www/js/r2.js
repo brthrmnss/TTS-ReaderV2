@@ -23,7 +23,15 @@ rip.settings.addDashesOnVGap = false;
 //rip.settings.stopAfterSorting = true
 
 var rUtils = {};
-rUtils.t  = '\t'
+rUtils.t = '\t'
+rUtils.n = '\n'
+
+
+rUtils.eachNumber = function eachNumber(i) {
+    return (i+1)+'.'
+}
+
+
 rUtils.clearPixels = function clearPixels(px) {
     if ( false  == px.includes('px' ) ) {
         return px;
@@ -892,6 +900,7 @@ window.fx2 = function fx2 (play, playIndex) {
         var spansZ = utilsSort.flattendRows(yDict);
         return spansZ
     }
+
     pH.totalPageHeight = $($(spans[0]).parent()).height();
     spans = pH.sortSpans(spans) ;
     console.error('spans', spans);
@@ -961,9 +970,44 @@ window.fx2 = function fx2 (play, playIndex) {
     }
 
 
+    pH.determineAverageFontSize = function determineAverageFontSize(spans) {
+        var dbg = false;
+        var tagName = 'determineAverageFontSize'
+        pH.averageFontSize_PerSpan = 0;
+        pH.averageFontSize_PerChar = 0;
+        var charLength = 0;
+        $.each(spans, function onF(kk,vv){
+            var ui = $(vv);
+            var fontSize = rUtils.getPx(ui.css('fontSize'), true);
+            // fontSize = parseFloat(fontSize)
+            var text = ui.text();
+            charLength += text.length;
+            var allFontSizePerChar = fontSize * text.length;
+
+            if ( dbg)
+            console.log(tagName, fontSize,  pH.averageFontSize_PerSpan)
+            pH.averageFontSize_PerSpan += fontSize
+            pH.averageFontSize_PerChar += allFontSizePerChar
+        })
+
+        pH.averageFontSize_PerSpan = pH.averageFontSize_PerSpan/spans.length;
+        pH.averageFontSize_PerChar = pH.averageFontSize_PerChar/charLength;
+        pH.averageFontSize = pH.averageFontSize_PerChar
+        console.log( tagName, 'avgs',pH.averageFontSize_PerSpan,  pH.averageFontSize_PerChar )
+        //asdf.g
+
+    }
+    pH.determineAverageFontSize(spans)
+
     pH.markUpSpans = function markUpSpans(spans) {
-        $.each(rip.settings.processors, function onF(kk,vv){
-            vv(spans)
+
+        $.each(spans, function clearSpanAnnotations(k, ui) {
+            ui = $(ui);
+            ui.css('border-left', 'none')
+        })
+
+        $.each(rip.settings.processors, function runPreProcessor(kk,fxPreProcessor){
+            fxPreProcessor(spans)
         })
 
     }
@@ -977,16 +1021,34 @@ window.fx2 = function fx2 (play, playIndex) {
         cSH.sentences = [];
         cSH.uiElements = [];
         cSH.uiElements_markup = $()
+        cSH.uiElementsClear = function uiElementsClear(reason, addIn) {
+            if ( reason == null ) {
+                throw new Error('need a reason')
+            }
+            var newElement = cSH.currentStyle.span.clone();
+            newElement.text('');
+            if ( addIn ) {
+                cSH.uiElements.push(addIn);
+            }
+            cSH.uiElementsPush(newElement, true)
+        }
         cSH.uiElementsPush = function uiElementsPush(elE) {
             var tagName = 'hasMarkcup';
             //var markup =  elE.attr('markup');
-            var markup =  cSH.currentSpan.attr('markup');
+            var markupCurrent =  cSH.currentSpan.attr('markup');
             if ( cSH.lastSpan ) {
-                markup = cSH.lastSpan.attr('markup');
+                var markup = cSH.lastSpan.attr('markup');
             }
             elE.css('color', '');
-            console.log(tagName, 'span has markup', cSH.currentSpan.attr('markup'));
-            if ( markup ) {
+            console.log(tagName, 'span has markup',
+                cSH.currentSpan.attr('markup')
+            )
+            if ( cSH.currentStyle.clearAll ) {
+                var clearAll = cSH.currentStyle.clearAll
+            }
+            /*    , elE.text(),
+             elE[0].outerHTML);*/
+            if ( markup && clearAll != true  /*&& markup == markupCurrent*/ ) {
 
                 console.log(tagName, 'span has markup');
                 if ( cSH.uiElements_markup.attr('markupFor') != markup ) {
@@ -1000,6 +1062,10 @@ window.fx2 = function fx2 (play, playIndex) {
                 cSH.uiElements_markup.append(elE);
                 cSH.uiElements_lastElement = elE;
                 return;
+            }
+
+            if ( clearAll ) {
+                console.log('ok ok ok ok ', '-markup')
             }
             cSH.uiElements.push(elE);
             cSH.uiElements_lastElement = elE;
@@ -1168,6 +1234,7 @@ window.fx2 = function fx2 (play, playIndex) {
                     return false;
                 }
 
+                styles.span = span;
 
                 return styles;
             };
@@ -1247,11 +1314,15 @@ window.fx2 = function fx2 (play, playIndex) {
                     lastElement[0].outerHTML
                 );
 
+                if (  cSH.uiElement == null ) {
+                    return;
+                }
                 //create a new vgap element to for p tag
                 cSH.addedNotEmptySpacing = true;
 
                 //cSH.uiElementsPush( cSH.uiElement )
 
+                /*
                 var uiEl = uiUtils.tag('p');
                 uiEl.attr('why', why);
                 uiEl.addClass('vGap');
@@ -1262,7 +1333,8 @@ window.fx2 = function fx2 (play, playIndex) {
                     cSH.currentSentence,
                     spanText,
                 ].join('<br /> _____   '));
-                // cSH.uiElementsPush(uiEl);
+                 cSH.uiElementsPush(uiEl);
+                 */
                 console.error('bad size', cSH.uiElements.length)
 
 
@@ -1276,7 +1348,11 @@ window.fx2 = function fx2 (play, playIndex) {
                 uiEl.css('height', '8px')
                 uiEl.css('width', '100%')
                 uiEl.html();
-                cSH.uiElementsPush(uiEl);
+                //cSH.uiElementsPush(uiEl);
+
+                //if () {
+                    cSH.uiElementsClear('breaking a loop of sentence', null, uiEl)
+               // }
 
 
                 if (rip.settings.addDashesOnVGap) {
@@ -1298,7 +1374,8 @@ window.fx2 = function fx2 (play, playIndex) {
                 }
 
                 //cSH.currentSentence += 'yyuyisdf'
-                cSI.addSentenceToList('inside of loop ' + 'breaking the line')//+'yQuantizedSame ' + 'lastFormat') //why .. the next one is broken not this one
+
+                //cSI.addSentenceToList('inside of loop ' + 'breaking the line')//+'yQuantizedSame ' + 'lastFormat') //why .. the next one is broken not this one
 
                 //cSI.addSentenceToList('inside of loop '+'yQuantizedSame ' + 'lastFormat') //why .. the next one is broken not this one
 
@@ -1627,17 +1704,25 @@ window.fx2 = function fx2 (play, playIndex) {
                     }
                 };
 
-                if (cSI.sentenceNotAdded &&
-                    cSH.currentStyle.markup != cSH.lastStyle.markup) {
-
-                    var same = '';
-                    if ( cSH.currentStyle.yQuantized == cSH.lastStyle.yQuantized) {
-                        debugger; //did not believe this was possible
-                        same = ' ' + 'yQuantizedSame';
+                if ( rip.settings.newSentence_Markup != false ) {
+                    var arr = [
+                        cSH.currentStyle.markup,
+                        cSH.lastStyle.markup,
+                    ]
+                    var markupChanged = cSH.currentStyle.markup != cSH.lastStyle.markup;
+                    if ( markupChanged ) {
+                        // console.log('-markup changed', markupChanged, cSI.sentenceNotAdded, arr);
+                        if (   markupChanged) {
+                            var same = '';
+                            console.log('-markup changed', arr, cSH.currentSentence, cSH.currentStyle.text);
+                            cSH.currentStyle.clearAll = true;
+                            var newElement = cSH.currentStyle.span.clone();
+                            newElement.text('');
+                            cSH.uiElementsPush(newElement, true)
+                            // cSI.addSentenceToList('-markup different ' + arr + same);
+                        }
                     }
-                    console.log('-yQuantized', cSH.currentStyle.yQuantized);
-                    cSI.addSentenceToList('markup different ' + arr  + same);
-                }
+                };
 
                 //if currentSentence is not empty ('mioght have alreayd switched')
                 if ( cSI.sentenceNotAdded &&
@@ -2087,19 +2172,25 @@ window.uploadCurrentPage = function uploadCurrentPage(_fxPageComplete, processPa
 
 
 
-window.uploadAllPages = function  uploadAllPages() {
+window.uploadAllPages = function  uploadAllPages(_maxPageCount) {
     var cfg = {};
     cfg.maxPageCount = 10;
     cfg.pageCount = 0;
+
+    if ( _maxPageCount ) {
+        cfg.maxPageCount = _maxPageCount
+    }
 
     window.uploadCurrentPage(goToNextPage_Loop);
     function goToNextPage_Loop() {
         var page = window.$scope.pdfCurrentPage;
         //debugger;
         cfg.pageCount++;
-        if ( cfg.pageCount > cfg.maxPageCount ) {
-            console.log('ended', page, cfg.pageCount, cfg.maxPageCount)
-            return;
+        if ( cfg.maxPageCount != -1 ) {
+            if (cfg.pageCount > cfg.maxPageCount) {
+                console.log('ended', page, cfg.pageCount, cfg.maxPageCount)
+                return;
+            }
         }
 
         if ( page == cfg.lastPage ) {
@@ -2111,27 +2202,42 @@ window.uploadAllPages = function  uploadAllPages() {
     }
 }
 
+window.uploadEntireBook = function uploadEntireBook() {
+    $scope.pdfViewerAPI.goToPage(1)
+    setTimeout(function startUploading() {
+        window.uploadAllPages(-1);
+    }, 800)
+}
 
+window.uploadRemainingPages = function uploadRemainigPages(){
+    setTimeout(function startUploading() {
+        window.uploadAllPages(-1);
+    }, 800)
+}
 
 rip.settings.processors.push(function getCodeSnippets(spans) {
     var tagName = 'codeSearch';
+    var dbg = false
     var inBlock = false;
 
     var procHelper = {};
     procHelper.codeBlockNumber = 0;
     function markup(asdf) {
-        asdf.css('border-left', '50px #FFA500 solid')
+        asdf.css('border-left', '50px orange solid')
         asdf.attr('markup', 'codeBlock'+procHelper.codeBlockNumber)
     }
 
     $.each(spans, function processSpan_forMarkup(k,v) { //find spans
+
         v = $(v);
         var prev = $(spans[k-1]);
         var next = $(spans[k+1]);
         var font = $(v).css('fontFamily')
 
-
         var textIsNumber = isNaN(parseInt(v.text())) == false;
+        if ( v.text().includes('.')){
+            textIsNumber = false;  //block 5.1 Performance Trees, must have at least 2 valid spans to start
+        }
         var left = v.css('left').replace('px', '');
         var width = $('.page').css('width').replace('px', '');
         left = parseInt(left);
@@ -2146,24 +2252,32 @@ rip.settings.processors.push(function getCodeSnippets(spans) {
             //previousItems.reverse(); ... if is monospaced, mark it up ...
         }
 
-        if ( font == 'monospace' || numberAndInRightPosition ) {
-            if ( prev.text() == '1' || next.text()== '1' || numberAndInRightPosition) {
-                console.debug(tagName, 'start code block')
-                if ( inBlock == false ) {
+        //var nextSpanIsValid = false; //block 5.1 Performance Trees, must have at least 2 valid spans to start
+        //nextSpanIsValid = $(next).css('fontFamily') == 'monospace';
+
+        //if ( nextSpanIsValid ) {
+        if (font == 'monospace' || numberAndInRightPosition) {
+            if (prev.text() == '1' || next.text() == '1' || numberAndInRightPosition) {
+                if ( dbg )
+                    console.debug(tagName, 'start code block')
+                if (inBlock == false) {
                     procHelper.codeBlockNumber++;
                 }
-                if ( inBlock == true ) {
-                    console.error('inblock twice')
+                if (inBlock == true) {
+                    if ( dbg )
+                        console.error(tagName, 'inblock twice')
                 }
                 inBlock = true
-                if ( prev.text() == '1' ) {
-                    console.debug(tagName, 'gobackwards', prev.text())
+                if (prev.text() == '1') {
+                    if ( dbg )
+                        console.debug(tagName, 'gobackwards', prev.text())
                     markup(prev)
                 }
             }
         }
-
-        console.log(tagName, 'spans', font, v.text());
+        // }
+        if ( dbg )
+            console.log(tagName, 'spans', font, v.text());
         if (inBlock)
             markup(v)
 
@@ -2172,7 +2286,8 @@ rip.settings.processors.push(function getCodeSnippets(spans) {
                 var number = parseInt(next.text())
                 if ( isNaN(number)) {
                     inBlock = false;
-                    console.debug(tagName, 'leave code block', next.text())
+                    if ( dbg )
+                        console.debug(tagName, 'leave code block', next.text())
                 }
             }
 
@@ -2182,22 +2297,34 @@ rip.settings.processors.push(function getCodeSnippets(spans) {
     })
 })
 
-rUtils.getPx = function getPx(px) {
+rUtils.getPx = function getPx(px, roundOff) {
     if ( px == null )
         return null
-    return px.replace('px', '')
+    var sizePre = px.replace('px', '')
+    var size = parseFloat(sizePre);
+    if ( isNaN(size)){
+        console.log('size is nan', px)
+        throw new Error('size is nan '+px)
+    }
+    if ( roundOff) {
+        size = size.toFixed(2)
+        size = parseFloat(size)
+    }
+    return size;
 }
 
 rUtils.badError = function badError(msg) {
     pH.errors.push(msg)
 }
 
-rUtils.processHelper  = function processHelper(k,v,spans) {
+rUtils.processHelper  = function processHelper(k,v,spans, tagName) {
     var h = {}
     var prev = $(spans[k-1]);
     var cur = $(spans[k-0]);
     var next = $(spans[k+1]);
     var nextNext = $(spans[k+2]);
+
+    var pageWidth = $('.page').css('width').replace('px', '');
 
     h.prev = prev;
     h.cur = cur;
@@ -2206,15 +2333,18 @@ rUtils.processHelper  = function processHelper(k,v,spans) {
 
     function setTo(h, ui, prop, i ) {
         h[prop] = ui;
-        ui.font = ui.css('fontFamily')
-        ui.origfont = ui.attr('origfont')
-        ui.left = rUtils.getPx(ui.css('left'))
-        ui.top = rUtils.getPx(ui.css('top'))
+        ui.font = ui.css('fontFamily');
+        ui.origfont = ui.attr('origfont');
+        ui.left = rUtils.getPx(ui.css('left'), true);
+        ui.top = rUtils.getPx(ui.css('top'), true);
+        ui.y = ui.top;
+        ui.x = ui.left;
+        ui.fontSize = rUtils.getPx(ui.css('fontSize'), true);
     }
-    setTo(h, prev, 'prev')
-    setTo(h, cur, 'cur')
-    setTo(h, next, 'next')
-    setTo(h, nextNext, 'nextNext')
+    setTo(h, prev, 'prev');
+    setTo(h, cur, 'cur');
+    setTo(h, next, 'next');
+    setTo(h, nextNext, 'nextNext');
 
     h.xPercentageGreatherThan = function xPercentageGreatherThan(xRatio) {
         //130/545
@@ -2224,10 +2354,88 @@ rUtils.processHelper  = function processHelper(k,v,spans) {
         left = parseInt(left);
         width = parseInt(width);
         var xIsNearCodeArea = left/width > xRatio ;
-        console.warn("\t",'figureSearch', (left/width).toFixed(2), xRatio.toFixed(2) , left, width)
+        var tagName = 'xPercentageGreatherThan figureSearch'
+        var dbg = false;
+        if ( dbg)
+            console.warn("\t",tagName, (left/width).toFixed(2), '>',  xRatio.toFixed(2) , rUtils.t, 'x', left, 'y', width)
         return xIsNearCodeArea;
         // var numberAndInRightPosition = xIsNearCodeArea && textIsNumber;
     }
+
+
+    h.searchOnRow5050_any_xPercentageGreatherThan = function searchOnRow5050_any_xPercentageGreatherThan(xRatio) {
+
+        var spansOnRow = [];
+        var spansOnRowText = [];
+        var y = h.cur.top;
+        //console.log(tagName, 'what is y',y)
+        //asdf.g
+        var rowFontSizeX = h.cur.fontSize;
+        //if ( rowFontSize ) {
+        var rowFontSize = pH.averageFontSize;
+        // }
+        var ymin = h.cur.top-rowFontSize*.5;
+        var ymax = h.cur.top+rowFontSize*.5;
+
+        ymin = parseFloat(ymin.toFixed(2));
+        ymax = parseFloat(ymax.toFixed(2));
+
+        var dbg = false;
+        if ( dbg ) {
+            console.debug(rUtils.t, tagName, 'findSpansOrRow-start', y, ymin, ymax, 'looking for-->', h.cur.text())
+            console.debug(rUtils.t, tagName, 'findSpansOrRow-start::', rowFontSizeX, rowFontSize)
+        }
+        // asdf.g
+
+        $.each(spans, function findSpansOrRow(k,v) { //find spans
+            //y higher or lower than this 50-50
+
+
+            var potentialRowSpan = $(v)
+            var text = potentialRowSpan.text();
+            setTo({}, potentialRowSpan, 'potentialrowmatch');
+
+            if ( dbg ) {
+                console.debug(rUtils.t, rUtils.t, rUtils.eachNumber(k), tagName, 'findSpansOrRow', potentialRowSpan.y, ymin, ymax,
+                    rUtils.n, rUtils.t, rUtils.t, rUtils.t, text)
+            }
+
+            if ( potentialRowSpan && potentialRowSpan.y > ymin && potentialRowSpan.y < ymax ) {
+                console.warn(tagName, 'findSpansOrRow', potentialRowSpan.y, '-in-', text)
+                spansOnRow.push(potentialRowSpan);
+                spansOnRowText.push(text);
+            }
+        });
+
+        //if ( dbg ) {
+        console.debug(tagName, 'findSpansOrRow-length found', spansOnRow.length, '-in-', spansOnRowText, spansOnRow)
+        //}
+
+        var doAnyHaveXRatio_LessThanMin = false;
+
+        $.each(spansOnRow, function _findSpansOrRow_xRatioCheck(k,v) {
+            var potentialRowSpan = $(v)
+            setTo({}, potentialRowSpan, 'potentialrowmatch')
+            var xRatio_of_span = potentialRowSpan.x/pageWidth
+            var xIsLessThanRatio = xRatio_of_span < xRatio ;
+
+            if ( xIsLessThanRatio ) {
+                doAnyHaveXRatio_LessThanMin = true;
+                console.warn("\t",'figureSearch', xIsLessThanRatio, (xRatio_of_span).toFixed(2), '>',  xRatio.toFixed(2) , rUtils.t,
+                    'x', potentialRowSpan.x, 'y', pageWidth)
+                return false;
+            }
+            // var numberAndInRightPosition = xIsNearCodeArea && textIsNumber;
+
+        });
+
+        console.debug(tagName, 'findSpansOrRow-length output', doAnyHaveXRatio_LessThanMin)
+
+        // asdf.g
+        return doAnyHaveXRatio_LessThanMin;
+    }
+
+
 
 
     h.lookAheadForSpan_startsWith = function lookAheadForSpan_startsWith(startWith) {
@@ -2237,6 +2445,7 @@ rUtils.processHelper  = function processHelper(k,v,spans) {
 
             var text = $(v).text()
             if ( text.startsWith(startWith)) {
+                console.debug(tagName, 'did get match', startWith, '-in-', text)
                 found = true
                 return false;
             }
@@ -2255,13 +2464,16 @@ rip.settings.processors.push(function getFigures(spans) {
     var tagName = 'figureSearch';
     var inBlock = false;
 
+    var dbg = false;
+
     function markup(asdf) {
-        asdf.css('border-left', '50px yellow solid')
+        asdf.css('border-left', '50px blue solid')
         asdf.attr('markup', 'figureBlock')
     }
 
     $.each(spans, function processSpan_forMarkup(k,v) { //find spans
-        var h = rUtils.processHelper(k,v,spans);
+        var h = rUtils.processHelper(k,v,spans, tagName);
+        // h.cur.css('border-left', 'none');
         /*   var textIsNumber = isNaN(parseInt(v.text())) == false;
          var left = v.css('top').replace('px', '');
          var width = $('.page').css('width').replace('px', '');
@@ -2278,38 +2490,56 @@ rip.settings.processors.push(function getFigures(spans) {
          }*/
         //console.log(tagName, h.cur.origfont)
 
-        if ( h.cur.origfont  == 'g_font_21'  ) {
-            console.debug(tagName, 'start code block');
-            if ( inBlock == true ) {
-                console.error(tagName,'inblock twice');
-            }
-            inBlock = true;
-        };
+        /*if ( h.cur.origfont  == 'g_font_21'  ) {
+         console.debug(tagName, 'start code block');
+         if ( inBlock == true ) {
+         console.error(tagName,'inblock twice');
+         }
+         inBlock = true;
+         };*/
 
+        if ( dbg ) {
+            console.log(tagName, '---------------------------');
+            console.log(tagName, k, 'text:', h.cur.text());
+        }
         if ( h.xPercentageGreatherThan(rip.settings.books.ai.maxXPercentage) ) {
             if ( h.lookAheadForSpan_startsWith('Figure ') ) {
-                console.debug(tagName, 'start code block.2');
+                if ( dbg )
+                    console.debug(tagName, 'start code block.2');
                 if ( inBlock == true ) {
-                    console.error(tagName,'inblock twice');
+                    if ( dbg )
+                        console.error(tagName,'inblock twice');
                 }
                 inBlock = true;
+                if ( h.searchOnRow5050_any_xPercentageGreatherThan(rip.settings.books.ai.maxXPercentage) ) {
+                    if ( dbg )
+                        console.debug(tagName, 'undoing--start code block.2');
+                    inBlock = false;
+                }
+            }
+
+        }
+
+
+        if ( false  && inBlock == false ) {
+            if ( dbg ) {
+                console.debug(tagName, 'start code block.3',
+                    h.xPercentageGreatherThan(rip.settings.books.ai.maxXPercentage),
+                    h.lookAheadForSpan_startsWith('Figure '));
             }
         }
 
-        if ( inBlock == false ) {
-            console.debug(tagName, 'start code block.3',
-                h.xPercentageGreatherThan(rip.settings.books.ai.maxXPercentage),
-                h.lookAheadForSpan_startsWith('Figure ') );
-        }
-        console.log(tagName, 'spans', h.cur.font, h.cur.origfont, h.cur.text());
-        if (inBlock)
+        if (inBlock) {
+            //asdf.g
             markup(h.cur)
+        }
 
         if ( inBlock ) {
             if ( h.next.origfont == h.nextNext.origfont ) {
                 if ( h.next.text().includes('Figure') ) {
                     inBlock = false;
-                    console.debug(tagName, 'leave code block', h.next.text())
+                    if ( dbg )
+                        console.debug(tagName, 'leave code block', h.next.text())
                     markup(h.next)
                     markup(h.nextNext)
                 }
@@ -2360,6 +2590,15 @@ function defineTestable() {
     }
     window.goToPage = function goToPage(page) {
         $scope.pdfViewerAPI.goToPage(page+25)
+    }
+
+    window.taskHitDescriptionChapter = function taskHitDescriptionChapter() {
+        $scope.pdfViewerAPI.goToPage(318);
+        console.clear();
+        console.error('waiting to upload the pages')
+        setTimeout(function onUploadPage() {
+            uploadAllPages(250)
+        },2000)
     }
     //fix bug on page 489 ... need to go backwards to find monospace text items ...
 }
