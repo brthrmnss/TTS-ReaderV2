@@ -11,11 +11,25 @@
     <script src="js/nlp_compromise.js"></script>
     <script src="js/lib/js.cookie.js"></script>
 
-
-<!--
     <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
-    &lt;!&ndash;<link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">&ndash;&gt;
-    <script src="dist/js/lib/bootstrap.min.js"></script>-->
+<!--
+   <link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">
+-->
+
+    <script src="dist/js/lib/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            padding: 10px;
+        }
+        .btn {
+            border-radius: 0px;
+        }
+    </style>
+    <!--
+        <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
+        &lt;!&ndash;<link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">&ndash;&gt;
+        <script src="dist/js/lib/bootstrap.min.js"></script>-->
     <!--<script src="js/reloader.js"></script>-->
     <!-- <script src="js/lib/jquery-1.11.2.min.js"></script>
      <script src="js/lib/js.cookie.js"></script>
@@ -124,14 +138,16 @@
             /*plugins: "spellchecker",
              menubar: "tools",
              toolbar: "spellchecker",*/
+            plugins:"nonbreaking",
+            nonbreaking_force_tab: true,
             setup: function(editor) {
                 editor.on('change', function(e) {
                     console.log('change event', e);
 
                     if ( window.speakWhenNodeChanged ) {
-                       window.editSpeakDebouncer.debounce(function speakCurrentNode(){
-                           window.speak({text:c.elementUI.text() })
-                       })
+                        window.editSpeakDebouncer.debounce(function speakCurrentNode(){
+                            window.speak({text:c.elementUI.text() })
+                        })
                     }
                 });
                 editor.on('undo', function(e) {
@@ -139,8 +155,22 @@
                 });
 
                 var play2 =  debounce( c.speakCurrentElement,500);
+                editor.on('keydown',function keydown(e) {
+                    if ( e.keyCode == 16 ) {
+                    //    console.debug('keydown event: ' + e.keyCode);
+                        tHelper.shiftKey = true;
+                    }
+                })
+                editor.on('keyup',function keyup(e) {
+                    if ( e.keyCode == 16 ) {
+                      //  console.debug('keyup event: ' + e.keyCode);
+                        tHelper.shiftKey = false;
+                    }
+                })
                 editor.on('keyup',function(e) {
-                    console.debug('Key up event: ' + e.keyCode);
+                    if (window.showChangeWhenHere != false ) {
+                        console.debug('Key up event: ' + e.keyCode);
+                    }
                     var content = tinyMCE.get('mainContent').getContent();
                     Cookies.set('prevContent', content);
 
@@ -162,8 +192,10 @@
                             window.speak({text:c.elementUI.text() })
                         })
                     }
-                    console.debug(e.keyCode, e.ctrlKey)
-                   return
+                    if (window.showChangeWhenHere != false ) {
+                        console.debug(e.keyCode, e.ctrlKey)
+                    }
+                    return
 
                     play2()
                 });
@@ -194,13 +226,22 @@
                 })
 
                 editor.on('nodeChange', function onNodeChanged(e, wait) {
+
+
+                    if ( tHelper.shiftKey ) {
+                        return;
+                    }
+
+                    if (window.clickToGoToNextLine == false) {
+                        return;
+                    }
                     if ( wait != false ) {
                         setTimeout(function waitFewSecs(){
                             onNodeChanged(e, false)
                         },100)
                         return;
                     }
-                    console.log('node event', e.element, c.pasted);
+                    console.log('node event', e.element, c.pasted, e);
                     if ( c.pasted == true ) {
                         c.pasted = false;
                         return;
@@ -237,24 +278,24 @@
 
         tHelper.pasteHandle = function pasteHandle  (event, txt) {
 
-                console.log('pasted')
+            console.log('pasted')
 
-                if ( txt == null ) {
-                    var currentVal = $(this).val();
+            if ( txt == null ) {
+                var currentVal = $(this).val();
 
-                } else {
-                    currentVal = txt;
-                }
-                var txtOrig = currentVal;
+            } else {
+                currentVal = txt;
+            }
+            var txtOrig = currentVal;
 
-                //fix issues with text
-                currentVal = currentVal.replace(//gm, "");
-                currentVal = currentVal.replace(/’/gm, "'");
+            //fix issues with text
+            currentVal = currentVal.replace(//gm, "");
+            currentVal = currentVal.replace(/’/gm, "'");
 
-                if (currentVal == oldVal) {
-                    return; //check to prevent multiple simultaneous triggers
-                }
-                };
+            if (currentVal == oldVal) {
+                return; //check to prevent multiple simultaneous triggers
+            }
+        };
 
         tHelper.playAllSentences = function readText() {
             var tiny = tinyMCE.get('mainContent');
@@ -293,20 +334,20 @@
                     text +=  ui.text().trim() +  ' ';
             })
 
-                    // var ui = $(c.element)
-                    // var text = ui.text()
-                    // debugger;
-                    // console.debug(text, content.split(text)[1]);
-                    // var final = text  + content.split(text)[1];
-                    console.debug('txt to speac', text);
-                    window.speak(text)
-                    // play2()
-                };
+            // var ui = $(c.element)
+            // var text = ui.text()
+            // debugger;
+            // console.debug(text, content.split(text)[1]);
+            // var final = text  + content.split(text)[1];
+            console.debug('txt to speac', text);
+            window.speak(text)
+            // play2()
+        };
 
 
 
 
-     //   debugger
+        //   debugger
         tHelper.setupPaste()
 
         tHelper.setupControlBox = function setup() {
@@ -420,8 +461,11 @@ jQuery(head).append(css);
             //window.drawPBJS.go();
         })
         reloader.reloadWhenFx('ui_utils.js', function onTestOneJs(a, b, c) {
-            console.log('reload it', a,b,c);
-            window.bendIt()
+            setTimeout(function onWaitForIt() {
+                console.log('reload it', a,b,c);
+                window.bendIt()
+            }, 300)
+
         })
 
         //C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/test3/testFramework.js
@@ -434,16 +478,6 @@ jQuery(head).append(css);
     } catch ( e) {
         console.log('e', e)
     }
-</script>
-
-
-
-<script>
-    uiUtils.makeCheckbox({name:'speakWhenNodeChanged',
-                        windowProp:'speakWhenNodeChanged'})
-
-    window.editSpeakDebouncer = uiUtils.debouncer(null, 'debounce name', 800); //window.speakCurrentNode)
-
 </script>
 
 

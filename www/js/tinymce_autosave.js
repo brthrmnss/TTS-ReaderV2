@@ -59,10 +59,12 @@ function bendIt () {
                 var url = 'http://'+ window.location.hostname + ':' + 6007
                     + '/listFiles';
                 uiUtils.getUrl(url, function onGotRecentList(sdf){
-                    console.log('onGotRecentList', sdf)
+                   // console.log('onGotRecentList', sdf)
                     uiUtils.setSelect(self.data.ui.recentPages,
                         sdf, 'name', 'name');
                     callIfDefined(fxDone);
+                }, null, function onError(){
+                    alert('server is not running start autoaveserver')
                 });
             }
 
@@ -218,6 +220,7 @@ function bendIt () {
             uiUtils.updateSelect('ddPaper', [1,2,3,4,5]);
 
 
+            uiUtils.addSpace()
 //uiUtils.addBtn()
             uiUtils.addBtn(
                 {
@@ -362,6 +365,59 @@ function bendIt () {
     }
     window.t = t;
 
+
+    function createNewOptions() {
+
+        uiUtils.makeCheckbox({
+            name:'showExtraControls',
+            windowProp:'showExtraControls',
+            tooltip:'Show additional controls for page and flow options ',
+            label:'Show Ex Controls',
+            defaultValue:true,
+            fxChange:function onShowHideControls(setting) {
+                console.log('change setting', setting, $('#newcontrols'))
+                uiUtils.ifShow(setting, '#newcontrols')
+            }
+        })
+
+        uiUtils.addSpace();
+        uiUtils.addDiv('newcontrols')
+        uiUtils.addBorder(); 
+        uiUtils.makeInline(); 
+        uiUtils.changeContainer();
+        //uiUtils.addLabel('controls')
+         uiUtils.addIcon('play-circle');
+        uiUtils.makeCheckbox({name:'speakWhenNodeChanged',
+            windowProp:'speakWhenNodeChanged',
+            tooltip:'Speak when changed'});
+
+        window.editSpeakDebouncer = uiUtils.debouncer(null, 'debounce name', 800); //window.speakCurrentNode)
+
+        uiUtils.makeCheckbox({name:'showChangeWhenHere',
+            windowProp:'showChangeWhenHere',
+            tooltip:'Trace out change events',
+            why: "change events are annoying"});
+
+
+        uiUtils.makeCheckbox({name:'clickToGoToNextLine',
+            windowProp:'clickToGoToNextLine',
+            tooltip:'Click to go to next line'});
+
+
+
+
+        //window.editSpeakDebouncer = uiUtils.debouncer(null, 'debounce name', 800); //window.speakCurrentNode)
+
+        uiUtils.popContainer();
+
+        uiUtils.addBtn({text:'play all', fxClick:function () {
+            console.log('...sdf', 'play all')
+            tHelper.playAllSentences();
+        }})
+
+
+    }
+    createNewOptions();
 
 }
 

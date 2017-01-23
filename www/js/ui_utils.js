@@ -240,19 +240,48 @@ function defineUtils() {
 		ui.html(cfg.text)
 
 		if ( cfg.windowProp) {
-			var val = eval('window.'+cfg.windowProp);
-			ui.prop('checked', val);
+			var keyVal = 'store.' + cfg.windowProp;
+			var previousVal = uiUtils.getVal(keyVal);
+
+
+			if (previousVal != null) {
+			} else {
+				if (cfg.defaultValue) {
+					previousVal = cfg.defaultValue;
+				}
+			}
+
+			console.log('keyval', keyVal, previousVal)
+
+			if (previousVal != null) {
+				uiUtils.setVal(keyVal, previousVal);
+				setTimeout(function onLateR(){
+					callIfDefined(cfg.fxChange, previousVal)
+				},500)
+
+				window[cfg.windowProp] = previousVal;
+				var val = eval('window.' + cfg.windowProp);
+				ui.prop('checked', val);
+			}
 		}
+
+
 
 		ui.click(onChangeOptions);
 		function onChangeOptions(event) {
-			console.log('...', cfg.windowProp)
-			var val = ui.is(':checked')
+			console.log('...', cfg.windowProp);
+			var val = ui.is(':checked');
 			if ( cfg.windowProp) {
 				var val = eval('window.'+cfg.windowProp+'='+val );
+				uiUtils.setVal(keyVal, val);
 				//ui.prop('checked', val);
-			}
+			};
+
+			callIfDefined(cfg.fxChange, val)
+
 		}
+
+
 
 		//	lbl.css('user-select', 'none');
 		u.addUI(cfg, ui);
@@ -296,7 +325,19 @@ function defineUtils() {
 		var ui = u.tag(cfg.tag)
 		ui.html(cfg.text)
 		u.addUI(cfg, ui);
+		if ( cfg.newBaseContainer ) {
+			cfg.lastAddTo = cfg.addTo
+			cfg.addTo = ui;
+		}
 		return cfg;
+	}
+	uiUtils.changeContainer = function focusOnContainer() {
+		uiUtils.flagCfg.lastAddTo = uiUtils.flagCfg.addTo;
+		uiUtils.flagCfg.addTo = uiUtils.lastCfg.ui;
+		//console.log('adding to', uiUtils.flagCfg.addTo)
+	}
+	uiUtils.popContainer = function popContainer() {
+		uiUtils.flagCfg.addTo = uiUtils.flagCfg.lastAddTo;
 	}
 	p.addTitle =function addtitle(cfg) {
 		cfg = u.cfg.str(cfg, 'text')
@@ -304,9 +345,28 @@ function defineUtils() {
 		u.addLabel(cfg)
 	}
 
+	p.addIcon = function addIcon(iconName) {
+		var cfg = {}; //cfg = u.cfg.str(cfg, 'text')
+		cfg.tag = 'span'
+		var cfg = u.addLabel(cfg)
+		var span = cfg.ui;
+		span.addClass('glyphicon')
+		span.addClass('glyphicon-'+iconName) //+'-circle')
+		return cfg
+	}
+
 	uiUtils.fxTest = function fxTest() {
 		console.log('hello');
 	}
+
+	uiUtils.addBorder = function addBorder() {
+		uiUtils.lastCfg.ui.css('border', 'solid 1px #f2f2f2')
+	}
+
+	uiUtils.makeInline = function makeInline() {
+		uiUtils.lastCfg.ui.css('display', 'inline-block')
+	}
+
 
 	uiUtils.scrollToBottom = function scrollToBottom(jq){
 		//$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
@@ -331,14 +391,16 @@ function defineUtils() {
 		}
 
 		btn[0].onclick = cfg.fxDone
+		if ( cfg.fxClick )
+			btn[0].onclick = cfg.fxClick
 
 		if ( cfg.addSpacer ) {
 			uiUtils.spacer();
 		}
 
 		btn.addClass('btn')
-		btn.addClass('btn-primary btn-sm')
-		//btn.on('click', cfg.fxDone)
+		btn.addClass('btn-primary btn-xs')
+		//btn.on('click', cfg.fxDone) 
 	}
 	p.addButton = u.addBtn;
 
@@ -446,6 +508,8 @@ function defineUtils() {
 		btn.css('display', 'inline-block');
 		u.addUI(cfg, btn)
 	}
+	uiUtils.addSpace = uiUtils.spacer;
+
 	uiUtils.disable = function disable(id, fxD) {
 		$(id).css('opacity', 0.3);
 	}
@@ -528,11 +592,15 @@ function defineUtils() {
 		if ( cfg.addTo ) {
 			cfg.addTo.append(ui)
 		}
+		console.log('adding to', '2', ui.type, cfg.addTo)
 
 		if ( cfg.id ) {
 			cfg.jid = cfg.id;
 			ui.attr('id', cfg.id);
 			cfg.id = '#'+cfg.id;
+		}
+		if ( cfg.tooltip ) {
+			ui.attr('title', cfg.tooltip)
 		}
 		cfg.ui = ui;
 		u.lastCfg = cfg;
@@ -683,6 +751,36 @@ function defineUtils() {
 	defineSetValues();
 
 
+	function defineClickHandler() {
+		p.setupclickListener = function setupclickListener(jq, val) {
+			function onKeyDown(e) {
+				if (e.keyCode == 16) {
+					//alert(e.which + " or Shift was pressed");
+					window.shiftKey = true
+					console.log('keydown')
+				}
+			}
+			function onKeyUp(e) {
+				if (e.keyCode == 16) {
+					//alert(e.which + " or Shift was pressed");
+					window.shiftKey = false
+					console.log('keyup')
+				}
+			}
+
+			$(document).off('keydown', onKeyDown);
+			$(document).off('keyup', onKeyUp);
+
+			$(document).keydown(onKeyDown);
+			window.onKeyDown = onKeyDown;
+
+			$(document).keyup(onKeyUp);
+			window.onKeyUp = onKeyUp;
+
+		}
+		//	p.setupclickListener()
+	}
+	defineClickHandler();
 
 
 	p.utils = {};
@@ -1042,7 +1140,7 @@ function defineUtils() {
 	defineComparison();
 
 	function defineUrl() {
-		p.getUrl = function getUrl(url, data, fxDone) {
+		p.getUrl = function getUrl(url, data, fxDone, fxError) {
 			if ( $.isFunction(data)) {
 				fxDone = data;
 			}
@@ -1054,8 +1152,9 @@ function defineUtils() {
 					callIfDefined(fxDone, data)
 				},
 				error: function (a,b,c) {
-					console.error('request failed', a,b,c)
+					console.error(url,'request failed', a,b,c)
 					//gUtils.remoteFailed(a,b,c)
+					callIfDefined(fxError, a,b,c, url)
 				}
 			});
 		}
@@ -1128,8 +1227,8 @@ function defineUtils() {
 
 			});
 		}
-		
-		
+
+
 		u.debouncer = function debouncer(fx, name, time) {
 			//if ( time )
 			var d = {}
@@ -1147,7 +1246,7 @@ function defineUtils() {
 					fx()
 				}, time)
 			}
-			return d; 
+			return d;
 		}
 
 	}
