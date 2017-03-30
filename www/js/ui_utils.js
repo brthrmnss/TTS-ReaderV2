@@ -108,6 +108,8 @@ function defineUtils() {
 	var p = uiUtils;
 	var u = p;
 
+	u.data = {}
+
 	uiUtils.dictCfg = {};
 
 	$.isString = function isString(objectOrString) {
@@ -292,6 +294,66 @@ function defineUtils() {
 
 		return cfg;
 	}
+	
+	uiUtils.addDropdown = function addLabel(cfg) {
+		cfg = u.cfg.str(cfg, 'text')
+		cfg.tag = dv(cfg.tag, 'select');
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+
+		var ui = u.tag(cfg.tag)
+		ui.html(cfg.text)
+
+		if ( cfg.options ) {
+			$.each(cfg.options, function onAddOtpion(k,v) {
+
+
+				if ( v.value == null ) {
+					v = {value:v, text:v}
+				}
+				console.log('k', v)
+				ui.append($('<option>', /*{
+					value: item.value,
+					text: item.text
+				}*/v ));
+
+			})
+		}
+		//$('<span/>')
+		/*if (cfg.width){
+			if ( $.isNumeric(cfg.width) ) {
+				cfg.width = cfg.width+'px';
+			}
+			lbl.css('width', cfg.width);
+			lbl.css('display', 'inline-block');
+		}
+		lbl.css('user-select', 'none');*/
+		u.addUI(cfg, ui);
+		return cfg;
+	}
+	
+	uiUtils.addDD = uiUtils.addDropdown
+
+	uiUtils.addNumber = function addNumber(cfg) {
+		cfg = u.cfg.str(cfg, 'text')
+		cfg.tag = dv(cfg.tag, 'input');
+		uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+
+		var lbl = u.tag(cfg.tag)
+		lbl.html(cfg.text)
+		//$('<span/>')
+		/*if (cfg.width){
+		 if ( $.isNumeric(cfg.width) ) {
+		 cfg.width = cfg.width+'px';
+		 }
+		 lbl.css('width', cfg.width);
+		 lbl.css('display', 'inline-block');
+		 }
+		 lbl.css('user-select', 'none');*/
+		lbl.attr('type', 'number');
+
+		u.addUI(cfg, lbl);
+		return cfg;
+	}
 	uiUtils.addLabel = function addLabel(cfg, id) {
 		cfg = u.cfg.str(cfg, 'text');
 		u.cfg.addToCfg(cfg, 'id', id);
@@ -367,7 +429,7 @@ function defineUtils() {
 		uiUtils.lastCfg.ui.css('display', 'inline-block')
 	}
 
-
+ 
 	uiUtils.scrollToBottom = function scrollToBottom(jq){
 		//$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
 		$(jq).clearQueue();
@@ -385,14 +447,23 @@ function defineUtils() {
 		btn.html(cfg.text)
 
 		//debugger;
+		/*
 		if ( cfg.addTo ) {
 			//debugger;
 			cfg.addTo.append(btn)
 		}
+		*/
+
+		u.addUI(cfg, btn)
 
 		btn[0].onclick = cfg.fxDone
-		if ( cfg.fxClick )
-			btn[0].onclick = cfg.fxClick
+		if ( cfg.fxClick ) {
+			$(btn).on('click', cfg.fxClick)
+		}
+
+		if ( cfg.data ){
+			btn[0].data = cfg.data
+		}
 
 		if ( cfg.addSpacer ) {
 			uiUtils.spacer();
@@ -593,6 +664,21 @@ function defineUtils() {
 			cfg.addTo.append(ui)
 		}
 		console.log('adding to', '2', ui.type, cfg.addTo)
+		if (cfg.addSpacerAfter || cfg.addSpaceAfter) {
+			u.spacer()
+		}
+
+		if (cfg.defaultValue) {
+			ui.val(cfg.defaultValue)
+		}
+
+		if (cfg.width) {
+			if ($.isNumeric(cfg.width)) {
+				cfg.width = cfg.width + 'px';
+			}
+			ui.css('width', cfg.width);
+			//lbl.css('display', 'inline-block');
+		}
 
 		if ( cfg.id ) {
 			cfg.jid = cfg.id;
@@ -614,6 +700,38 @@ function defineUtils() {
 		return u.lastCfg.id;
 	}
 
+	function defineBasicMethods() {
+		p.enable = function enabled(id) {
+			var ui = $(id)
+			ui.prop('disabled', false);
+		}
+
+		p.disable = function disable(id) {
+			var ui = $(id)
+			ui.prop('disabled', true);
+		}
+		p.ifEmpty =function ifEmpty(id, fx) {
+			throwIfNull(fx, 'need a function for ' +  id)
+			var ui = $(id)
+			console.log('txt', ui.text(), ui.html())
+			if ( ui.is('input') && ui.val() == '' ) {
+				fx(ui)
+			}
+			if ( ui.text() == '' ) {
+				fx(ui)
+			}
+		}
+		p.getTimestamp = function getTimestamp() {
+			var d = new Date();
+			d = d.toString()
+			d = d.split(' GMT')[0]
+			d = d.replace(/ /gi, '_');
+			d = d.replace(/:/gi, '-');
+			d = '_'+d;
+			return d;
+		}
+	}
+	defineBasicMethods();
 
 	function defineSetValues() {
 		p.setText = function setText(jq, val) {
@@ -697,6 +815,9 @@ function defineUtils() {
 					id = '#'+id;
 				}
 				var ui = $(id);
+			}
+			if ( ui.is('span') || ui.is('div')){
+				return ui.html();
 			}
 			return ui.val()
 		}
@@ -785,6 +906,7 @@ function defineUtils() {
 
 	p.utils = {};
 	p.utils.mergeIn = function mergeIn(a, b, overwriteVals ) {
+		if ( a == null ) { return }
 		if ( b == null ) { return }
 		//function copyProps(from, to) {
 		$.each(a, function(k,v){
@@ -1140,10 +1262,32 @@ function defineUtils() {
 	defineComparison();
 
 	function defineUrl() {
+		p.getLocation = function getLocation(path , port) {
+			if ( path.startsWith('/') == false ) {
+				path = '/'+path;
+			}
+			if ( port == null ) {
+				port = ''
+			} else {
+				port = ':' + port
+			}
+			var url = 'http://'+ window.location.hostname + port
+				+ path;
+			return url;
+		}
 		p.getUrl = function getUrl(url, data, fxDone, fxError) {
+			if ( $.isFunction(data) && $.isPlainObject(fxDone)) {
+				//criss cross
+				var _fxDone = data;
+				data = fxDone;
+				fxDone = _fxDone;
+			}
+
 			if ( $.isFunction(data)) {
 				fxDone = data;
 			}
+
+			console.log('data', data)
 
 			$.ajax({
 				url: url,
@@ -1178,6 +1322,13 @@ function defineUtils() {
 			});
 		}
 
+		p.openNewWindow = function openNewWindow(url) {
+			window.open(url, 'status', "height=200,width=200");
+
+			return;
+			var win = window.open(url, '_blank');
+			win.focus();
+		}
 	}
 	defineUrl();
 
@@ -1362,6 +1513,58 @@ function defineUtils() {
 		}
 	}
 	defineLookAt();
+
+
+
+	function defineSockets() {
+		uiUtils.socket = {};
+		uiUtils.socket.dict = {};
+		uiUtils.socket.nextEmit = function nextEmit(t) {
+			uiUtils.socket.nextEmitter = t;
+		}
+
+		uiUtils.socket.emit = function emit(msg, data, fxDone) {
+
+			self.data.socket.emit(msg, data)
+			var key = null;
+			if (key == null && uiUtils.socket.nextEmitter != null) {
+				key = uiUtils.socket.nextEmitter
+			}
+			var existingListener = uiUtils.socket.dict[key];
+			if (existingListener != null) {
+				 console.warn('u already set this ...')
+				return; //skip ...
+			}
+			uiUtils.socket.dict[key] = fxDone;
+			self.data.socket.on(data.cmd + '_results', function _onResults(msg) {
+				console.log('msg', msg);
+				fxDone(msg)
+
+			})
+
+		}
+
+
+		uiUtils.socket.addListener = function addListener(type, fxDone, retryCount) {
+			if ( self.data.socket == null ) {
+				if ( retryCount == null ) { retryCount = 0; }
+				if ( retryCount > 10 ) { console.error('failed to ', this.name, type, fxDone)}
+				setTimeout(function onRetry() {
+					retryCount++
+					addListener(type, fxDone, retryCount)
+				}, 500);
+				return;
+			}
+			self.data.socket.on(type, function _onResults(data) {
+				//console.log('msg', msg);
+				fxDone(data)
+
+			})
+
+		}
+	}
+
+	defineSockets();
 }
 
 defineUtils();

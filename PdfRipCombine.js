@@ -70,7 +70,8 @@ function PdfRipCombine() {
         console.log('files', files)
 
         var cheerio = require('cheerio');
-        var fileOutput = dir.slice(0,-1)+'.'+files.length+'.html'
+        self.settings.oddName = sh.dv(self.settings.oddName, '')
+        var fileOutput = dir.slice(0,-1)+'.'+files.length+self.settings.oddName+'.html'
         var contents = ''
         sh.each(files, function combineItems(k,v) {
             var body = sh.readFile(v);
@@ -84,6 +85,8 @@ function PdfRipCombine() {
         self.proc('start', files[0])
         self.proc('end', files.slice(-1)[0])
         self.proc('out', fileOutput)
+
+        sh.callIfDefined(self.settings.fxDone, fileOutput)
     }
 
     self.runServer = function runServer() {
@@ -106,6 +109,8 @@ function PdfRipCombine() {
     }
 }
 
+module.exports.PdfRipCombine = PdfRipCombine;
+
 if (module.parent == null) {
 
 
@@ -118,7 +123,16 @@ if (module.parent == null) {
 
     options.dirBook =  '/uploads/Artificial Intelligence for Games, Second Edition.pdf'
 
+    options.dirBook = '/uploads/the_responsive_city_engaging_c.pdf'
+    options.dirBook = '/uploads/[Donald_A._Norman]_Living_with_Complexity(BookZZ.org).pdf'
+
+    options.maxPages = 10
+    options.oddName = 'asdftest'
+
     t.loadConfig(options);
+    options.fxDone = function fxDone(file) {
+        console.log('...what', file)
+    }
     return;
 
 }

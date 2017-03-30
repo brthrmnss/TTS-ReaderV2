@@ -22,6 +22,9 @@ rip.settings.processors = []
 rip.settings.addDashesOnVGap = false;
 //rip.settings.stopAfterSorting = true
 
+rip.settings.margin.b = 10
+//rip.settings.margin.t = 20
+
 var rUtils = {};
 rUtils.t = '\t'
 rUtils.n = '\n'
@@ -737,7 +740,7 @@ window.fx2 = function fx2 (play, playIndex) {
                 div2.text('bottom margin')
                 uiUtils.absHelper(div2, 0, null, 0, 0);
                 var marginHeight = parent.height()*(margins.b/100);
-                div2.css('marginHeight', marginHeight);
+                div2.css('height', marginHeight);
                 margins.maxY = parentHeight-marginHeight;
                 parent.append(div2)
             }
@@ -2208,6 +2211,42 @@ window.uploadEntireBook = function uploadEntireBook() {
         window.uploadAllPages(-1);
     }, 800)
 }
+
+
+
+function exportEntireBookFxs() {
+    window.onConvertEntireBook = function onConvertEntireBook() {
+        window.uploadEntireBook();
+    }
+
+    window.onCombineEntireBook = function onCombineEntireBook() {
+        console.log('CombineEntireBook()')
+        var data = {}
+        data.book_name = 'xb'
+        data.book_name = window.$scope.pdfURL;
+        var url = 'http://127.0.0.1:6006/upBookCombine';
+        $.ajax({
+            url: url,
+            type: 'get',
+            data: data,
+            success: onWavDataResponseRecieved,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            error:function onError(a,b,c,d) {
+                console.error(url, a,b,c,d)
+            }
+            //dataType: dataType
+        });
+
+        function onWavDataResponseRecieved() {
+            console.info('done')
+        }
+
+        //window.uploadEntireBook();
+    }
+}
+exportEntireBookFxs();
 
 window.uploadRemainingPages = function uploadRemainigPages(){
     setTimeout(function startUploading() {

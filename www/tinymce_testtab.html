@@ -10,26 +10,6 @@
     <script src="js/list.js"></script>
     <script src="js/nlp_compromise.js"></script>
     <script src="js/lib/js.cookie.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
-<!--
-   <link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">
--->
-
-    <script src="dist/js/lib/bootstrap.min.js"></script>
-
-    <style>
-        body {
-            padding: 10px;
-        }
-        .btn {
-            border-radius: 0px;
-        }
-    </style>
-    <!--
-        <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
-        &lt;!&ndash;<link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">&ndash;&gt;
-        <script src="dist/js/lib/bootstrap.min.js"></script>-->
     <!--<script src="js/reloader.js"></script>-->
     <!-- <script src="js/lib/jquery-1.11.2.min.js"></script>
      <script src="js/lib/js.cookie.js"></script>
@@ -61,6 +41,8 @@
  -->
 
     <script src="js/tinymce/tinymce.min.js"></script>
+
+    //<script src="js/tinymce/plugins/indent/tinymce-indent-outdent-code.js"></script>
     <script>
 
 
@@ -129,7 +111,7 @@
             var content = b.text();
             var children = b.children();
             var children = b.find('*');
-            children.removeClass('highlight')
+            children.removeClass('highlight');
         }
 
         tinymce.init({ selector:'textarea',
@@ -138,46 +120,36 @@
             /*plugins: "spellchecker",
              menubar: "tools",
              toolbar: "spellchecker",*/
-            plugins:["nonbreaking", 'indent'],
-            nonbreaking_force_tab: true,
             setup: function(editor) {
+
+                var ed = editor;
+                ed.on('keydown', function onCatchATab(event) {
+                    if (event.keyCode == 9) { // tab pressed
+                        if (event.shiftKey) {
+                            ed.execCommand('Outdent');
+                        }
+                        else {
+                            ed.execCommand('Indent');
+                        }
+
+                        event.preventDefault();
+                        return false;
+                    }
+                });
+
                 editor.on('change', function(e) {
                     console.log('change event', e);
-
-                    if ( window.speakWhenNodeChanged ) {
-                        window.editSpeakDebouncer.debounce(function speakCurrentNode(){
-                            window.speak({text:c.elementUI.text() })
-                        })
-                    }
                 });
                 editor.on('undo', function(e) {
                     console.log('undo event', e);
                 });
 
                 var play2 =  debounce( c.speakCurrentElement,500);
-                editor.on('keydown',function keydown(e) {
-                    if ( e.keyCode == 16 ) {
-                    //    console.debug('keydown event: ' + e.keyCode);
-                        tHelper.shiftKey = true;
-                    }
-                })
-                editor.on('keyup',function keyup(e) {
-                    if ( e.keyCode == 16 ) {
-                      //  console.debug('keyup event: ' + e.keyCode);
-                        tHelper.shiftKey = false;
-                    }
-                })
                 editor.on('keyup',function(e) {
-                    if (window.showChangeWhenHere != false ) {
-                        console.debug('Key up event: ' + e.keyCode);
-                    }
+                    console.debug('Key up event: ' + e.keyCode);
                     var content = tinyMCE.get('mainContent').getContent();
                     Cookies.set('prevContent', content);
 
-                    //console.log('what is content after keyup', content);
-                    if ( window.t) {
-                        window.t.keyup(content, e)
-                    }
 
                     if (e.keyCode == 86 && e.ctrlKey ) {
                         console.debug('paste')
@@ -187,15 +159,9 @@
                         }, 300)
                         return;
                     }
-                    if ( window.speakWhenNodeChanged ) {
-                        window.editSpeakDebouncer.debounce(function speakCurrentNode(){
-                            window.speak({text:c.elementUI.text() })
-                        })
-                    }
-                    if (window.showChangeWhenHere != false ) {
-                        console.debug(e.keyCode, e.ctrlKey)
-                    }
-                    return
+
+                    console.debug(e.keyCode, e.ctrlKey)
+                   return
 
                     play2()
                 });
@@ -226,22 +192,13 @@
                 })
 
                 editor.on('nodeChange', function onNodeChanged(e, wait) {
-
-
-                    if ( tHelper.shiftKey ) {
-                        return;
-                    }
-
-                    if (window.clickToGoToNextLine == false) {
-                        return;
-                    }
                     if ( wait != false ) {
                         setTimeout(function waitFewSecs(){
                             onNodeChanged(e, false)
                         },100)
                         return;
                     }
-                    console.log('node event', e.element, c.pasted, e);
+                    console.log('node event', e.element, c.pasted);
                     if ( c.pasted == true ) {
                         c.pasted = false;
                         return;
@@ -251,7 +208,6 @@
                     }
                     c.element = e.element
                     var ui = $(e.element);
-                    c.elementUI = ui;
 
 
                     $('#txtEdit').text(ui.text())
@@ -278,24 +234,24 @@
 
         tHelper.pasteHandle = function pasteHandle  (event, txt) {
 
-            console.log('pasted')
+                console.log('pasted')
 
-            if ( txt == null ) {
-                var currentVal = $(this).val();
+                if ( txt == null ) {
+                    var currentVal = $(this).val();
 
-            } else {
-                currentVal = txt;
-            }
-            var txtOrig = currentVal;
+                } else {
+                    currentVal = txt;
+                }
+                var txtOrig = currentVal;
 
-            //fix issues with text
-            currentVal = currentVal.replace(//gm, "");
-            currentVal = currentVal.replace(/’/gm, "'");
+                //fix issues with text
+                currentVal = currentVal.replace(//gm, "");
+                currentVal = currentVal.replace(/’/gm, "'");
 
-            if (currentVal == oldVal) {
-                return; //check to prevent multiple simultaneous triggers
-            }
-        };
+                if (currentVal == oldVal) {
+                    return; //check to prevent multiple simultaneous triggers
+                }
+                };
 
         tHelper.playAllSentences = function readText() {
             var tiny = tinyMCE.get('mainContent');
@@ -334,20 +290,20 @@
                     text +=  ui.text().trim() +  ' ';
             })
 
-            // var ui = $(c.element)
-            // var text = ui.text()
-            // debugger;
-            // console.debug(text, content.split(text)[1]);
-            // var final = text  + content.split(text)[1];
-            console.debug('txt to speac', text);
-            window.speak(text)
-            // play2()
-        };
+                    // var ui = $(c.element)
+                    // var text = ui.text()
+                    // debugger;
+                    // console.debug(text, content.split(text)[1]);
+                    // var final = text  + content.split(text)[1];
+                    console.debug('txt to speac', text);
+                    window.speak(text)
+                    // play2()
+                };
 
 
 
 
-        //   debugger
+     //   debugger
         tHelper.setupPaste()
 
         tHelper.setupControlBox = function setup() {
@@ -437,50 +393,10 @@ jQuery(head).append(css);
 <div id="txtEdit">
 
 </div>
-<!--<span id="speakingBox">speaking</span>-->
+<span id="speakingBox">speaking</span>
 <div id="txtConsole" >sttaus</div>
 <button onclick="reverse()">asdf</button>
 <div id="controlBox"> </div>
-
-
-<div id="divSaveArea" >
-
-</div>
-
-
-<script src="js/ui_utils.js" ></script>
-<script src="js/tinymce_autosave.js" ></script>
-<script src="http://localhost:14002/socket.io-1.2.0.js" ></script>
-<script src="http://localhost:10110/reloader.js" ></script>
-<script>
-    function onReloader() {
-        reloader.reloadWhen('tinymce_autosave.html');
-        reloader.filter = '/TTS-Reader/';
-        reloader.reloadWhenFx('tinymce_autosave.js', function onTestOneJs(a, b, c) {
-            console.log('reload it', a,b,c);
-            //window.drawPBJS.go();
-        })
-        reloader.reloadWhenFx('ui_utils.js', function onTestOneJs(a, b, c) {
-            setTimeout(function onWaitForIt() {
-                console.log('reload it', a,b,c);
-                window.bendIt()
-            }, 300)
-
-        })
-
-        //C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/test3/testFramework.js
-        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/', '')
-        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/delegation/Reader/TTS-Reader/www/', '')
-        //reloader
-    }
-    try {
-        onReloader()
-    } catch ( e) {
-        console.log('e', e)
-    }
-</script>
-
-
 </body>
 
 

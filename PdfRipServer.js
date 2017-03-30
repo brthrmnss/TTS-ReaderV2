@@ -4,13 +4,15 @@
  */
 var sh = require('shelpers').shelpers;
 
+var PdfRipCombine = require(__dirname + '/' + 'PdfRipCombine').PdfRipCombine
+
+
 function PdfRipServer() {
     var p = PdfRipServer.prototype;
     p = this;
     var self = this;
 
     p.loadConfig = function loadConfig(config) {
-
         self.settings = config;
         config.port = sh.dv(config.port, 6006)
 
@@ -90,8 +92,37 @@ function PdfRipServer() {
             res.send('Hello World!');
         });
 
+        app.get('/upBookCombine', function onCombineUploadedBook (req, res) {
+
+            var body = req.query;
+            var bookName = body.book_name;
+
+            var t = new PdfRipCombine()
+            var options = {}
+            //options.port = 7789
+
+            /* options.startAt = 318;
+             options.maxPages = 10*/
+            console.log('building teh book', bookName)
+            options.dirBook =  '/uploads/Artificial Intelligence for Games, Second Edition.pdf'
+
+            options.dirBook = '/uploads/the_responsive_city_engaging_c.pdf'
+            options.dirBook = bookName //'/uploads/[Donald_A._Norman]_Living_with_Complexity(BookZZ.org).pdf'
+          //  options.maxPages = 10
+            options.oddName = 'asdftest'
+            options.fxDone = function (){
+                console.log('..')
+                res.send('Hello World! finisehd ');
+            }
+            t.loadConfig(options);
+            return;
+        });
 
 
+
+
+        
+        
 
         var storage =   multer.diskStorage({
             destination: function (req, file, callback) {

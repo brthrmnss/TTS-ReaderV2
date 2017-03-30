@@ -335,7 +335,6 @@ app.get("/epub.html/*",function onEditEpub(req,res){
 			j.add(bookJSON, true, 'originalUrl');
 
 			//epub = epub.replace(/src="\.\.\//gi, '~~~~')
-		ver.js
 			if ( req.query.endAt != null ) {
 				var endAt = parseFloat(req.query.endAt)
 				console.log('end at ', endAt)
@@ -467,8 +466,14 @@ app.get("/epub.html/*",function onEditEpub(req,res){
 		epub = epub.replace('---yyy---', fileContent)
 		res.send(epub);
 	} else if ( file.endsWith('.js') ) {
-		var y =  'www/js/'+file.split('/js/')[1];
-		fileContent = fs.readFileSync( y, 'utf8' );
+		var ending = file.split('/js/')[1];
+		var y =  'www/js/'+ending;
+		if ( ending === undefined ) {
+			y = 'www/'+file;
+		}
+		console.error('issues', y)
+		console.error('issues', file)
+		fileContent = fs.readFileSync( __dirname + '/' + y, 'utf8' );
 		res.send(fileContent);
 	} else { //send raw file
 		fileContent = fs.readFileSync(file )

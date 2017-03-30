@@ -131,7 +131,10 @@ function MergeEpub() {
 
         var parser = new xml2js.Parser();
         var data = fs.readFileSync(fileToc) //, function(err, data) {
-        parser.parseString(data, function (err, result) {
+        data = data.toString();
+        data = sh.replace(data, 'ncx:', '')
+        self.proc('reading toc', fileToc)
+        parser.parseString(data, function onReadToc(err, result) {
             // console.dir(result);
             var x = result.ncx.navMap[0].navPoint;
             var files = []
@@ -162,6 +165,24 @@ function MergeEpub() {
                         return; //skip included
                     }
                     files.push(fileSrc)
+
+                    if ( v.navPoint ) {
+                        sh.each(v.navPoint, function onAddEachFile_inner(k, v) {
+                            var fileSrc = v.content[0].$.src;
+
+                            fileSrc = dir2+fileSrc.split('#')[0];
+
+                            self.proc('inner nav', sh.toJSONString(v.content[0]))
+                            if (files.indexOf(fileSrc) != -1) {
+                                return; //skip included
+                            }
+                            //https://youtu.be/jmoRkepTHsg?t=36s
+                            files.push(fileSrc)
+                        })
+
+                    }
+
+
                 })
 
 
@@ -382,6 +403,7 @@ if (module.parent == null) {
     dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Medical Herbalism  David Hoffmann FNIMH AHGepub'
     dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Tokyo Fashion City  Philomena Keetepub'
     dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/The Power of Presence  Kristi Hedgesepub'
+    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Babylonjs Essentials  Unknownepub'
 
     options.dir = dir;
 
