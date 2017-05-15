@@ -1,9 +1,45 @@
 [
 	{
-		"originalUrl": "/epub.html/Babylon.js%20Essentials%20-%20Unknown.epub",
+		"originalUrl": "/epub.html/[Kaplan_Justin]_When_the_Astors_Owned_New_York(book4you.org).epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
-		"name": "Babylonjs Essentials  Unknown"
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Kaplan_Justin_When_the_Astors_Owned_New_Yorkbook4youorgepub/epub.html",
+		"name": "Kaplan_Justin_When_the_Astors_Owned_New_Yorkbook4youorg"
+	},
+	{
+		"originalUrl": "/epub.html/Networks%20of%20New%20York%20-%20Ingrid%20Burrington.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Networks of New York  Ingrid Burringtonepub/epub.html",
+		"name": "Networks of New York  Ingrid Burrington"
+	},
+	{
+		"originalUrl": "/epub.html/Our%20Robots,%20Ourselves%20-%20David%20A.%20Mindell.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Our Robots Ourselves  David A Mindellepub/epub.html",
+		"name": "Our Robots Ourselves  David A Mindell"
+	},
+	{
+		"originalUrl": "/epub.html/[Paul_McGillick_Ph.D,_Masano_Kawana]_Sustainable_L(bookzz.org).epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Paul_McGillick_PhD_Masano_Kawana_Sustainable_Lbookzzorgepub/epub.html",
+		"name": "Paul_McGillick_PhD_Masano_Kawana_Sustainable_Lbookzzorg"
+	},
+	{
+		"originalUrl": "/epub.html/Bali%20Living_%20Innovative%20Tropica%20-%20Gianni%20Francione.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Bali Living_ Innovative Tropica  Gianni Francioneepub/epub.html",
+		"name": "Bali Living_ Innovative Tropica  Gianni Francione"
+	},
+	{
+		"originalUrl": "/epub.html/Super%20Potato%20Design%20-%20Mira%20Locher.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Super Potato Design  Mira Locherepub/epub.html",
+		"name": "Super Potato Design  Mira Locher"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Definitive%20Book%20of%20Body%20Lan%20-%20Barbara%20Pease.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Definitive Book of Body Lan  Barbara Peaseepub/epub.html",
+		"name": "The Definitive Book of Body Lan  Barbara Pease"
 	},
 	{
 		"originalUrl": "/epub.html/Learn%20Better_%20Mastering%20the%20Ski%20-%20Ulrich%20Boser.epub",
@@ -18,22 +54,22 @@
 		"name": "How to Transform Your Ideas int  Poornima Vijayashanker"
 	},
 	{
-		"originalUrl": "/epub.html/Managing%20the%20Unmanageable_%20Rule%20-%20Mickey%20W.%20Mantle.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Managing the Unmanageable_ Rule  Mickey W Mantleepub/epub.html",
-		"name": "Managing the Unmanageable_ Rule  Mickey W Mantle"
-	},
-	{
-		"originalUrl": "/epub.html/The%20Definitive%20Book%20of%20Body%20Lan%20-%20Barbara%20Pease.epub",
-		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Definitive Book of Body Lan  Barbara Peaseepub/epub.html",
-		"name": "The Definitive Book of Body Lan  Barbara Pease"
-	},
-	{
 		"originalUrl": "/epub.html/The%20Destructive%20Power%20of%20Family%20-%20Philip%20Marcovici.epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Destructive Power of Family  Philip Marcoviciepub/epub.html",
 		"name": "The Destructive Power of Family  Philip Marcovici"
+	},
+	{
+		"originalUrl": "/epub.html/Babylon.js%20Essentials%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
+		"name": "Babylonjs Essentials  Unknown"
+	},
+	{
+		"originalUrl": "/epub.html/Managing%20the%20Unmanageable_%20Rule%20-%20Mickey%20W.%20Mantle.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Managing the Unmanageable_ Rule  Mickey W Mantleepub/epub.html",
+		"name": "Managing the Unmanageable_ Rule  Mickey W Mantle"
 	},
 	{
 		"originalUrl": "/epub.html/Rise%20of%20the%20Robots_%20Technology%20-%20Martin%20Ford.epub",

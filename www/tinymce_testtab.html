@@ -10,6 +10,14 @@
     <script src="js/list.js"></script>
     <script src="js/nlp_compromise.js"></script>
     <script src="js/lib/js.cookie.js"></script>
+
+    <script src="js/ui_utils.js"></script>
+
+
+    <!-- <script src="js/lib/jquery/jquery-1.11.1.js.ignore"></script>-->
+    <script src="js/lib/jquery/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="js/lib/jquery//jquery-ui.css">
+
     <!--<script src="js/reloader.js"></script>-->
     <!-- <script src="js/lib/jquery-1.11.2.min.js"></script>
      <script src="js/lib/js.cookie.js"></script>
@@ -42,7 +50,7 @@
 
     <script src="js/tinymce/tinymce.min.js"></script>
 
-    //<script src="js/tinymce/plugins/indent/tinymce-indent-outdent-code.js"></script>
+
     <script>
 
 
@@ -114,19 +122,33 @@
             children.removeClass('highlight');
         }
 
+        c.dbg = {}
+        c.dbg.debugKeyEvents = false;
+        c.dbg.debugKeyUpEvents = false;
+        c.dbg.debugNodeChangeEvents = false;
+
         tinymce.init({ selector:'textarea',
             height: 500,
             theme: 'modern',
             /*plugins: "spellchecker",
              menubar: "tools",
              toolbar: "spellchecker",*/
+            // toolbar: "file edit insert view format table tools undo redo | currentdate",
+            toolbar: [
+                'undo redo | styleselect | bold italic | link image',
+                'alignleft aligncenter alignright | bullist numlist'
+            ],
             setup: function(editor) {
+
+                window.ed = editor;
 
                 var ed = editor;
                 ed.on('keydown', function onCatchATab(event) {
                     if (event.keyCode == 9) { // tab pressed
                         if (event.shiftKey) {
                             ed.execCommand('Outdent');
+                            //ed.execCommand('Strikeout');
+                            //ed.execCommand('Strikethrough');
                         }
                         else {
                             ed.execCommand('Indent');
@@ -135,6 +157,25 @@
                         event.preventDefault();
                         return false;
                     }
+
+                    // if (event.keyCode == 83) { // ctrl alt s
+                    if (event.keyCode == 68) { // ctrl alt d
+
+                        //strick through .....
+                        if (event.ctrlKey && event.altKey ) {
+                            ed.execCommand('Strikethrough');
+                            window.ed.selection.select(c.element)
+                            event.preventDefault();
+                            return false;
+                        }
+                        else {
+                            //ed.execCommand('Indent');
+                        }
+                    }
+
+
+
+
                 });
 
                 editor.on('change', function(e) {
@@ -146,7 +187,8 @@
 
                 var play2 =  debounce( c.speakCurrentElement,500);
                 editor.on('keyup',function(e) {
-                    console.debug('Key up event: ' + e.keyCode);
+                    if ( c.dbg.debugKeyUpEvents)
+                        console.debug('Key up event: ' + e.keyCode);
                     var content = tinyMCE.get('mainContent').getContent();
                     Cookies.set('prevContent', content);
 
@@ -160,8 +202,28 @@
                         return;
                     }
 
-                    console.debug(e.keyCode, e.ctrlKey)
-                   return
+                    if ( c.dbg.debugKeyEvents ) {
+                        console.debug(e.keyCode, e.ctrlKey)
+                    }
+
+                    var txt = c.ui.text();
+                    tagTxt = txt
+                    if ( tagTxt.includes(':')) {
+                        var tagTxt = txt.split(':')[0]
+                    }
+                    var tags = tagTxt.split(', ')
+                    var acOn = tags.slice(-1)[0]
+
+                    var ac = $('#tags')
+
+                    ac.val(acOn)
+                    //
+                    ac.autocomplete( "search", acOn );
+                    //debugger
+
+
+                    console.debug('\t', '---', acOn, tags);
+                    return;
 
                     play2()
                 });
@@ -173,24 +235,24 @@
                 });
 
 
-                editor.on('nodeChangeX', function(e) {
-                    console.log('node event', e.element);
-                    if (  c.element == e.element ) {
-                        return
-                    }
-                    c.element = e.element
-                    var ui = $(e.element);
-
-                    // var ui = $(c.element)
-                    // var text = ui.text()
-                    // debugger;
-                    // console.debug(text, content.split(text)[1]);
-                    // var final = text  + content.split(text)[1];
-                    console.debug('txt to speac', text);
-                    window.speak(text)
-                    // play2()
-                })
-
+                /*  editor.on('nodeChangeX', function(e) {
+                 console.log('node event', e.element);
+                 if (  c.element == e.element ) {
+                 return
+                 }
+                 c.element = e.element
+                 var ui = $(e.element);
+                 c.ui = ui;
+                 // var ui = $(c.element)
+                 // var text = ui.text()
+                 // debugger;
+                 // console.debug(text, content.split(text)[1]);
+                 // var final = text  + content.split(text)[1];
+                 console.debug('txt to speac', text);
+                 window.speak(text)
+                 // play2()
+                 })
+                 */
                 editor.on('nodeChange', function onNodeChanged(e, wait) {
                     if ( wait != false ) {
                         setTimeout(function waitFewSecs(){
@@ -198,7 +260,9 @@
                         },100)
                         return;
                     }
-                    console.log('node event', e.element, c.pasted);
+                    if  ( c.dbg.debugNodeChangeEvents ) {
+                        console.log('node event', e.element, c.pasted);
+                    }
                     if ( c.pasted == true ) {
                         c.pasted = false;
                         return;
@@ -208,12 +272,36 @@
                     }
                     c.element = e.element
                     var ui = $(e.element);
-
+                    c.ui = ui;
 
                     $('#txtEdit').text(ui.text())
                     c.removeHighlight()
                     window.speak({text:ui.text() })
                     ui.addClass('highlight')
+                });
+
+                /*
+
+                 ed.addButton('check', {
+                 type:'checkbox',
+                 text: 'some descriptive label',
+                 });
+
+                 */
+                editor.addButton('mybutton', {
+                    text: "My Button",
+                    onclick: function () {
+                        alert("My Button clicked!");
+                    }
+                });
+
+
+
+                editor.addButton('strikeout', {
+                    icon: 'strikethrough',
+                    onclick: function() {
+                        editor.execCommand('mceToggleFormat', false, 'strikethrough');
+                    }
                 });
             }
         });
@@ -234,24 +322,24 @@
 
         tHelper.pasteHandle = function pasteHandle  (event, txt) {
 
-                console.log('pasted')
+            console.log('pasted')
 
-                if ( txt == null ) {
-                    var currentVal = $(this).val();
+            if ( txt == null ) {
+                var currentVal = $(this).val();
 
-                } else {
-                    currentVal = txt;
-                }
-                var txtOrig = currentVal;
+            } else {
+                currentVal = txt;
+            }
+            var txtOrig = currentVal;
 
-                //fix issues with text
-                currentVal = currentVal.replace(//gm, "");
-                currentVal = currentVal.replace(/’/gm, "'");
+            //fix issues with text
+            currentVal = currentVal.replace(//gm, "");
+            currentVal = currentVal.replace(/’/gm, "'");
 
-                if (currentVal == oldVal) {
-                    return; //check to prevent multiple simultaneous triggers
-                }
-                };
+            if (currentVal == oldVal) {
+                return; //check to prevent multiple simultaneous triggers
+            }
+        };
 
         tHelper.playAllSentences = function readText() {
             var tiny = tinyMCE.get('mainContent');
@@ -290,20 +378,20 @@
                     text +=  ui.text().trim() +  ' ';
             })
 
-                    // var ui = $(c.element)
-                    // var text = ui.text()
-                    // debugger;
-                    // console.debug(text, content.split(text)[1]);
-                    // var final = text  + content.split(text)[1];
-                    console.debug('txt to speac', text);
-                    window.speak(text)
-                    // play2()
-                };
+            // var ui = $(c.element)
+            // var text = ui.text()
+            // debugger;
+            // console.debug(text, content.split(text)[1]);
+            // var final = text  + content.split(text)[1];
+            console.debug('txt to speac', text);
+            window.speak(text)
+            // play2()
+        };
 
 
 
 
-     //   debugger
+        //   debugger
         tHelper.setupPaste()
 
         tHelper.setupControlBox = function setup() {
@@ -354,6 +442,11 @@ var css = '<style type="text/css">' +
 jQuery(head).append(css);
 });
 -->
+<div class="ui-widget">
+    <label for="tags"> </label>
+    <input id="tags" class="txt2">
+    <span id="txtStatus2"></span>
+</div>
 
 <div class="hideContextMenu" id="contextAddBookmark">
     <div id="contextAddBookmark_lbl" ></div>
@@ -384,8 +477,8 @@ jQuery(head).append(css);
 </div>
 
 
-
 <textarea id="mainContent">
+    <p class="highlight">asdfa</p><p class="">sdf</p><p class="">as</p><p class="">df</p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfadfadf</span></span></p><p class=""><br data-mce-bogus="1" class=""></p><p class="">dfsdfsdfsdf</p>
 </textarea>
 
 
@@ -397,6 +490,118 @@ jQuery(head).append(css);
 <div id="txtConsole" >sttaus</div>
 <button onclick="reverse()">asdf</button>
 <div id="controlBox"> </div>
+
+<script>
+    $( function() {
+        var availableTags = [
+            "ActionScript",
+            "AppleScript",
+            "Asp",
+            "BASIC",
+            "C",
+            "C++",
+            "Clojure",
+            "COBOL",
+            "ColdFusion",
+            "Erlang",
+            "Fortran",
+            "Groovy",
+            "Haskell",
+            "Java",
+            "JavaScript",
+            "Lisp",
+            "Perl",
+            "PHP",
+            "Python",
+            "Ruby",
+            "Scala",
+            "Scheme"
+        ];
+        $( "#tags" ).autocomplete({
+            source: availableTags
+        });
+        $( "#tags" ).on( "autocompleteselect",
+                function onSelected( event, item ) {
+                    console.log(event, item)
+                    console.log('item', item)
+                    //window.sr.onAction(ui.item.label);
+
+                    c.ui.attr('tags', item)
+
+
+                    $( "#tags" ).val('')
+                    setTimeout(function ok() {
+                        $( "#tags" ).val('')
+                    }, 250)
+                   // var c = uiUtils.makeFloatingContainer('randomThingx')
+
+                    var div = uiUtils.addDiv('boxStuff').ui;
+                    div.css('top', '0px')
+                    div.css('right', '0px')
+                   // $('body').append(div);
+                    uiUtils.addDefaultCfg( {addTo:div} );
+                    uiUtils.makeAbs(div)
+                    uiUtils.addBtn({text:'x-'+item.item.label}, function onF() {
+                        console.log('onF')
+                    })
+                    console.log('div', div)
+
+
+                    uiUtils.abs = {}
+                    uiUtils.abs.addRelativeWrapper = function addRelativeWrapper() {
+                        var div = $('<div />')
+                        div.css('position', 'relative')
+                        return div;
+                    }
+
+                    var tagMetaHolder = 'metaDataHolder'
+                    var div = uiUtils.abs.addRelativeWrapper();
+                    div.css('text-align', 'right');
+                    div.addClass(tagMetaHolder)
+
+                    var metaHolder = c.ui.find('.'+tagMetaHolder)
+                    if ( metaHolder.length == 0 ) {
+                        metaHolder = div;
+                        c.ui.append(metaHolder);
+                        var metaHolder = c.ui.find('.'+tagMetaHolder)
+                    }
+                    uiUtils.addDefaultCfg( {addTo:metaHolder} );
+                    //uiUtils.makeAbs(div)
+                    uiUtils.addBtn({text:'x-'+item.item.label}, function onF() {
+                        console.log('onF')
+                    })
+
+
+                   // c.ui.append(div)
+
+                    //   console.log('what', $('#tags').val());
+                } );
+        /* $( "#tags" ).on( "autocompletechange",
+         function onSelected( event, ui ) {
+         console.log(event, ui)
+         console.log('item', ui)
+         console.log('what', $('#tags').val());
+         } );*/
+
+    } );
+</script>
+
+
+<script src="http://localhost:10110/reloader.js" ></script>
+<script>
+    reloader.reloadWhen('tinymce_testtab.html')
+    //reloader.filter = '/ExtBookzz/'
+    reloader.reloadWhenFx('drawPB.js', function onTestOneJs(a,b,c){
+        //console.log('pussy', a,b,c)
+        //window.drawPBJS.go();
+    })
+    //reloader
+</script>
+
+
+
+
+
 </body>
 
 
