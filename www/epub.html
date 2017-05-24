@@ -173,7 +173,9 @@
         <div id="upload-widget" style="background-color: #d2d2d2; height: 20px; width:200px;"></div>
 
         <script>
-            var myDropzone = new Dropzone("#upload-widget", { url: "/upload"});
+            var myDropzone = new Dropzone("#upload-widget", {
+                maxFilesize: 500,
+                url: "/upload"});
             myDropzone.on('success', function( file, resp ){
                 //...
             });

@@ -606,6 +606,12 @@ window.fx = function fc(){
             }
             //debugger;
 
+            if ( window.initTCustomDir ) {
+                
+                
+                debugger;
+                return;
+            }
             self.utils.findSentencesInHtml($('#bookHolderContainerClone'));
             self.fixedHTML = true
 
@@ -1534,6 +1540,9 @@ window.fx = function fc(){
         defineUtils();
 
         function defineNLP() {
+            self.data.lastItems = []
+            self.data.lastItems2 = []
+            self.data.lastItems3 = []
             p.utils.nlp = function nlp(sentence) {
 
                 var y =  nlp_compromise.text(sentence).nouns()
@@ -1548,7 +1557,16 @@ window.fx = function fc(){
                     values.push(v);
                 })
 
+                var valuesOrig = values.concat();
                 y = values;
+
+                values = values.concat(self.data.lastItems)
+                values = values.concat(self.data.lastItems2)
+                values = values.concat(self.data.lastItems3)
+
+                self.data.lastItems3 = self.data.lastItems2
+                self.data.lastItems2 = self.data.lastItems
+                self.data.lastItems = valuesOrig;
 
 
                 $('#col2_words').html('' +
@@ -1608,8 +1626,9 @@ window.fx = function fc(){
                     voice = 'IVONA 2 Brian';
                     voice = self.voice;
                 }
+                sentence = sentence.trim()
                 // debugger
-                console.log('trim',  sentence.trim().endsWith('reply'), sentence)
+               // console.log('trim',  sentence.trim().endsWith('reply'), sentence)
                 if (  sentence.trim().endsWith('reply') ) {
                     if ( self.voice == 'IVONA 2 Brian' ) {
                         //self.voice = 'IVONA 2 Joey'
@@ -1622,7 +1641,18 @@ window.fx = function fc(){
                     sentence += 'end comment.'
                 }
 
+
+                //replace UX UI ' '''
                 sentence = sentence.replace(/’/gi, "'");
+                sentence = sentence.replace(/‘/gi, "'");
+                sentence = sentence.replace(/”/gi, "\"");
+
+                //clear hash . a
+                sentence = sentence.replace(/\.'/gi, "");
+                sentence = sentence.replace(/\."/gi, "");
+                console.log('trim',  sentence.trim().endsWith('reply'), sentence)
+
+              //  debugger
                 //self.voice = voice;
                 var speakOnce = false
                 var date = new Date();
@@ -1654,7 +1684,12 @@ window.fx = function fc(){
     }
     window.SentenceHelper = SentenceHelper
 
-    function initSpeakerControls () {
+    function initSpeakerControls (loadStandalone) {
+        if ( loadStandalone ) {
+
+            initSpeaker()
+            return;
+        }
         loadHTML();
         function loadHTML() {
             $.get( '/js/speak.html', function( loadedHTML ) {
@@ -1971,6 +2006,10 @@ window.fx = function fc(){
         //   $( document ).ready( doReady ) ;
         // doReady()
 
+        if ( window.IInitSpeaker) {
+            window.initSpeakerControls = initSpeakerControls; 
+            return;
+        }
         setTimeout(initSpeakerControls, 500)
     }
 }

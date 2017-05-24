@@ -1,5 +1,83 @@
 [
 	{
+		"originalUrl": "/epub.html/test2.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/test2epub/epub.html",
+		"name": "test2"
+	},
+	{
+		"originalUrl": "/epub.html/Mapping%20Experiences_%20A%20Complete%20-%20James%20Kalbach.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Mapping Experiences_ A Complete  James Kalbachepub/epub.html",
+		"name": "Mapping Experiences_ A Complete  James Kalbach"
+	},
+	{
+		"originalUrl": "/epub.html/In%20the%20Lands%20of%20the%20Enchanted%20M%20-%20Torres,%20Claudio.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/In the Lands of the Enchanted M  Torres Claudioepub/epub.html",
+		"name": "In the Lands of the Enchanted M  Torres Claudio"
+	},
+	{
+		"originalUrl": "/epub.html/Rapid%20Development%20(Developer%20Be%20-%20McConnell,%20Steve.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Rapid Development Developer Be  McConnell Steveepub/epub.html",
+		"name": "Rapid Development Developer Be  McConnell Steve"
+	},
+	{
+		"originalUrl": "/epub.html/New%20York%20City_%2010%20Locals%20Tell%20Y%20-%20Gigi%20Griffis.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/New York City_ 10 Locals Tell Y  Gigi Griffisepub/epub.html",
+		"name": "New York City_ 10 Locals Tell Y  Gigi Griffis"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Architecture%20of%20Luxury%20-%20Condello,%20Annette_.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Architecture of Luxury  Condello Annette_epub/epub.html",
+		"name": "The Architecture of Luxury  Condello Annette_"
+	},
+	{
+		"originalUrl": "/epub.html/House%20of%20Outrageous%20Fortune%20-%20Michael%20Gross.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/House of Outrageous Fortune  Michael Grossepub/epub.html",
+		"name": "House of Outrageous Fortune  Michael Gross"
+	},
+	{
+		"originalUrl": "/epub.html/150%20Best%20Mini%20Interior%20Ideas%20-%20Francesc%20Zamora.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/150 Best Mini Interior Ideas  Francesc Zamoraepub/epub.html",
+		"name": "150 Best Mini Interior Ideas  Francesc Zamora"
+	},
+	{
+		"originalUrl": "/epub.html/Opulent%20Interiors%20of%20the%20Gilded%20-%20Lewis,%20Arnold.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Opulent Interiors of the Gilded  Lewis Arnoldepub/epub.html",
+		"name": "Opulent Interiors of the Gilded  Lewis Arnold"
+	},
+	{
+		"originalUrl": "/epub.html/Architectural%20Detailing_%20Functi%20-%20Edward%20Allen.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Architectural Detailing_ Functi  Edward Allenepub/epub.html",
+		"name": "Architectural Detailing_ Functi  Edward Allen"
+	},
+	{
+		"originalUrl": "/epub.html/Building%20Structures%20Illustrated%20-%20Francis%20D.%20K.%20Ching.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Building Structures Illustrated  Francis D K Chingepub/epub.html",
+		"name": "Building Structures Illustrated  Francis D K Ching"
+	},
+	{
+		"originalUrl": "/epub.html/30-Second%20Architecture_%20The%2050%20-%20Edward%20Denison.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/30Second Architecture_ The 50  Edward Denisonepub/epub.html",
+		"name": "30Second Architecture_ The 50  Edward Denison"
+	},
+	{
+		"originalUrl": "/epub.html/Kill%20Chain_%20The%20Rise%20of%20the%20Hig%20-%20Andrew%20Cockburn.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Kill Chain_ The Rise of the Hig  Andrew Cockburnepub/epub.html",
+		"name": "Kill Chain_ The Rise of the Hig  Andrew Cockburn"
+	},
+	{
 		"originalUrl": "/epub.html/[Kaplan_Justin]_When_the_Astors_Owned_New_York(book4you.org).epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Kaplan_Justin_When_the_Astors_Owned_New_Yorkbook4youorgepub/epub.html",

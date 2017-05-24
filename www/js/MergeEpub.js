@@ -69,8 +69,8 @@ function MergeEpub() {
 
     }
 
-    self.returnPreviousResult =   function returnPreviousResult() {
-        if (  self.settings.force ) {
+    self.returnPreviousResult = function returnPreviousResult() {
+        if (self.settings.force) {
             return false;
         }
         return false;
@@ -79,7 +79,7 @@ function MergeEpub() {
     self.go = function go() {
 
         function stopProcessing_returnPreviousResult() {
-            if (  self.settings.force ) {
+            if (self.settings.force) {
                 return false;
             }
             self.done()
@@ -89,11 +89,11 @@ function MergeEpub() {
 
         self.fileOutput = self.settings.dir + '/' + 'epub.html';
         if (sh.fileExists(self.fileOutput)) {
-            if ( stopProcessing_returnPreviousResult() ) return;
+            if (stopProcessing_returnPreviousResult()) return;
         } else {
             self.fileOutput = self.settings.dir + '/' + 'OEBPS/' + 'epub.html';
             if (sh.fileExists(self.fileOutput)) {
-                if ( stopProcessing_returnPreviousResult() ) return;
+                if (stopProcessing_returnPreviousResult()) return;
             }
         }
 
@@ -106,10 +106,9 @@ function MergeEpub() {
         var origDir = self.settings.dir
 
 
+        fileToc = self.utils.getToc(fileToc, self.settings.dir)
 
-        fileToc = self.utils.getToc(fileToc,  self.settings.dir)
-
-        if (fileToc == null ) {
+        if (fileToc == null) {
             console.error('cannot find toc')
             return;
         }
@@ -119,9 +118,9 @@ function MergeEpub() {
 
         var dir2 = '';
         //after fileOutput set, set working dir
-        if (sh.fileExists(fileToc)  ) {
-            var dirs = fileToc.split('/').slice(0,-1)
-            var dir2 = dirs.join('/')+'/'
+        if (sh.fileExists(fileToc)) {
+            var dirs = fileToc.split('/').slice(0, -1)
+            var dir2 = dirs.join('/') + '/'
             dir2 = dir2.split('/extracted/')[1]
             dir2 = dir2.split('/').slice(1).join('/')
             //dir2 = dir2.replace(__dirname.split('\\').join('/'), '')
@@ -146,7 +145,7 @@ function MergeEpub() {
             sh.each(x, function onAddEachFile(k, v) {
                 var fileSrc = v.content[0].$.src;
 
-                 fileSrc = dir2+fileSrc.split('#')[0];
+                fileSrc = dir2 + fileSrc.split('#')[0];
 
                 self.proc(sh.toJSONString(v.content[0]))
                 if (files.indexOf(fileSrc) != -1) {
@@ -158,7 +157,7 @@ function MergeEpub() {
                 sh.each(v.navPoint, function onAddEachFile(k, v) {
                     var fileSrc = v.content[0].$.src;
 
-                    fileSrc = dir2+fileSrc.split('#')[0];
+                    fileSrc = dir2 + fileSrc.split('#')[0];
 
                     self.proc(sh.toJSONString(v.content[0]))
                     if (files.indexOf(fileSrc) != -1) {
@@ -166,11 +165,11 @@ function MergeEpub() {
                     }
                     files.push(fileSrc)
 
-                    if ( v.navPoint ) {
+                    if (v.navPoint) {
                         sh.each(v.navPoint, function onAddEachFile_inner(k, v) {
                             var fileSrc = v.content[0].$.src;
 
-                            fileSrc = dir2+fileSrc.split('#')[0];
+                            fileSrc = dir2 + fileSrc.split('#')[0];
 
                             self.proc('inner nav', sh.toJSONString(v.content[0]))
                             if (files.indexOf(fileSrc) != -1) {
@@ -220,29 +219,59 @@ function MergeEpub() {
         var dir = self.settings.dir;
 
         var fileOutput = dir + '/' + 'epub.html';
-        var dirOEBPS = dir+'/'+'OEBPS/'
-        if ( self.data.dirOEBPS ) {
+        var dirOEBPS = dir + '/' + 'OEBPS/'
+        if (self.data.dirOEBPS) {
             dirOEBPS = self.data.dirOEBPS;
+        }
+
+
+        sh.fs.leaf = sh.getFileName;
+        sh.fs.exists = function fileExists(dir, error) {
+            var fs = require("fs")
+            var fileFound = fs.existsSync(dir)
+
+            if (fileFound == false && error) {
+                console.error('could not find ', dir, fileFound)
+                sh.throw('notfound - ' + error)
+            }
+            return fileFound;
         }
 
 
         var contents = '';
         var validParts = [];
         sh.each(self.data.files, function onAddEachFile(k, v) {
-            var filePart = dir + '/' + v
-            //replace toc.ncx nav map
-            if ( sh.fileExists(dirOEBPS) && sh.fileExists(filePart) == false) {
-                dir = dirOEBPS;   //case toc.ncx is in subdir, but files are in OEBS
+
+            //if TOC was in a subdir
+            var leaf = sh.fs.leaf(dir)
+            if (dir.endsWith(leaf) && v.startsWith(leaf)) {
+                var vOrig = v;
+                v = v.replace(leaf, '')//asdf.g
             }
 
 
+            var filePart = dir + '/' + v;
+
+            //replace toc.ncx nav map
+            if (sh.fileExists(dirOEBPS) && sh.fileExists(filePart) == false) {
+                dir = dirOEBPS;   //case toc.ncx is in subdir, but files are in OEBS
+            }
+
             var isHTMLLike = self.utils.isHTMLFile(filePart);
             filePart = filePart;
-            if ( isHTMLLike == false ) return;
+            if (isHTMLLike == false) return;
+
+            if (sh.fs.exists(filePart) == false) {
+                console.error('cannot find file', filePart)
+            }
+
             try {
+
                 contents += sh.readFile(filePart)
                 validParts.push(filePart)
             } catch (e) {
+                console.error('where is:', filePart)
+                console.error(e)
                 contents += 'MergeEpub error ... file not found ' + filePart
             }
         })
@@ -254,8 +283,8 @@ function MergeEpub() {
         var dirText = dir + '/'
 
 
-        var dirOEBPS = dir+'/'+'OEBPS/'
-        if ( sh.fileExists(dirOEBPS)) {
+        var dirOEBPS = dir + '/' + 'OEBPS/'
+        if (sh.fileExists(dirOEBPS)) {
             dirText = dirOEBPS;   //case toc.ncx is in subdir, but files are in OEBS
         }
 
@@ -267,7 +296,7 @@ function MergeEpub() {
         sh.each(files, function onAddEachFile(k, v) {
             var filePart = v
             var isHTMLLike = self.utils.isHTMLFile(filePart);
-            if ( isHTMLLike == false ) return;
+            if (isHTMLLike == false) return;
 
             validPardsWildCard.push(v); //++
             try {
@@ -297,11 +326,12 @@ function MergeEpub() {
             })
         }
 
-        if ( validParts.length > validPardsWildCard.length ) {
+        if (validParts.length > validPardsWildCard.length) {
             self.proc('reverting to regular type')
             contents = contentsTocBased;
         }
 
+        self.data.contents = contents;
         sh.writeFile(fileOutput, contents)
         // self.mergeFiles();
         self.done()
@@ -309,6 +339,8 @@ function MergeEpub() {
 
 
     self.done = function done(options) {
+        if ( self.data.contents )
+        self.proc('contents size', self.data.contents.length, 'chars')
         sh.callIfDefined(self.settings.fxDone, self.fileOutput)
     }
 
@@ -316,35 +348,35 @@ function MergeEpub() {
     function defineUtils() {
         p.utils = {}
         p.utils.isHTMLFile = function isHTMLFile(filePart) {
-            if (!sh.includes(filePart, '.html') && !sh.includes(filePart, '.xhtml') &&
-                !sh.includes(filePart, '.htm')) {
+            if (!sh.includes(filePart, '.html') && !sh.includes(filePart, '.xhtml') && !sh.includes(filePart, '.htm')) {
                 return false;
             }
             return true;
         }
 
         p.utils.getToc = function getToc(fileToc, dirx) {
-            if ( sh.fileExists(fileToc)) {
+            if (sh.fileExists(fileToc)) {
                 return fileToc
             }
             var dir = self.settings.dir;
             var dirToSearch = null;
 
-            var dirOEBPS = dir+'/'+'OEBPS/'
-            if ( sh.fileExists(dirOEBPS)) {
-                fileToc = dirOEBPS+'toc.ncx';   //case toc.ncx is in subdir, but files are in OEBS
+            var dirOEBPS = dir + '/' + 'OEBPS/'
+            if (sh.fileExists(dirOEBPS)) {
+                fileToc = dirOEBPS + 'toc.ncx';   //case toc.ncx is in subdir, but files are in OEBS
+                dirToSearch = dirOEBPS
+            }
+            var dirOPS = dir + '/' + 'ops/'
+            if (sh.fileExists(dirOPS)) {
+                fileToc = dirOPS + 'toc.ncx';   //case toc.ncx is in subdir, but files are in OEBS
                 dirToSearch = dirOPS
             }
-            var dirOPS = dir+'/'+'ops/'
-            if ( sh.fileExists(dirOPS)) {
-                fileToc = dirOPS+'toc.ncx';   //case toc.ncx is in subdir, but files are in OEBS
-                dirToSearch = dirOPS
-            }
-            if ( sh.fileExists(fileToc)) {
+            if (sh.fileExists(fileToc)) {
                 return fileToc
             }
 
-            if ( dirToSearch ) {
+            if (dirToSearch) {
+                //   asdf.g
                 var files = sh.fs.getFilesInDirectory2(dirToSearch, false, false);
                 sh.each(files, function (k, fileTocPotentially) {
                     if (sh.includes(fileTocPotentially, '.ncx')) {
@@ -358,12 +390,12 @@ function MergeEpub() {
             }
 
             var files = sh.fs.getFilesInDirectory2(dir, false, false);
-            sh.each(files, function (k,fileTocPotentially) {
-                if ( sh.includes(fileTocPotentially, '.ncx')) {
+            sh.each(files, function (k, fileTocPotentially) {
+                if (sh.includes(fileTocPotentially, '.ncx')) {
                     fileToc = fileTocPotentially
                 }
             });
-            if ( sh.fileExists(fileToc)) {
+            if (sh.fileExists(fileToc)) {
                 return fileToc
             }
 
@@ -405,8 +437,11 @@ if (module.parent == null) {
     dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/The Power of Presence  Kristi Hedgesepub'
     dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Babylonjs Essentials  Unknownepub'
 
-    options.dir = dir;
+    var dirExtracted = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/';
+    var dirLeaf = '150 Best Mini Interior Ideas  Francesc Zamoraepub'
+    dir = dirExtracted + '/' + dirLeaf
 
+    options.dir = dir;
 
 
     options.fxDone = function done() {

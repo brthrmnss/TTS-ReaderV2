@@ -97,8 +97,41 @@ function createPreviewPanel() {
     uiUtils.flagCfg.addTo = $(cfg.id);
     window.uiUtils.addLabel( 'Preview', 'txtCurrentStepIndex');
     window.uiUtils.addDiv( {id:'divPreview'} );
+
+
+    window.IInitSpeaker = true;
+    window.initTCustomDir = true;
+    window.initSpeakerControls;
+
 }
 createPreviewPanel();
+
+
+
+function createTransportPanel() {
+    var cfg = {}
+    cfg.id = 'test_createTransportPanel';
+    cfg.clearIfFound = true
+    if ( window.uiUtils.makePanel(cfg) ) {
+        return; //already made
+    }
+    $(cfg.id).empty()
+    uiUtils.flagCfg = {};
+    uiUtils.lastUI.css('right', '10px')
+    uiUtils.lastUI.css('left', '10px')
+    //uiUtils.flagCfg.id = cfg.id;
+    uiUtils.flagCfg.addTo = $(cfg.id);
+    window.uiUtils.addLabel( '>>>', 'txtCurrentStepIndex');
+    //window.uiUtils.addDiv( {id:'divTransport'} );
+
+
+    window.uiUtils.addBtn( {text:'Play'} );
+    window.uiUtils.addBtn( {text:'Stop'} );
+    window.uiUtils.addBtn( {text:'Scan'}, function onScan() {
+
+    } );
+}
+createTransportPanel();
 
 
 
