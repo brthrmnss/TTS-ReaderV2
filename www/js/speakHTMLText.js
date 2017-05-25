@@ -589,7 +589,7 @@ window.fx = function fc(){
 
         definePlayMode2();
 
-        p.setupSentences = function setupSentences() {
+        p.setupSentences = function setupSentences(cfg2) {
             $('#bookHolderContainerClone').html('');
             // $('body').prepend('<div id="bookHolderContainerClone"></div>')
             var html = $('#bookHolderContainer').clone().html()
@@ -606,13 +606,19 @@ window.fx = function fc(){
             }
             //debugger;
 
-            if ( window.initTCustomDir ) {
+            if ( window.initTCustomDir && cfg2 == null ) {
                 
                 
                 debugger;
                 return;
             }
-            self.utils.findSentencesInHtml($('#bookHolderContainerClone'));
+
+            var divProcess = '#bookHolderContainerClone';
+            if ( cfg2 ) {
+                divProcess = cfg2.divProcess
+            }
+
+            self.utils.findSentencesInHtml($(divProcess));
             self.fixedHTML = true
 
 
@@ -1687,7 +1693,7 @@ window.fx = function fc(){
     function initSpeakerControls (loadStandalone) {
         if ( loadStandalone ) {
 
-            initSpeaker()
+            initSpeaker(loadStandalone)
             return;
         }
         loadHTML();
@@ -1704,7 +1710,7 @@ window.fx = function fc(){
                 }
             })
         }
-        function initSpeaker() {
+        function initSpeaker(cfg2) {
 
             //var utils = {};
             //utils.
@@ -1723,7 +1729,7 @@ window.fx = function fc(){
                     window.sentenceHelper.removeEvents()
             }
             window.sentenceHelper = t
-            t.setupSentences();
+            t.setupSentences(cfg2);
 
             $('#voc_startOnSelection').click(t.startOnSel)
 
@@ -1922,6 +1928,11 @@ window.fx = function fc(){
             loadStorage();
 
 
+
+            if ( cfg2.skipHandleFrames) {
+                return;
+            }
+           // debugger
 
             function handleIframes() {
                 $('iframe[notKeep!="true"]').remove();

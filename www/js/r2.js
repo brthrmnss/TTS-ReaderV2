@@ -99,9 +99,6 @@ function createPreviewPanel() {
     window.uiUtils.addDiv( {id:'divPreview'} );
 
 
-    window.IInitSpeaker = true;
-    window.initTCustomDir = true;
-    window.initSpeakerControls;
 
 }
 createPreviewPanel();
@@ -116,6 +113,7 @@ function createTransportPanel() {
         return; //already made
     }
     $(cfg.id).empty()
+    var ui =  $(cfg.id);
     uiUtils.flagCfg = {};
     uiUtils.lastUI.css('right', '10px')
     uiUtils.lastUI.css('left', '10px')
@@ -123,13 +121,35 @@ function createTransportPanel() {
     uiUtils.flagCfg.addTo = $(cfg.id);
     window.uiUtils.addLabel( '>>>', 'txtCurrentStepIndex');
     //window.uiUtils.addDiv( {id:'divTransport'} );
+    $.get( '/js/speak.html', function( loadedHTML ) {
 
+
+        var h = $('<div>'+loadedHTML+'</div>')
+        var contentToApped = $(h).find('#appendToApp'); //don't get entire html container
+        $('#appendToApp').remove();//support hot-reload
+        if ( contentToApped != null ) {
+         //   $('body').append(contentToApped);
+            ui.append(contentToApped);
+          //  initSpeaker()
+        }
+    })
 
     window.uiUtils.addBtn( {text:'Play'} );
     window.uiUtils.addBtn( {text:'Stop'} );
     window.uiUtils.addBtn( {text:'Scan'}, function onScan() {
-
+        var cfg = {}
+        pH.currentPage = window.$scope.pdfCurrentPage;
+        var id = 'page_Y_' + (window.$scope.pdfCurrentPage - 1)
+        cfg.divProcess = '#'+id
+        cfg.skipHandleFrames = true; 
+        window.initSpeakerControls(cfg)
     } );
+
+
+    window.IInitSpeaker = true;
+    window.initTCustomDir = true;
+
+
 }
 createTransportPanel();
 
