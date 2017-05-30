@@ -9,7 +9,9 @@ window.fx = function fc(){
 
     //console.log('hamb');
     function defineUtils() {
-        $.async = function asyncHelper(items, fx, fxAllDone, delay, playIndex) {
+        $.async = function asyncHelper(
+            items, fx, fxAllDone, 
+            delay, playIndex) {
             //var index = 0
             var asyncController = {};
             asyncController.index = 0;
@@ -25,6 +27,14 @@ window.fx = function fc(){
             }
 
             asyncController.length = items.length;
+            if ( items.length == null ) {
+                var itemsLength = 1
+                $.each(items, function onCountItems(k,v) {
+                    itemsLength++
+                })
+                asyncController.length = itemsLength
+            }
+
 
             if ( delay == null && $.isNumeric(fxAllDone)) {
                 delay = fxAllDone;
@@ -32,8 +42,10 @@ window.fx = function fc(){
 
             function goToNextSpan() {
                 var item = items[asyncController.index];
-                console.log('playindex', asyncController.index)
-                if (asyncController.index > items.length - 1) {
+                var currentIndex = parseInt(asyncController.index)
+                var isFinished = currentIndex + 1 > asyncController.length - 1
+                console.log('playindex', asyncController.index, asyncController.length - 1, isFinished)
+                if ( isFinished ) {
                     if ( fxAllDone ) {
                         fxAllDone();
                     }
@@ -135,6 +147,10 @@ window.fx = function fc(){
         self.data = {};
         self.data.repeatCountIndex = 5
         self.data.rr = new RecentAndResume();
+
+        self.settings2 = {};
+
+
 
         p.startOnSel = function startOnSel() {
             console.log('startSel', self.sel)
@@ -369,7 +385,7 @@ window.fx = function fc(){
 
 
                 if ( hasSelectedText == false && self.data.pauseId  ) { //resume paused player
-                    console.log('resuming pause')
+                    console.debug('iterationMarker','resuming pause',  window.iterationMarker,  self.data.pauseId )
                     window.iterationMarker =   self.data.pauseId;
                     self.data.pauseId = null;
                     window.fxIteration();
@@ -378,6 +394,7 @@ window.fx = function fc(){
 
                 var iterationMarker = Math.random();
                 window.iterationMarker = iterationMarker
+                console.debug('iterationMarker','start', window.iterationMarker)
                 var currentIndex = 0;
                 if ( changeIndex ) {
                     c.currentIndex += changeIndex;
@@ -391,6 +408,7 @@ window.fx = function fc(){
 
                     console.log('finding element .... ', startOnUIElement)
 
+                    var foundStartingElement_playIndex = 0 
 
                     if ( startOnUIElement  != null )  {
                         $.each(c.dictSentences2, function (iSs, sentenceObj) {
@@ -420,6 +438,7 @@ window.fx = function fc(){
                 }
 
 
+                console.debug('creating a loop')
                 var async = $.async(c.dictSentences2,
                     function procSentence(k, sentenceObj, fxEnd, controller) {
 
@@ -475,10 +494,19 @@ window.fx = function fc(){
                         function iterationWrapperFx() {
                             if (window.iterationMarker != iterationMarker) {
                                 //debugger
-                                console.error('marker has changed.... aborting loop')
+                                console.error('marker has changed.... aborting loop',
+                                    window.iterationMarker, '!=', iterationMarker)
                                 return;
                             }
+                            if ( sentenceObj == null ) {
+                              //  debugger;
+                            }
+                            if ( sentenceObj == null || sentenceObj.txt == null ) {
+                                console.debug('odd error', sentenceObj, k)
+                            }
+
                             var sentence = sentenceObj.txt;
+
                             c.currentIndex = k;
 
                             // debugger
@@ -536,6 +564,7 @@ window.fx = function fc(){
 
                     },
                     function onDone() {
+                        u.cid(self.settings2.fxDone)
                         // helper.goToNextPage();
                     }, 10,
                     playIndex)
@@ -551,6 +580,7 @@ window.fx = function fc(){
                 self.data.isPaused = false;
                 self.data.pauseId  = null;
                 window.iterationMarker = null;
+                console.debug('iterationMarker', 'hard stop',   window.iterationMarke)
             }
 
             p.onPause = function onPause() {
@@ -564,9 +594,8 @@ window.fx = function fc(){
                 self.data.pauseId = window.iterationMarker
                 window.iterationMarker = null;
                 self.speakHelper.speak('')
+                console.debug('iterationMarker', 'onPause',   window.iterationMarke)
             }
-
-
 
             p.onPrev = function onPrev(event) {
                 // console.log('startSel', self.sel)
@@ -590,6 +619,9 @@ window.fx = function fc(){
         definePlayMode2();
 
         p.setupSentences = function setupSentences(cfg2) {
+            self.settings2 = cfg2;
+            self.settings2 = u.dv(self.settings2, {})
+
             $('#bookHolderContainerClone').html('');
             // $('body').prepend('<div id="bookHolderContainerClone"></div>')
             var html = $('#bookHolderContainer').clone().html()
@@ -607,8 +639,8 @@ window.fx = function fc(){
             //debugger;
 
             if ( window.initTCustomDir && cfg2 == null ) {
-                
-                
+
+
                 debugger;
                 return;
             }
@@ -618,10 +650,33 @@ window.fx = function fc(){
                 divProcess = cfg2.divProcess
             }
 
-            self.utils.findSentencesInHtml($(divProcess));
+            var noParseSentenceMode = false;
+            if ( self.settings2.sentences ) {
+               noParseSentenceMode = true
+            }
+            self.utils.findSentencesInHtml($(divProcess), noParseSentenceMode);
+
+            if ( noParseSentenceMode ) {
+                var h = window.h
+               // self.da ta.currentSentences.sentences =
+                h.sentences = self.settings2.sentences;
+                h.dictSentences2 = self.settings2.dictSentencesToSpans;
+                var dictSentences2_Replica = {}
+                $.each(self.settings2.sentences, function copyToS(k,v) {
+                    var sentenceObj = {}
+                    sentenceObj.txt = v;
+                    var spans =  self.settings2.dictSentencesToSpans[v];
+                    sentenceObj.spans = spans;
+                    dictSentences2_Replica[k] = sentenceObj
+                    sentenceObj.images = [];
+                })
+                h.dictSentences2 = dictSentences2_Replica
+                self.data.currentSentences = h; 
+                //debugger;
+            }
+
+
             self.fixedHTML = true
-
-
 
             self.render();
             self.handleResume()
@@ -732,6 +787,15 @@ window.fx = function fc(){
                     voice = self.voice;
                 }
                 // debugger
+
+                var removeBulletLikeIcons = true;
+                if ( removeBulletLikeIcons ) {
+                    sentence = sentence.replace('', '')
+                    sentence = sentence.replace('', '')
+                }
+                window.lastSentenceRead = sentence;
+
+
                 console.log('trim',  sentence.trim().endsWith('reply'), sentence)
                 if (  sentence.trim().endsWith('reply') ) {
                     if ( self.voice == 'IVONA 2 Brian' ) {
@@ -744,6 +808,13 @@ window.fx = function fc(){
                     sentence = sentence.trim().slice(-5)
                     sentence += 'end comment.'
                 }
+
+                if ( sentence.length == 0 ) {
+                    console.warn('empty string', sentence)
+                    self.goEach();
+                    return;
+                }
+
                 //self.voice = voice;
                 var speakOnce = false
                 var date = new Date();
@@ -939,6 +1010,11 @@ window.fx = function fc(){
             utils.scrollToElement = function (target) {
                 target = $(target);
 
+                if ( self.settings2.fxScroll) {
+                    u.cid(self.settings2.fxScroll, target, self)
+                    return;
+                }
+
                 if (target.length) {
                     $('html,body').clearQueue();
                     $('html,body').stop();
@@ -950,7 +1026,7 @@ window.fx = function fc(){
             }
 
 
-            utils.findSentencesInHtml = function findSentencesInHtml(parent) {
+            utils.findSentencesInHtml = function findSentencesInHtml(parent, liteMode) {
 
                 window.parent = parent;
                 console.log('starting point is', parent)
@@ -980,6 +1056,12 @@ window.fx = function fc(){
                 h.data.debugAddingSentencesHeavy  = false
                 h.data.debugAddingSentences = true;
                 h.data.debugAddingSentencesHeavy  = true
+                
+                if ( self.settings2 && self.settings2.dbgSettings ) {
+                    $.each(self.settings2.dbgSettings, function onK(k,v) {
+                        h.data[k] = v; 
+                    })
+                }
 
                 h.data.clearConsole = false;
 
@@ -998,6 +1080,12 @@ window.fx = function fc(){
                 h.dictSentences2 = {};
                 h.currentSpans = {};
                 h.images = [];
+
+                window.h = h;
+
+                if ( liteMode ) {
+                    return h;
+                }
 
                 h.addSentence = function addSentence(str, ui, why) {
                     return;
@@ -1530,7 +1618,7 @@ window.fx = function fc(){
                 h.colorizeSentences();
                 h.utils.getQuotes(h.sentences)
                 h.utils.fixLinks();
-                window.h = h;
+
 
                 console.log('h', window.h)
 
@@ -1612,6 +1700,7 @@ window.fx = function fc(){
             p.speakHelper = speakHelper
 
 
+
             speakHelper.speak = function speak(txt,  fxDone, rate, cacheRequest) {
                 var curId = self.currentId;
 
@@ -1634,7 +1723,7 @@ window.fx = function fc(){
                 }
                 sentence = sentence.trim()
                 // debugger
-               // console.log('trim',  sentence.trim().endsWith('reply'), sentence)
+                // console.log('trim',  sentence.trim().endsWith('reply'), sentence)
                 if (  sentence.trim().endsWith('reply') ) {
                     if ( self.voice == 'IVONA 2 Brian' ) {
                         //self.voice = 'IVONA 2 Joey'
@@ -1647,6 +1736,12 @@ window.fx = function fc(){
                     sentence += 'end comment.'
                 }
 
+                var removeBulletLikeIcons = true;
+                if ( removeBulletLikeIcons ) {
+                    sentence = sentence.replace('', '')
+                    sentence = sentence.replace('', '')
+                }
+                window.lastSentenceRead = sentence;
 
                 //replace UX UI ' '''
                 sentence = sentence.replace(/’/gi, "'");
@@ -1658,7 +1753,13 @@ window.fx = function fc(){
                 sentence = sentence.replace(/\."/gi, "");
                 console.log('trim',  sentence.trim().endsWith('reply'), sentence)
 
-              //  debugger
+
+                if ( sentence.length == '' ) {
+                    u.cid(fxDone);
+                    return;
+                }
+
+                //  debugger
                 //self.voice = voice;
                 var speakOnce = false
                 var date = new Date();
@@ -1715,6 +1816,7 @@ window.fx = function fc(){
             //var utils = {};
             //utils.
 
+            debugger
             if (  $('#voc_startOnSelection').length == 0 ) {
                 console.log('injected html not found, try do ready again...')
                 setTimeout(doReady, 300)
@@ -1731,6 +1833,9 @@ window.fx = function fc(){
             window.sentenceHelper = t
             t.setupSentences(cfg2);
 
+            $(".speakerControls").find("*").off();
+            
+
             $('#voc_startOnSelection').click(t.startOnSel)
 
             $('#btnPrev').click(t.onPrev)
@@ -1739,6 +1844,7 @@ window.fx = function fc(){
             $('#doSel').change(changeEnabled);
 
 
+            $('#rowCheckbox2').empty();
 
             var cfg = {
                 //name:'repeatSentenceMode',
@@ -1746,19 +1852,19 @@ window.fx = function fc(){
                 val:false,
                 bindTo:{obj:t.data, prop:'repeatSentenceMode'},
                 fxChange:function onCh() {
-                  t.data.goForth=false;
+                    t.data.goForth=false;
                 },
-                addTo: '#rowCheckbox'
+                addTo: '#rowCheckbox2'
             }
             window.utilsx.uiHelpers.addCheckbox(cfg);
 
-        /*    var cfg2 = {
-                title:'Repeat each sentence, press 1 to continue',
-                val:false,
-                bindTo:{obj:t.data, prop:'repeatSentenceMode'},
-                addTo: '#rowCheckbox'
-            }
-            window.utilsx.uiHelpers.addCheckbox(cfg2);*/
+            /*    var cfg2 = {
+             title:'Repeat each sentence, press 1 to continue',
+             val:false,
+             bindTo:{obj:t.data, prop:'repeatSentenceMode'},
+             addTo: '#rowCheckbox'
+             }
+             window.utilsx.uiHelpers.addCheckbox(cfg2);*/
 
 
             function changeEnabled(event) {
@@ -1789,6 +1895,9 @@ window.fx = function fc(){
                 addEventListeners(true)
             }
             function onKeyUp(e) {
+                if ( window.debugKeys ) {
+                    console.debug('doneKes', e.keyCode)
+                }
                 if ( t != window.sentenceHelper ) {
                     debugger
                     console.error('should not be firing')
@@ -1804,6 +1913,9 @@ window.fx = function fc(){
                 }
                 if ( e.keyCode == 40 &&   e.shiftKey == true) {
                     t.onPlay2(null, false, 1, true, true)
+                }
+                if ( e.keyCode == 40 &&   e.ctrlKey == true) {
+                    t.onPlay2(null, false, 15, true, true)
                 }
                 if ( e.keyCode == 38 &&   e.shiftKey == true) {
                     t.onPlay2(null, false, -1, true, true)
@@ -1831,6 +1943,7 @@ window.fx = function fc(){
             }
 
             function addEventListeners(remove) {
+                //debugger
                 if (remove !== true ) {
                     $('body').keyup(onKeyUp);
                 } else {
@@ -1932,7 +2045,7 @@ window.fx = function fc(){
             if ( cfg2.skipHandleFrames) {
                 return;
             }
-           // debugger
+            // debugger
 
             function handleIframes() {
                 $('iframe[notKeep!="true"]').remove();
@@ -2018,7 +2131,7 @@ window.fx = function fc(){
         // doReady()
 
         if ( window.IInitSpeaker) {
-            window.initSpeakerControls = initSpeakerControls; 
+            window.initSpeakerControls = initSpeakerControls;
             return;
         }
         setTimeout(initSpeakerControls, 500)

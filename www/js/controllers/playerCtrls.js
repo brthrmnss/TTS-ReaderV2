@@ -278,7 +278,23 @@ angular.module('playerCtrls', ['ngSanitize', 'connexionServices', 'ui.bootstrap-
 
 		// GET FILE IN I-FRAME
 		$scope.loadFileInFrame= function(file_name){
+			//debugger
+			var filesCopy = [];
+			$.each($rootScope.recentFiles, function findFile(k,v) {
+				if (v.file == file_name	) {
+					return;
+				}
+				filesCopy.push(v)
+			})
 
+
+			//filesCopy.unshift()
+			filesCopy.unshift({ file :file_name  });
+			//debugger;
+			var oldRecentFiles = JSON.parse(JSON.stringify($rootScope.recentFiles))
+			$rootScope.recentFiles = filesCopy;
+			$scope.fileForm.files = filesCopy;
+			//debugger;
 			// SYNC WITH RECENT_FILES.JSON FILE
 			$scope.updateListFiles();
 			// DISPLAY DOCUMENT
@@ -848,6 +864,9 @@ angular.module('playerCtrls', ['ngSanitize', 'connexionServices', 'ui.bootstrap-
 						} while(true);
 					}
 
+					if ( window.fxStartPdf ) {
+						window.fxStartPdf()
+					}
 					// BIND TEXT LAYER
 					$('#XLayer')[0].onmouseup=function(){
 						// UNDO ALL SELECTION

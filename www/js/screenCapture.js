@@ -108,6 +108,24 @@ function uploadPicture(data, name) {
 
      */
 
+
+    console.warn(
+        'no uploading this picture'
+    )
+
+
+
+    return;
+
+
+    curretnPage
+    if ( currentPage != lastPage ) {
+        window.picCount = 0
+    }
+    picCount ++
+
+    var name = bookName = window.pickCount + '.png'
+
     $.ajax({
         url: "http://127.0.0.1:6006/doUp3/",
         type: 'POST',

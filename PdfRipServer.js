@@ -183,9 +183,9 @@ function PdfRipServer() {
             //console.log(imageBuffer, p);
             var data = p.data;
             var imageBuffer = decodeBase64Image(data);
-            console.log('bpp')
+            console.log('bpp', p.name)
             var name = p.name;
-            sh.writeFile(name, imageBuffer.data, 'base64')
+            sh.writeFile(__dirname + '/' + 'rips/image/' + name, imageBuffer.data, 'base64')
             res.send('done')
             return;
             upload(req,res,function(err) {

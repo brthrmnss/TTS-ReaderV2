@@ -3094,8 +3094,75 @@ function defineUtils() {
 
 
 
-}
+    function defineKeyboard() {
+        u.addKeyListener = function addKeyListener() {
 
+        }
+
+        u.onKey = function onKey(va) {
+
+        }
+    }
+
+    defineKeyboard();
+
+    function defineScrollable() {
+        uiUtils.scrollToBottom = function scrollToBottom(jq) {
+
+            var ui = $(jq)
+            //$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
+            $(jq).clearQueue();
+            $(jq).stop(true, true);
+            $(jq).animate({scrollTop: $(jq).prop("scrollHeight")}, 10);
+            console.log('scrollto', ui.prop('scrollHeight'), ui.scrollTop())
+        }
+
+        uiUtils.makeScrollable = function makeScrollaboe(div, height) {
+            div.css('overflow', 'auto')
+            div.css('max-height', height + 'px')
+            //debugger
+        }
+        uiUtils.scrollToTop = function scrollToTop(jq) {
+            //$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
+            $(jq).clearQueue();
+            $(jq).stop(true, true);
+            $(jq).animate({scrollTop: 0}, 10);
+        }
+        uiUtils.getPos = function getPos(ui) {
+            var position = $(ui).offset();
+            return position;
+        }
+
+        uiUtils.getScrollPosition = function getScrollPosition(ui) {
+            var position = $(ui).prop('scrollHeight');
+            var position = $(ui).scrollTop();
+            return position;
+        }
+
+        uiUtils.setScrollPosition = function setScrollPosition(ui, pos, animate) {
+            ui = $(ui)
+            //debugger
+            if ( animate != false  ) {
+                ui.clearQueue();
+                ui.stop(true, true);
+                ui.animate({scrollTop: pos}, 10);
+            }
+            else {
+                ui.scrollTop(pos)
+            }
+
+
+
+            return;
+            var position = $(ui).offset();
+
+            return position;
+        }
+
+    }
+    defineScrollable()
+    
+}
 defineUtils();
 
 window.restartTest = function restartTest() {

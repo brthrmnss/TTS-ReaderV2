@@ -39,7 +39,6 @@ angular.module('connexionServices', [])
 		}
 		
 		this.updateRecentFiles = function(files){
-	
 			var xsrf = $.param(files);
 			
 			return $http({

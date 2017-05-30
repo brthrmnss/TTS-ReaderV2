@@ -35,7 +35,11 @@ if ( loadEval ) {
         loadJS2(baseBaseUrl+
             'socket.io-1.2.0.js.ignore', function loadedSocket(a){
             //return;
+            if ( window.oldSocket ) {
+                window.oldSocket.destroy();
+            }
             var socket = io(baseBaseUrl);
+            window.oldSocket = socket; 
             $('form').submit(function(){
                 socket.emit('chat message', $('#m').val());
                 $('#m').val('');

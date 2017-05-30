@@ -7,6 +7,16 @@ window.showPDFWorkerOperations2 = false;
 // alert('whs')
 var rip = {}
 rip.settings = {}
+
+rip.settings.autoRead = true;
+rip.settings.autoAnnotate = true;
+rip.settings.scrollReader = false;
+rip.settings.hideAnnotations = false;
+rip.settings.showRipPreview = true;
+rip.settings.showRipPreview = false;
+
+//rip.settings.autoRead = false;
+
 rip.settings.showSpanNumbers = true;
 rip.settings.newSentenceOnOrigFont = true;
 rip.settings.margin = null
@@ -21,8 +31,44 @@ rip.settings.newSentence_OnVerticalSpace_log_displayPurple = true;
 rip.settings.processors = []
 rip.settings.addDashesOnVGap = false;
 //rip.settings.stopAfterSorting = true
+rip.dbg = {}
+rip.dbg.sorting = false;
+rip.dbg.finalSentenceParsedList= false;
+rip.dbg.finalSpans = false
 
+
+rip.dictSettings = {};
+
+
+var bookSettings = {};
+bookSettings.margin = {l:10,t:8,r:10,b:10};
+rip.dictSettings['cameronmoll_bio.pdf'] = bookSettings;
+bookSettings = sh.clone(bookSettings)
+bookSettings.tryToDetect3Columns = true;
+bookSettings.margin = {l:8,t:5,r:9,b:10};
+rip.dictSettings["[Eric_Nash]_Manhattan_Skyscrapers(bookzz.org).pdf"] = bookSettings;
+
+//TODO: fox F on page $scope.pdfCurrentPage 144
+//$scope.pdfViewerAPI.goToPage(144)
+//1.2
 rip.settings.margin.b = 10
+
+
+
+bookSettings = sh.clone(bookSettings)
+//bookSettings.tryToDetect3Columns = true;
+bookSettings.margin = {l:8,t:5,r:9,b:6};
+rip.dictSettings["[Stephen_Biddle]_Military_Power_Explaining_Victor(Book4You).pdf"] = bookSettings;
+
+
+bookSettings = sh.clone(bookSettings)
+//bookSettings.tryToDetect3Columns = true;
+bookSettings.margin = {l:5,t:4,r:7,b:7};
+rip.dictSettings["[Various]_Edge_-.August.2016(bookzz.org).pdf"] = bookSettings;
+
+
+
+
 //rip.settings.margin.t = 20
 
 var rUtils = {};
@@ -82,6 +128,261 @@ rUtils.addToArrayDict = function addToArrayDict(dict, key, val) {
     dict[key] = arr;
 }
 
+rUtils.getXY = function getXY(ui) {
+    var xy = {}
+    xy.x = ui.css('left')
+    xy.y = ui.css('top')
+    xy.x= rUtils.clearPixels((xy.x))
+    xy.y= rUtils.clearPixels((xy.y))
+    return xy ;
+}
+
+rUtils.getSpanDimensions = function getSpanDimensions(ui) {
+
+    var span = ui;
+    /*
+     var top = span.css('top').replace('px','')
+     top = parseFloat(top);
+
+     var left = span.css('left').replace('px','')
+     left = parseFloat(left);*/
+
+    var styles = {};
+
+    styles.x = ui.css('left')
+    styles.left = styles.x = rUtils.clearPixels(styles.x)
+    styles.y = ui.css('top')
+    // console.log('detectColumns', styles.y)
+    styles.top = styles.y = rUtils.clearPixels(styles.y)
+    /* tyles.x = ui.css('left')
+     styles.y = ui.css('top')
+     styles.x= rUtils.clearPixels((xy.x))
+     styles.y= rUtils.clearPixels((xy.y))*/
+
+
+    styles.fontFamily = ui.css('font-family');
+    styles.fontFamilyOrig = ui.attr('origFont');
+    styles.markup = ui.attr('markup');
+    styles.fontSize = ui.css('font-size')
+    styles.fontSizeAsNumber = rUtils.clearPixels(( styles.fontSize))
+    styles.yQuantized = ui.attr('yQuantized');
+
+    //styles.top = top;
+    //console.log('what is width', span.width() );
+    styles.width = span.width();
+    styles.maxX = styles.right = span.width()+styles.left;
+
+    styles.height = span.height();
+    styles.maxY = styles.bottom = span.height()+styles.top;
+
+    //console.log('detectColumns', styles.top, span.height(),  styles.y, styles.maxY ,  styles.height)
+
+
+
+    //console.log('what is width', styles.width,
+    //    styles.right, left);
+    styles.text = span.text();
+
+    ui._pStyles = styles;
+
+    return styles ;
+}
+
+rUtils.average = function getAvg(nums) {
+    return nums.reduce(function (p, c) {
+            return p + c;
+        }) / nums.length;
+}
+
+rUtils.annot = function sdf(x,str) {
+    console.log('ok...')
+}
+
+
+function xT() {
+    sh.join  = function joinArray(){
+        var args = sh.convertArgumentsToArray(arguments);
+        if ( args.length == 1 && sh.isArray(args[0]) ) {
+            args = args[0]; //if first arg is array, join array
+        }
+        return args.join(' ')
+    }
+
+    if ( sh.each == null ) {
+        sh.each = $.each
+    }
+    sh.joinStr  = function joinArray(obj, props){
+        var args = sh.convertArgumentsToArray(arguments);
+        var strArr = [];
+        sh.each(args, function additems(k,v) {
+            if ( k == 0) return;
+            strArr.push(obj[v])
+        })
+
+        return strArr.join(' ')
+    }
+}
+xT();
+function asdf() {
+
+    function GoThroughEach(items) {
+        //  var async = require('async')
+        var self = this;
+        var p = GoThroughEach.prototype;
+
+        p.setIndex = function setIndex(newIndex) {
+            self.currentIndex = newIndex;
+        }
+
+
+
+        self.data = {};
+        self.settings = {};
+
+        self.data.items = items
+        self.data.currentIndex = 0;
+
+        self.config = {};
+
+        self.go = function go(arr, fxItemCallback, fxComplete, timeDelay_, autoStart) {
+            self.complete = false;
+            if (arr instanceof Array) {
+                self.items = arr;
+                self.fxComplete = fxComplete
+                self.fxItemCallback = fxItemCallback;
+            } else {
+                var config = arr; //user sent in obj
+                self.items = config.items;
+                if (config.fxDone == null) {
+                    throw 'supply fxDone'
+                }
+                self.fxComplete = config.fxDone;
+                self.fxItemCallback = config.fxItem;
+                ;
+                self.config = config;
+                autoStart = self.autoStart;///// = config;
+            }
+            self.currentIndex = -1
+            self.timeDelay = timeDelay_
+            if (self.timeDelay > 0) {
+                /*if ( timer != null )
+                 timer.removeEventListener(TimerEvent.TIMER, this.nextTimerComplete )
+                 timer = new Timer(timeDelay,1 )
+                 timer.addEventListener(TimerEvent.TIMER, this.nextTimerComplete )*/
+            }
+            if (autoStart != false) {
+                // self.nextItem(null, true);
+                self.start()
+            }
+
+
+        }
+
+        self.start = function start() {
+            var limit = sh.defaultValue(self.config.concurrency, 1)
+            async.forEachLimit(self.items, limit, function (item, callback) {
+                //db.delete('messages', messageId, callback);
+                //fx(callbackPlay)
+                self.fxItemCallback(item, callback)
+            }, function (err) {
+                if (err) console.error(err)
+                self.fxComplete();
+
+            });
+        }
+
+        //remove this method .... use async callback only
+        self.XnextItem = function nextItem(e, timed, internallySet) {
+            /*if ( self.currentIndex != -1 && ( self.currentIndex != self.items.length ) ||  PauseFirstAndLast )
+             {
+             if ( self.items.length != 0 )
+             {
+             if ( timeDelay != 0 && timed == false  )
+             {
+             this.timer.reset();
+             this.timer.start();
+             return;
+             }
+             }
+             }*/
+            if (self.config.concurrent != null && internallySet != true) {
+                self.handleConcurrency()
+                return;
+            }
+            if (this.complete == true)
+                return;
+            self.currentIndex++
+            if (self.currentIndex >= self.items.length) {
+                self.end();
+                return;
+            }
+            var currentItem = self.items[self.currentIndex]
+            self.fxItemCallback(currentItem, self.nextItem);
+            //self.execution.waitingFor.add()
+        }
+
+
+        self.handleConcurrency = function handleConcurrency() {
+            //how many ouconing requests
+
+        }
+
+        /*self.start = function start() {
+         self.currentIndex=-1;
+         self.running = false;
+         self.complete = false;
+         self.nextItem()
+         }*/
+        self.next = function next() {
+
+            self.data.currentIndex++
+            if (self.data.currentIndex >= self.data.items.length) {
+                self.data.currentIndex = 0
+                //  self.end();
+                //return;
+            }
+            var currentItem = self.data.items[self.data.currentIndex]
+            self.data.currentItem = currentItem
+            return currentItem;
+            self.nextItem()
+        }
+
+        self.end = function end(callEndFxCallback) {
+            //if ( this.timer != null ) 	this.timer.stop() ;
+            self.complete = true;  //call complete first so we do not interfere wtih starting again ...
+            //self.items = [] ; //
+
+            var fxFinal = self.fxComplete
+            //self.fxComplete = null
+
+            //call final fx last to prevent anything that has restarted the loop and reused
+            //this instance from losign variables ...
+            if (callEndFxCallback != false) {
+                if (fxFinal != null)
+                    fxFinal();
+            }
+        }
+
+        self.last = function last() {
+            index = self.items.length - 1
+            return self.items[index];
+        }
+
+        self.reset = function reset(sendEndFx) {
+            self.currentIndex = 0;
+            self.running = false;
+            self.complete = false;
+            if (sendEndFx == true) {
+                sh.callIfDefined(fxComplete)
+            }
+        }
+
+
+    }
+
+    rUtils.GoThroughEach = GoThroughEach;
+}
+asdf();
 
 
 function createPreviewPanel() {
@@ -92,6 +393,12 @@ function createPreviewPanel() {
         return; //already made
     }
     $(cfg.id).empty()
+
+
+    if (rip.settings.showRipPreview != true) {
+        return;
+    }
+
     uiUtils.flagCfg = {};
     //uiUtils.flagCfg.id = cfg.id;
     uiUtils.flagCfg.addTo = $(cfg.id);
@@ -106,21 +413,36 @@ createPreviewPanel();
 
 
 function createTransportPanel() {
+
+    var prepReadeMode = false;
+    prepReadeMode = true;
+
+
+    window.IInitSpeaker = true;
+    window.initTCustomDir = true;
+
+
+    if (rip.settings.autoRead != true) {
+        return;
+    }
+
     var cfg = {}
     cfg.id = 'test_createTransportPanel';
     cfg.clearIfFound = true
     if ( window.uiUtils.makePanel(cfg) ) {
-        return; //already made
+        //return; //already made
     }
+    //  debugger;
     $(cfg.id).empty()
     var ui =  $(cfg.id);
     uiUtils.flagCfg = {};
-    uiUtils.lastUI.css('right', '10px')
+    // uiUtils.lastUI.css('right', '10px')
     uiUtils.lastUI.css('left', '10px')
     //uiUtils.flagCfg.id = cfg.id;
     uiUtils.flagCfg.addTo = $(cfg.id);
     window.uiUtils.addLabel( '>>>', 'txtCurrentStepIndex');
     //window.uiUtils.addDiv( {id:'divTransport'} );
+    //debugger
     $.get( '/js/speak.html', function( loadedHTML ) {
 
 
@@ -128,26 +450,161 @@ function createTransportPanel() {
         var contentToApped = $(h).find('#appendToApp'); //don't get entire html container
         $('#appendToApp').remove();//support hot-reload
         if ( contentToApped != null ) {
-         //   $('body').append(contentToApped);
+            //   $('body').append(contentToApped);
             ui.append(contentToApped);
-          //  initSpeaker()
+            //  initSpeaker()
         }
-    })
 
-    window.uiUtils.addBtn( {text:'Play'} );
-    window.uiUtils.addBtn( {text:'Stop'} );
-    window.uiUtils.addBtn( {text:'Scan'}, function onScan() {
+        if ( prepReadeMode ) {
+            onScanBookForREadableSentences();
+        }
+
+    })
+    window.uiUtils.addBtn( {text:'Proc'},
+        function onScanBookForREadableSentences(startReadingWhenProcesse) {
+            window.u = uiUtils;
+            //if (window.pH == null) {
+            window.processPage();
+            // }
+        });
+    window.uiUtils.addBtn( {text:'Name'},
+        function onScanBookForREadableSentences(startReadingWhenProcesse) {
+            console.log(pH.data.bookname)
+        });
+    window.uiUtils.addBtn( {text:'Next'},
+        function onScanBookForREadableSentences2(startReadingWhenProcesse) {
+            onScanBookForREadableSentences(true, true)
+        });
+    window.uiUtils.addBtn( {text:'Scan'}, onScanBookForREadableSentences )
+    function onScanBookForREadableSentences(startReadingWhenProcesse, processCurrengPage) {
+        window.u = uiUtils;
+        if ( window.pH == null ) {
+            window.processPage();
+        }
+        if ( processCurrengPage ) { //otherwise will play the last page
+            window.processPage();
+        }
         var cfg = {}
         pH.currentPage = window.$scope.pdfCurrentPage;
-        var id = 'page_Y_' + (window.$scope.pdfCurrentPage - 1)
-        cfg.divProcess = '#'+id
-        cfg.skipHandleFrames = true; 
+        var id = '#page_Y_' + (window.$scope.pdfCurrentPage - 1)
+        cfg.divProcess = ''+id
+
+
+        var cloneContainer = false;
+
+        if (cloneContainer) {
+            $(id).css('display', 'none')
+            var id = '#page_' + (window.$scope.pdfCurrentPage - 1)
+            var ui = $(id).find('#XLayer')//.hide();
+            var uiPageCloned = ui.clone()
+            //var uiPageCloned
+            var classSentenceScroller = 'sentenceScrollableContainer'
+            $('.'+classSentenceScroller).remove();
+            uiPageCloned.attr('id', 'Xlayer2');
+            uiPageCloned.addClass(classSentenceScroller);
+            ui.parent().append(uiPageCloned)
+            cfg.divProcess = uiPageCloned
+        } else {
+            $(id).css('display', 'inherit')
+            /*
+             var id = '#page_' + (window.$scope.pdfCurrentPage - 1)
+             var ui = $(id).find('#XLayer')//.hide();
+             var uiPageCloned = ui.clone()
+             //var uiPageCloned
+             var classSentenceScroller = 'sentenceScrollableContainer'
+             $('.'+classSentenceScroller).remove();
+             uiPageCloned.attr('id', 'Xlayer2');
+             uiPageCloned.addClass(classSentenceScroller);
+             ui.parent().append(uiPageCloned)
+             cfg.divProcess = uiPageCloned
+             */
+        }
+
+        var removeMarkings = true;
+        if ( removeMarkings ) {
+            function removeAllUIWithClass(cssclass){
+                $('.'+cssclass).remove()
+            }
+            function removeAllClassesOfClass(cssclass){
+                $('.'+cssclass).removeClass(cssclass)
+                //$('.'+cssclass).remove()
+                //console.log('y',  $('.'+cssclass))
+            }
+            // removeAllClassesOfClass('highlight2')
+            // removeAllClassesOfClass('highlight3')
+            // removeAllClassesOfClass('highlight4')
+
+            var classes2 = ['spanMargins',
+                'spanSortAnnotations', 'brokenLine',
+                //'highlight2', 'highlight3', 'highlight4'
+                'annottatino_Columns',
+
+            ]
+            $.each(classes2, function onCl(k,classNameToRemove) {
+                removeAllUIWithClass(classNameToRemove)
+            })
+
+
+
+
+            var classes = ['spanMargins',
+                'spanSortAnnotations', 'brokenLine',
+                'highlight2', 'highlight3', 'highlight4']
+            $.each(classes, function onCl(k,classNameToRemove) {
+                removeAllClassesOfClass(classNameToRemove)
+            })
+        }
+
+
+
+        cfg.skipHandleFrames = true;
+
+        cfg.fxScroll = function fxScroll(target, self) {
+            if ( rip.settings.scrollReader == false ) {
+                return;
+            }
+            var posSentenceDiv = u.getPos(target)
+            var page = u.getPos('#page_'+ (window.$scope.pdfCurrentPage - 1))
+            var scrollContainer = $('pdf-viewer')
+            var scrollY = u.getScrollPosition(scrollContainer)
+
+            var posScrollContainer = u.getPos(scrollContainer);
+
+            var setT=   scrollY  - 60 + posSentenceDiv.top - posScrollContainer.top;
+            u.setScrollPosition(scrollContainer, setT)
+            console.log('scrollto', setT)
+            //pageY = pageY.top
+            //$('pdf-viewer').scrollTop
+            //console.log('scrollX', target, setT, posSentenceDiv.top, page.top)
+        }
+
+        cfg.fxDone = function onFxDoe(){
+            console.log('done with everything ...');
+
+            if ( window.$scope.pdfCurrentPage == window.$scope.pdfTotalPages ) {
+                console.log('end of book')
+                return;
+            }
+
+            window.$scope.pdfViewerAPI.goToNextPage();
+            setTimeout(onScanBookForREadableSentences, 1500, true, true);
+        }
+
+        cfg.dbgSettings = {};
+        // cfg.dbgSettings.colorizeBackgrounds = true;
+
+
+        cfg.sentences = cSH.sentences;
+        cfg.dictSentencesToSpans = cSH.dictSentencesToSpans;
+
         window.initSpeakerControls(cfg)
-    } );
+        setTimeout(function startLAter() {
+            if ( startReadingWhenProcesse ) {
+                window.sentenceHelper.onPlay2()
+            }
+        },500)
+    }
 
-
-    window.IInitSpeaker = true;
-    window.initTCustomDir = true;
 
 
 }
@@ -159,6 +616,9 @@ window.fx = function onProcessPageAndDefineUtils(){
     console.log('reloadYYY');
     //debugger
     function defineUtils() {
+        if ( $.async != null ) {
+            return;
+        }
         $.async = function asyncHelper(items, fx, fxAllDone, delay, playIndex) {
             //var index = 0
             var asyncController = {};
@@ -227,7 +687,7 @@ window.fx = function onProcessPageAndDefineUtils(){
         helper.t = transport;
         helper.transport = transport;
 
-        window.iterationMarker = null; //stop if playing currently
+        window.iterationMarkerPdf = null; //stop if playing currently
         $scope.playerForm.isPlaying = false;
         $scope.isPlaying = false;
         $scope.isPaused = false;
@@ -235,7 +695,7 @@ window.fx = function onProcessPageAndDefineUtils(){
         helper.pauseId = null;
 
         helper.stop = function stop() {
-            window.iterationMarker = null;
+            window.iterationMarkerPdf = null;
             $scope.playerForm.isPlaying = false;
             $scope.isPlaying = false;
             $scope.playerForm.player.pause();
@@ -252,8 +712,8 @@ window.fx = function onProcessPageAndDefineUtils(){
                 $scope.$apply();
             }, 200)
 
-            helper.pauseId = window.iterationMarker
-            window.iterationMarker = null;
+            helper.pauseId = window.iterationMarkerPdf
+            window.iterationMarkerPdf = null;
 
         };
 
@@ -278,8 +738,8 @@ window.fx = function onProcessPageAndDefineUtils(){
             //window.async.index++; //is already on next idnex
             window.async.runIteration()
             return;
-            helper.pauseId = window.iterationMarker
-            window.iterationMarker = null;
+            helper.pauseId = window.iterationMarkerPdf
+            window.iterationMarkerPdf = null;
         }
 
         helper.playPrevSentence = function playPrevSentence(){
@@ -307,7 +767,7 @@ window.fx = function onProcessPageAndDefineUtils(){
             $scope.playerForm.isPlaying = true;
             $scope.isPlaying = true;
             $scope.isPaused = false;
-            window.iterationMarker = Math.random();
+            window.iterationMarkerPdf = Math.random();
             setTimeout(function applyLater() {
                 $scope.$apply();
             }, 200)
@@ -321,7 +781,7 @@ window.fx = function onProcessPageAndDefineUtils(){
 
             if (helper.pauseId) { //resume paused player
                 console.log('resumign pause')
-                window.iterationMarker =  helper.pauseId;
+                window.iterationMarkerPdf =  helper.pauseId;
                 helper.pauseId = null;
                 window.fxIteration();
                 return;
@@ -448,6 +908,10 @@ window.fx = function onProcessPageAndDefineUtils(){
 //window.showImages2 = true;
 window.fx2 = function fx2 (play, playIndex) {
 
+
+
+
+
     if ( typeof $scope === 'undefined') {
         console.debug('not ready yet, $scope is null')
         return;
@@ -455,9 +919,29 @@ window.fx2 = function fx2 (play, playIndex) {
     console.clear()
     console.log('the thing', $scope)
 
+
+
+
     var procHelper = {}
     var pH = procHelper;
     window.pH = pH;
+
+
+    pH.data = {};
+    pH.data.bookname = window.$scope.pdfURL.split('/').slice(-1);
+
+
+    // bookSettings.margin = {l:10,t:8,r:10,b:10};
+
+    var bookSettings = {};
+    bookSettings = rip.dictSettings[pH.data.bookname];
+
+    if ( bookSettings ) {
+        $.each(bookSettings, function ok(k,v) {
+            rip.settings[k] = v;
+        })
+    }
+
     pH.defineUtils = function defineUtils() {
         pH.utils = {};
         pH.utils.getFontSize = function getFontSize(span) {
@@ -536,6 +1020,7 @@ window.fx2 = function fx2 (play, playIndex) {
         }
         pageCustom.html('')
         pageCustom.html(page_.html())
+        pH.data.ui = pageCustom;
         var psans = pageCustom.children('span')
         return psans
     }
@@ -708,10 +1193,382 @@ window.fx2 = function fx2 (play, playIndex) {
             return __spans;
         }
 
+        sSH.getSizeOfColumn = function getSizeOfColumn(columnSet, allSpans) {
+
+            var colDimensions;// = {};
+
+
+
+            var fontSizeAvg = [];
+
+
+            $.each(columnSet.spans, function filterSpansInMargin(k,span) {
+                span = $(span)
+                var spanText = span.text();
+                var xy = rUtils.getSpanDimensions(span);
+
+                fontSizeAvg.push(xy.fontSizeAsNumber)
+
+
+                if ( colDimensions == null ) {
+                    colDimensions = {};
+                    colDimensions.x = xy.x;
+                    colDimensions.y = xy.y;
+                    colDimensions.maxX = xy.maxX;
+                    colDimensions.maxY = xy.maxY;
+                }
+
+                if ( xy.x < colDimensions.x ) {
+                    colDimensions.x = xy.x;
+                }
+                if ( xy.y < colDimensions.y ) {
+                    colDimensions.y = xy.y;
+                }
+
+                if ( xy.maxX > colDimensions.maxX ) {
+                    colDimensions.maxX = xy.maxX;
+                }
+
+                if ( xy.maxY > colDimensions.maxY ) {
+                    colDimensions.maxY = xy.maxY;
+                }
+
+                /*
+                 if ( xy.x < margins.minX ) {
+                 console.error('removing', 'x too small', xy, spanText)
+                 return;
+                 }
+                 if ( xy.x > margins.maxX ) {
+                 console.error('removing', 'x too big', xy, spanText)
+                 return;
+                 }
+                 if ( xy.y < margins.minY ) {
+                 console.error('removing', 'y too small', xy, spanText)
+                 return;
+                 }
+                 if ( xy.y > margins.maxY ) {
+                 console.error('removing', 'y too big', xy, spanText)
+                 return;
+                 }
+                 */
+                //return;
+                //filteredSpans.push(span)
+            })
+
+            var avgFontSize = rUtils.average(fontSizeAvg);
+
+            rUtils.searchForSpansInArea = function findItemsInBox(spansToSearch, box) { //searchForSpansInArea
+                var dictX = {}
+                var dictY = {}
+                var fxName = 'detectColumns.findItemsInBox';
+                console.log(fxName, 'find a box for', spansToSearch.length, box )
+
+
+                var foundSpans = [];
+
+                if ( box.maxX == null ) {
+                    box.maxX = box.x + box.width
+                }
+                if ( box.maxY == null ) {
+                    box.maxY = box.y + box.height
+                }
+
+                $.each(spansToSearch, function filterSpansInMargin(k,span) {
+                    span = $(span)
+                    var spanText = span.text();
+                    var xy = rUtils.getSpanDimensions(span);
+                    if ( spanText.includes('XYZ')) {
+                        //  console.log(fxName, xy, spanText)
+                    }
+                    if ( xy.x >= box.x) {
+                        if ( xy.maxX <= box.maxX) {
+                            if ( xy.y >= box.y ) {
+                                if ( xy.maxY <= box.maxY) {
+                                    foundSpans.push(span)
+                                }
+                            }
+                        }
+                    }
+                })
+                console.log(fxName, 'find a box Result ', foundSpans.length, foundSpans )
+                return foundSpans;
+                //go to page 144
+            }
+
+            colDimensions.height    =   colDimensions.maxY - colDimensions.y;
+            colDimensions.width     =   colDimensions.maxX - colDimensions.x;
+
+            var extTopOfCol = sh.clone(colDimensions)
+
+            var heightOfSearchBox = avgFontSize*1.8
+            extTopOfCol.height = heightOfSearchBox
+            extTopOfCol.y = extTopOfCol.y - extTopOfCol.height
+            extTopOfCol.height = heightOfSearchBox  * 1.4 //add a litle overhang JIC
+            extTopOfCol.maxY =  extTopOfCol.y + extTopOfCol.height;
+
+            var extraSpans = rUtils.searchForSpansInArea(allSpans,extTopOfCol)
+
+            extTopOfCol.color = 'orange'
+            rUtils.drawBlock(extTopOfCol, 'extra search area')
+
+            rUtils.enlarge = function enlarge(box,elnargeWit) {
+                if ( $.isArray(elnargeWit) ) {
+                }else {
+                    elnargeWit = [elnargeWit];
+                }
+
+                var fxName = 'detectColumns.enlarge';
+
+
+                var c = sh.clone(box)
+                $.each(elnargeWit, function filterSpansInMargin(k,span) {
+                    span = $(span)
+                    var spanText = span.text();
+                    var xy = rUtils.getSpanDimensions(span);
+                    //if ( spanText.includes('XYZ')) {
+                    //  console.log(fxName, xy, spanText)
+                    //}/
+                    //debugger;
+                    if ( xy.x < box.x) {
+                        box.x = xy.x;
+                    }
+
+                    if ( xy.y < box.y) {
+                        box.y = xy.y;
+                    }
+
+                    if ( xy.maxX > box.maxX) {
+                        box.maxX = xy.maxX;
+                    }
+
+                    if ( xy.maxY > box.maxY ) {
+                        box.maxY = xy.maxY;
+                    }
+
+                    console.log(fxName, box, c, xy)
+                })
+
+                box.height = box.maxY - box.y
+                box.width = box.maxX - box.x
+            }
+
+            if ( extraSpans.length > 0 ) {
+
+                //add to annotation to thsi ...
+                rUtils.annot(extraSpans, 'Add ed this to a column')
+
+                $.each(extraSpans, function onAdd(k,v) {
+                    columnSet.spans.push(v);
+                    rUtils.enlarge(colDimensions, v)
+                })
+            }
+
+            //catch all things in spring
+            var extraSpans2 = rUtils.searchForSpansInArea(allSpans,colDimensions)
+            if ( extraSpans2.length > 0 ) {
+                fxName = 'detectColumns.addextra'
+                //add to annotation to thsi ...
+                //rUtils.annot(extraSpans2, 'Add ed this to a column')
+
+                var rawColumSetSpans = []
+                $.each(columnSet.spans, function addRaw(k,v) {
+                    rawColumSetSpans.push(v[0]);
+                })
+
+                //    debugger
+                $.each(extraSpans2, function onAdd(k,v) {
+                    var rawUI = v[0]
+                    var included = rawColumSetSpans.includes(rawUI)
+                    if ( included == true ) {
+                        return;
+                    }
+
+                    span = $(v)
+                   // span.css('border-bottom', 'solid 2px '+ 'red')
+                    span.addClass('wasGrabbedToColoumn')
+                    console.log(fxName, 'a name', span.text(), rawUI)
+                    // return;
+
+                    columnSet.spans.push(v);
+                    //rUtils.enlarge(colDimensions, v)
+                })
+            }
+
+            var fxName = 'detectColumns.size'
+            console.log(fxName, 'maxV', avgFontSize, colDimensions, extraSpans)
+
+            return colDimensions
+        }
+
+        rUtils.drawBlock = function drawBlock(size, name, size2) {
+            var div2 = $('<div/>')
+            // div2 = div.clone();
+            div2.css('background-color', 'blue')
+            if ( size.color ) {
+                div2.css('background-color', size.color)
+            }
+            div2.css('opacity', '0.5')
+            div2.text(name)
+            div2.css('left', size.left+ 'px' )
+            div2.css('width', size.width+ 'px' )
+            div2.css('top', size.top +'px' )
+
+            if ( size.x ) {
+                div2.css('left', size.x +'px' )
+            }
+            div2.css('height', size.height +'px' )
+            if ( size.y ) {
+                div2.css('top', size.y +'px' )
+            }
+            console.log('detectColumns', '---size',  size)
+
+            div2.css('position', 'absolute')
+            div2.addClass('annottatino_Columns')
+            // parent.append(div2)
+            // margins.minX = width;
+            pH.data.ui.append(div2)
+        }
+
+
+        rUtils.removeUiWithClass('annottatino_Columns')
+
+        sSH.detectColumns = function detectColumns(__spans) {
+            //if two rows appear ... then two rows
+            var fxName = 'detectColumns'
+            var xVals = {};
+            $.each(__spans, function (indexSpan,v) {
+                var span = $(v);
+                //var fontSize = pH.utils.getFontSize(v);
+                var left = pH.utils.getPos(v).left;
+
+                var lineHeight = rUtils.getFontSize(span)
+
+                left = pH.utils.quantize(left, 5)
+
+                //console.log(fxName,'sorted by x spans',lineHeight)
+
+                var arr = xVals[left];
+                if ( arr == null ) arr = [];
+                arr.push(span)
+                xVals[left] = arr;
+
+
+                // rUtils.addToArrayDict(dictYRowToSentence, )
+            })
+            var colCount = 0;
+            var maxColX = 0;
+            var columnSets = [];
+
+            var drawBBB = true;
+            /*
+
+             TODO:
+             store the x values
+             try to find if all the items do not width
+             use width to limti items
+             get width of all tiems at oclumn adn draw column
+             push the x down fo items int eh colum
+             if any go over .. there is aproblem and abort operation
+
+
+             */
+
+
+            var  str = 'FAEADD,F38898,F0D1B5,E8A789,653C26'
+            rUtils.colors = {};
+            rUtils.colors.addColorSet = function addColorSet(name, str) {
+                var y  = '#'+str.split(',').join(',#')
+                var colors = y.split(',')
+                rUtils.colors[name] = colors;
+            }
+            rUtils.colors.makeCircle = function makeCircle(name) {
+                if ( $.isString(name)) {
+                    colors = rUtils.colors[name]
+                }
+
+                var y = new rUtils.GoThroughEach(colors)
+                return y;
+            }
+
+
+            rUtils.colors.addColorSet('sizeAnd7', str)
+            var colorLoop_colColors =  rUtils.colors.makeCircle('sizeAnd7')
+
+            console.log(fxName,'sorted by x spans',xVals)
+            //,  sortedByX)
+            $.each(xVals, function (xPosition,spansAtX) {
+                /*   if ( spansAtX.length > _spans.length*.){
+                 console.log('sorted by x spans', 'has 2 columns')
+                 }*/
+                if ( spansAtX.length > 10){
+                    if ( maxColX < xPosition ) maxColX = xPosition;
+                    colCount++
+                    console.log(fxName, 'sorted by x spans', 'found column',  xPosition)
+                    var columnSet = {};
+                    columnSet.spans = spansAtX
+                    columnSet.size = spansAtX.length
+                    columnSet.name = 'Column ' + columnSets.length +1
+                    //columnSets[xPosition] = columnSet;
+                    columnSets.push(columnSet)
+                    columnSet.dim = sSH.getSizeOfColumn(columnSet, __spans)
+                    //console.log(fxName, '~~~~~~s',  columnSet.dim)
+                    columnSet.dim.color = colorLoop_colColors.next();
+
+
+                    if ( drawBBB ) {
+                        //return;
+                        rUtils.drawBlock(
+                            columnSet.dim,
+                            sh.join(columnSet.name, spansAtX.length),
+                            sh.joinStr( columnSet.dim,'x', 'y', 'width', 'height')
+                        )
+
+                    }
+
+
+                    if ( columnSets.length > 1 ) {
+                        $.each(spansAtX, function (k, span) {
+                            var top = pH.utils.getPos(span).top;
+                            console.log(fxName,  '--- overriding', columnSets.length, span.text())
+                            span.attr('top-override', top+pH.pageHeight*columnSets.length);
+                        })
+                    }
+
+                }
+            })
+            console.log(fxName,  'column list', columnSets)
+            /*if ( colCount > 1) {
+             console.log(fxName,  'found column', 'has',colCount,'columns')
+             //add and override property to all spans
+             $.each(__spans, function (indexSpan,v) {
+             var span = $(v);
+             //var fontSize = pH.utils.getFontSize(v);
+             var left = pH.utils.getPos(v).left;
+             left = pH.utils.quantize(left, 5)
+             if ( left >= maxColX ) {
+             //console.log(fxName,   'found column @', 'has',left,maxColX)
+             var top = pH.utils.getPos(v).top;
+             span.attr('top-override', top+pH.pageHeight);
+             }
+
+             })
+
+             }*/
+
+            return __spans;
+        }
+
         if ( rip.settings.tryToDetect2Columns ) {
             //fix an add visual anotations
             _spans = sSH.detectTwoPages(_spans);
         }
+
+
+        if ( rip.settings.tryToDetect3Columns ) {
+            //fix an add visual anotations
+            _spans = sSH.detectColumns(_spans);
+        }
+
 
         uiUtils.absHelper = function abs(div2, l, t, r, b ) {
             div2.css('position', 'absolute')
@@ -802,14 +1659,6 @@ window.fx2 = function fx2 (play, playIndex) {
 
             $.each(_spans_, function filterSpansInMargin(k,span) {
 
-                rUtils.getXY = function getXY(ui) {
-                    var xy = {}
-                    xy.x = ui.css('left')
-                    xy.y = ui.css('top')
-                    xy.x= rUtils.clearPixels((xy.x))
-                    xy.y= rUtils.clearPixels((xy.y))
-                    return xy ;
-                }
 
 
                 span = $(span)
@@ -903,11 +1752,12 @@ window.fx2 = function fx2 (play, playIndex) {
             })
 
             //return sortedSpans
-            console.error('spans organized by row.',
-                ' with x values considered', yDict, yDict2);
+            if (rip.dbg.sorting  ) {
+                console.error('spans organized by row.',
+                    ' with x values considered', yDict, yDict2);
 
-            console.info('yDict', JSON.stringify(yDict2, null, 2) )
-
+                console.info('yDict', JSON.stringify(yDict2, null, 2))
+            }
             return yDict;
         };
 
@@ -959,8 +1809,11 @@ window.fx2 = function fx2 (play, playIndex) {
 
     pH.totalPageHeight = $($(spans[0]).parent()).height();
     spans = pH.sortSpans(spans) ;
-    console.error('spans', spans);
 
+
+    if ( rip.dbg.finalSpans ) {
+        console.error('spans', spans);
+    }
 
 
     var selectionElement = window.helper.selectionNode;
@@ -1041,7 +1894,7 @@ window.fx2 = function fx2 (play, playIndex) {
             var allFontSizePerChar = fontSize * text.length;
 
             if ( dbg)
-            console.log(tagName, fontSize,  pH.averageFontSize_PerSpan)
+                console.log(tagName, fontSize,  pH.averageFontSize_PerSpan)
             pH.averageFontSize_PerSpan += fontSize
             pH.averageFontSize_PerChar += allFontSizePerChar
         })
@@ -1379,16 +2232,16 @@ window.fx2 = function fx2 (play, playIndex) {
                 //cSH.uiElementsPush( cSH.uiElement )
 
                 /*
-                var uiEl = uiUtils.tag('p');
-                uiEl.attr('why', why);
-                uiEl.addClass('vGap');
-                uiEl.css('font-size', '7px')
-                uiEl.css('color', '#666666')
-                uiEl.html(['..... >>>',
-                    cSH.uiElement.text(),
-                    cSH.currentSentence,
-                    spanText,
-                ].join('<br /> _____   '));
+                 var uiEl = uiUtils.tag('p');
+                 uiEl.attr('why', why);
+                 uiEl.addClass('vGap');
+                 uiEl.css('font-size', '7px')
+                 uiEl.css('color', '#666666')
+                 uiEl.html(['..... >>>',
+                 cSH.uiElement.text(),
+                 cSH.currentSentence,
+                 spanText,
+                 ].join('<br /> _____   '));
                  cSH.uiElementsPush(uiEl);
                  */
                 console.error('bad size', cSH.uiElements.length)
@@ -1407,8 +2260,8 @@ window.fx2 = function fx2 (play, playIndex) {
                 //cSH.uiElementsPush(uiEl);
 
                 //if () {
-                    cSH.uiElementsClear('breaking a loop of sentence', null, uiEl)
-               // }
+                cSH.uiElementsClear('breaking a loop of sentence', null, uiEl)
+                // }
 
 
                 if (rip.settings.addDashesOnVGap) {
@@ -1998,8 +2851,10 @@ window.fx2 = function fx2 (play, playIndex) {
     pH.highlightSpans(pH.cSH.spans);
 //console.clear()
     var sentencesX = pH.createSentences(spans);
-    console.log('sentencesX', 'k', sentencesX);
-    console.log('cSH', pH.cSH);
+    if ( rip.dbg.finalSentenceParsedList ) {
+        console.log('sentencesX', 'k', sentencesX);
+        console.log('cSH', pH.cSH);
+    }
 //pH.cSH.spans = []
     pH.highlightSpans(pH.cSH.spans);
 //console.clear()
@@ -2052,12 +2907,12 @@ window.fx2 = function fx2 (play, playIndex) {
         var lastFoundIndex = 0;
         var sentences = pH.cSH.sentences;
         var dictSentToDivs = pH.cSH.dictSentencesToSpans;
-        var marker = window.iterationMarker;
+        var marker = window.iterationMarkerPdf;
         var async = $.async(sentences, function procSentence(k, sentence, fxEnd, controller) {
                 iterationWrapperFx(); //run so it can be resumed
 
                 function iterationWrapperFx() {
-                    if (window.iterationMarker != marker) {
+                    if (window.iterationMarkerPdf != marker) {
                         //debugger
                         console.error('marker has changed.... aborting loop')
                         return;
@@ -2701,11 +3556,34 @@ if ( rip.settings.stopAfterSorting != true ) {
 }
 
 //window.handlePage()
-var targetZoom = 1.2;
-if ( window.$scope.pdfViewerAPI.getZoomLevel() != targetZoom ) {
+var targetZoom = 1.2; //zoom for pics
+targetZoom = 1.3
+if ( window.$scope && window.$scope.pdfViewerAPI &&
+    window.$scope.pdfViewerAPI.getZoomLevel() != targetZoom ) {
     window.$scope.pdfViewerAPI.zoomTo(targetZoom)
+    debugger;
     setTimeout(function() {
         window.processPage();
     }, 1500);
 }
 
+
+window.fxStartPdf = function fxStartPdf() {
+    if ( window.$scope == null ) {
+        console.debug('not ready yet')
+        setTimeout(fxStartPdf, 500)
+        return;
+    }
+    //TODO where was another ...
+    var targetZoom = 1.2; //zoom for pics
+    targetZoom = 1.3
+
+    if ( window.$scope.pdfViewerAPI.getZoomLevel() != targetZoom ) {
+        window.$scope.pdfViewerAPI.zoomTo(targetZoom)
+        debugger;
+        setTimeout(function() {
+            window.processPage();
+        }, 1500);
+    }
+
+}

@@ -168,9 +168,9 @@
     <div  id="bookHolderContainerClone"  class="col1">
 
     </div>
- 
 
- 
+
+
 
     <div  id="col2Container"  class="col2">
 
@@ -266,7 +266,7 @@
                 </script>
                 <br />
                 <a href="https://www.youtube.com/watch?v=5BTTA09Qlzk&index=101&list=PL6jb--mldytlzksWTOWk7GJXaDyMsvhPu"
-                    target="_blank"
+                   target="_blank"
                 >music</a>
                 <a href="https://www.youtube.com/watch?v=9H2oY_85q8U"
                    target="_blank"
@@ -298,7 +298,7 @@
 
         var href = this.href;
         if ( 0 == href.indexOf('http') ) {
-                return;
+            return;
         };
         if (  href == null  ) {
             return;
@@ -322,6 +322,219 @@
         }
 
     });
+
+
+
+    function STrX() {
+        var self = this;
+        var p = self;
+
+        p.init =  function init() {
+
+            window.IInitSpeaker = true;
+            window.initTCustomDir = true;
+
+        }
+
+        p.loadHTML = function loadHTML() {
+            $.get( '/tests/testresume.html', function( loadedHTML ) {
+
+                var h = $('<div>'+loadedHTML+'</div>')
+                var contentToAppend = $(h).find('.body'); //don't get entire html container
+                $('#contentToShow').empty();//support hot-reload
+                if ( contentToAppend != null ) {
+                    $('#contentToShow').append(contentToAppend);
+                    //  initSpeaker()
+                }
+
+
+                self.onScanBookForREadableSentences();
+
+                //debugger;
+            })
+        }
+
+
+        p.onScanBookForREadableSentences =  function onScanBookForREadableSentences(startReadingWhenProcesse) {
+               /* window.u = uiUtils;
+                if ( window.pH == null ) {
+                    window.processPage();
+                }*/
+                var cfg = {}
+               // pH.currentPage = window.$scope.pdfCurrentPage;
+                var id = '#contentToShow'
+                cfg.divProcess = ''+id
+                //$(id).css('display', 'none')
+
+                var id = '#contentToShow'
+                var ui = $(id)//.find('#XLayer')//.hide();
+                var uiPageCloned = ui.clone()
+                //var uiPageCloned
+                var classSentenceScroller = 'sentenceScrollableContainer'
+                $('.'+classSentenceScroller).remove();
+               // uiPageCloned.attr('id', 'Xlayer2');
+                uiPageCloned.addClass(classSentenceScroller);
+                $('#contentToShowA').append(uiPageCloned)
+
+                cfg.divProcess = uiPageCloned
+
+                cfg.skipHandleFrames = true;
+
+                cfg._fxScroll = function fxScroll(target, self) {
+                    var posSentenceDiv = u.getPos(target)
+                    var page = u.getPos('#page_'+ (window.$scope.pdfCurrentPage - 1))
+                    var scrollContainer = $('pdf-viewer')
+                    var scrollY = u.getScrollPosition(scrollContainer)
+
+                    var posScrollContainer = u.getPos(scrollContainer);
+
+                    var setT=   scrollY  - 60 + posSentenceDiv.top - posScrollContainer.top;
+                    u.setScrollPosition(scrollContainer, setT)
+                    console.log('scrollto', setT)
+                    //pageY = pageY.top
+                    //$('pdf-viewer').scrollTop
+                    //console.log('scrollX', target, setT, posSentenceDiv.top, page.top)
+                }
+
+                cfg.fxDone = function onFxDoe(){
+                    console.log('done with everything ...');
+
+                    window.$scope.pdfViewerAPI.goToNextPage();
+                    setTimeout(onScanBookForREadableSentences, 1500, true);
+                }
+
+                cfg.dbgSettings = {};
+                 //cfg.dbgSettings.colorizeBackgrounds = true;
+            cfg.dbgSettings.debugWithColor = true;
+                window.initSpeakerControls(cfg)
+                setTimeout(function startLAter() {
+                    if ( startReadingWhenProcesse ) {
+                        window.sentenceHelper.onPlay2()
+                    }
+                },500)
+            }
+
+
+        p.addTransportHTML = function addTransportHTML() {
+
+
+            var prepReadeMode = false;
+            prepReadeMode = true;
+
+
+            var cfg = {}
+            cfg.id = 'test_createTransportPanel';
+            cfg.clearIfFound = true
+            if ( window.uiUtils.makePanel(cfg) ) {
+                //return; //already made
+            }
+            //  debugger;
+            $(cfg.id).empty()
+            var ui =  $(cfg.id);
+            uiUtils.flagCfg = {};
+            uiUtils.lastUI.css('right', '10px')
+            uiUtils.lastUI.css('left', '10px')
+            //uiUtils.flagCfg.id = cfg.id;
+            uiUtils.flagCfg.addTo = $(cfg.id);
+            window.uiUtils.addLabel( '>>>', 'txtCurrentStepIndex');
+            //window.uiUtils.addDiv( {id:'divTransport'} );
+
+
+
+            $.get( '/js/speak.html', function onSpeakHTML( loadedHTML ) {
+
+
+                var h = $('<div>'+loadedHTML+'</div>')
+                var contentToApped = $(h).find('#appendToApp'); //don't get entire html container
+                $('#appendToApp').remove();//support hot-reload
+                if ( contentToApped != null ) {
+                    //   $('body').append(contentToApped);
+                    ui.append(contentToApped);
+                    //  initSpeaker()
+                }
+
+                if ( prepReadeMode ) {
+                    self.onScanBookForREadableSentences();
+                }
+
+            })
+
+
+            window.uiUtils.addBtn( {text:'Scan'}, self.onScanBookForREadableSentences);
+        }
+    }
+
+    var y= new STrX()
+    y.init();
+    y.addTransportHTML();
+    y.loadHTML();
+
 </script>
+<script src="http://localhost:10110/reloader.js" ></script>
+<script>
+    function onReloader() {
+        reloader.reloadWhen('epub_test_files.html');
+        reloader.filter = 'Reader/TTS-Reader/www/';
+        /*reloader.reloadWhenFx('drawPB.js', function onTestOneJs(a, b, c) {
+         //console.log('pussy', a,b,c);
+         //window.drawPBJS.go();
+         })
+
+
+         reloader.reloadWhenFx('account_', function onTestOneJs(a, b, c) {
+         //console.log('pussy', a,b,c);
+         //window.drawPBJS.go();
+         var $modal_content = $('.modal-account .content');
+         $modal_content.removeClass('js-loaded')
+         window.xLoad = true
+         uiUtils.setHash('')
+         function myAccount() {
+         uiUtils.setHash('account')
+         }
+
+         setTimeout(myAccount, 500)
+         })
+
+
+         reloader.reloadWhenFx('test3/csvScripts/', function onTestOneJs(a, b, c) {
+         console.log('rerun last test',a,b,c)
+         tH.runTest('testCSV', a)
+         //debugger
+         return true
+         /!*
+         loadTestFramework(function onFinishedRerunTest() {
+         // window.tests.loaded = true;
+         //window.whenReadyHasRunTesting = false; do not reload again
+         console.log('rerun last test',a,b,c,)
+         // tH.rerunLastTest()
+         }, true)
+         *!/
+         })
+
+         reloader.reloadWhenFx('test3/', function onTestOneJs(a, b, c) {
+         loadTestFramework(function onFinishedRerunTest() {
+         // window.tests.loaded = true;
+         //window.whenReadyHasRunTesting = false; do not reload again
+         console.log('rerun last test')
+         tH.rerunLastTest()
+         }, true)
+         })
+
+
+         //C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/test3/testFramework.js
+         reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/', '')
+         //reloader*/
+    }
+    try {
+        onReloader()
+    } catch ( e) {
+        console.log('e', e)
+    }
+
+</script>
+
+<div id="contentToShowA" ></div>
+<div id="contentToShow" ></div>
+
 </body>
 </html>

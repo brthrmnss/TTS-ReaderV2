@@ -9,6 +9,9 @@
  */
 
 var sh = {};
+var sh = require('shelpers').shelpers;
+
+
 var fs = require("fs");
 var encoding = 'utf8';
 var express = require("express");
@@ -45,6 +48,17 @@ function SayServerLite(){
     var p = SayServerLite.prototype;
     p = this;
     var self = this;
+
+    self.settings = {};
+
+    self.data = {};
+    self.data.cache = {};
+
+    var dirTrash = 'c:/trash/'
+    if ( sh.fileExists(dirTrash)) {
+        self.settings.useTrash = true
+    }
+
     /**
      * Setup middleware and routes
      * @param urlf
@@ -80,6 +94,7 @@ function SayServerLite(){
             var playAudio = req.body.playAudio=='true';
             var speakOpts = {};
             speakOpts.playAudio = playAudio;
+            speakOpts.cacheAudio = req.body.cacheAudio=='true';
             var volume = req.body.volume;
             speakOpts.volume = volume;
             speakOpts.voice = voice;
@@ -109,7 +124,6 @@ function SayServerLite(){
 
             }
 
-
             var json = {}
             json.src="audio/rx-wav;base64,";
             self.speak(function result(body){
@@ -125,6 +139,31 @@ function SayServerLite(){
                 });
             }, text , rate, voice, file, playAudio, speakOpts);
         }
+
+
+        var nextX = {}
+        nextX.data = {};
+        nextX.load = function loadArr(arr) {
+            nextX.arr = arr;
+            nextX.currentIndex = 0
+        }
+        nextX.next = function next() {
+            if ( nextX.arr.length >= nextX.currentIndex)
+                nextX.currentIndex = -1
+
+            nextX.currentIndex++
+            var nextItem = nextX.arr[nextX.currentIndex];
+            nextX.data.current = nextItem;
+            return nextItem;
+        }
+        nextX.getCurrent = function getCurrent() {
+            if ( nextX.data.current == null) {
+                nextX.next()
+            }
+            return nextX.data.current;
+        }
+        nextX.load( ['cachedFile1.wav','cachedFile2.wav','cachedFile3.wav'] )
+
 
         p.speak = function speak(fx, text, rate, voice, file, playAudio, speakOpts){
             var isMac = sh.isWin() == false
@@ -174,16 +213,58 @@ function SayServerLite(){
                 var path = require('path');
                 var filePath = path.resolve(__dirname+'/www/cache/txt.txt')
                 var filePathFile = path.resolve(__dirname+'/www/cache/sound.wav')
+
+
+                var fileNext = nextX.getCurrent();
+
+                if ( self.settings.useTrash ) {
+                    var filePath = path.resolve(dirTrash+'/txt.txt')
+                    var filePathFile = path.resolve(dirTrash+'/sound.wav')
+                    var fileCached = path.resolve(dirTrash+'/'+fileNext)
+                }
+
+                if ( speakOpts.playAudio && speakOpts.cacheAudio) {
+                    var cachedFile = self.data.cache[text]
+                    if ( cachedFile ) {
+                        console.log('cached', text)
+                        self.utils.playSong(cachedFile, fx)
+                        return;
+                    }
+                }
+
+
+
+
                 filePath = filePath.replace(/\\/gi, "/")
                 sh.writeFile(filePath, text);
                 gb = 'cscript "C:\\Program Files\\Jampal\\ptts.vbs" -u '+filePath
+                if ( speakOpts.cacheAudio ) {
+                    gb += ' ' + '-w ' + filePathFile + ' ';
+                }
                 gb +=  ' -voice ' + sh.qq(sh.dv(speakOpts.voice, 'IVONA 2 Brian'))// sh.qq('IVONA 2 Brian')
                 gb +=  ' -v ' + sh.dv(speakOpts.volume, '100')
                 if(rate != null){
                     gb += ' -r ' + rate + ' ';
                 };
-                if ( playAudio != true )
-                    gb +=  ' -w ' + filePathFile;
+                if ( playAudio != true ) {
+                   // gb += ' -w ' + filePathFile;
+                }
+
+                if ( speakOpts.cacheAudio ) {
+                    self.proc('caching audio', filePathFile, fileCached, sh.qq(text) )
+                    sh.each(self.data.cache, function removeIfVal(k,v) {
+                        if ( v == fileCached ) {
+                            self.data.cache[k] == null;
+                            delete  self.data.cache[k]
+                        }
+                    })
+                    self.data.cache[text] = fileCached;
+                    sh.copyFile(filePathFile, fileCached)
+                   // asdf.g
+                }
+
+
+
             }
 
             console.log('log', gb)
@@ -239,6 +320,15 @@ function SayServerLite(){
                         return
                     }
 
+
+
+
+                    if ( speakOpts.cacheAudio && speakOpts.playAudio ) {
+                        self.utils.playSong(filePathFile, fx)
+                    }
+
+
+
                     fx(true);
                     //console.log('done speaking', text, stdout);
                 });
@@ -246,6 +336,16 @@ function SayServerLite(){
 
             }
             return;
+        }
+
+        p.utils = {}
+        p.utils.playSong = function playSong(fileSong, fx) {
+            sh.run(
+                [
+                    sh.fs.join(__dirname,'bin','windows','cmdmp3.exe'),
+                    sh.qq(fileSong)
+                ].join(' '))
+            if ( fx ) fx(true);
         }
 
         p.listVoices = function listVoices(req, res){
@@ -292,13 +392,89 @@ exports.SayServerLite = SayServerLite;
 if(module.parent == null){
     var e = new SayServerLite()
     e.start();
-    var req = {};
-    req.body = {};
-    req.body.text = 'sentence.'
-    req.body.playAudio = 'true'
-    var res = {};
-    res.json =function () {}
-    e.say(req, res)
+    /*
+     var req = {};
+     req.body = {};
+     req.body.text = 'sentence.'
+     req.body.playAudio = 'true'
+     var res = {};
+     res.json =function () {}
+     e.say(req, res)
+
+     setTimeout(function ()  {
+     var req = {};
+     req.body = {};
+     req.body.text = 'sentence 2.'
+     req.body.cacheAudio = 'true'
+     var res = {};
+     res.json =function () {}
+     e.say(req, res)
+     }, 1000)
+
+
+     setTimeout(function ()  {
+     var req = {};
+     req.body = {};
+     req.body.text = 'sentence 2.'
+     req.body.cacheAudio = 'true'
+     req.body.playAudio = 'true'
+     var res = {};
+     res.json =function () {}
+     e.say(req, res)
+     }, 2000)
+
+
+     */
+
+    function onX(){
+
+        var sentObjs = [
+            { text:'Sentence'},
+            { text:'Sentence'},
+            { text:'Sentence',cacheAudio:true,playAudio:false},
+            //{ text:'Sentence2',cacheAudio:true},
+            { text:'Sentence',cacheAudio:true},
+            { text:'Sentence',cacheAudio:true},
+        ]
+
+
+        onX.d = new Date();
+
+        var ddd = [];
+
+        sh.async(sentObjs, function onCall(k,fx) {
+            //e.start();
+            // asdf.g
+            var req = {};
+            req.body = {};
+           // k.text = 'take that dog outside i said, it\'s muddy'
+            req.body.text = k.text;
+            req.body.playAudio = 'true'
+            if ( k.cacheAudio ) {
+                req.body.cacheAudio = 'true';
+            }
+            if ( k.playAudio == false ) {
+                req.body.playAudio = 'false';
+            }
+            var res = {};
+            res.json = function onJSon () {
+                var yy = sh.time.secs(onX.d);
+                console.log('how much time', yy)
+                onX.d = new Date();
+                ddd.push(yy)
+                fx()
+            }
+
+
+
+            e.say(req, res)
+        }, function asdf() {
+            console.log(ddd)
+        })
+
+    }
+    onX();
+
 };
 
 
