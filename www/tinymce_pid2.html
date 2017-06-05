@@ -1,0 +1,187 @@
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>TinyMCE TestTab</title>
+
+    <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+    <script src="js/lib/jquery-1.11.2.min.js"></script>
+    <script src="js/speakHTMLText_Cleaned.js"></script>
+    <script src="js/list.js"></script>
+    <script src="js/nlp_compromise.js"></script>
+    <script src="js/lib/js.cookie.js"></script>
+
+    <script src="js/ui_utils.js"></script>
+
+    <!-- <script src="js/lib/jquery/jquery-1.11.1.js.ignore"></script>-->
+    <script src="js/lib/jquery/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="js/lib/jquery/jquery-ui.css">
+
+    <!--<script src="js/reloader.js"></script>-->
+    <!-- <script src="js/lib/jquery-1.11.2.min.js"></script>
+     <script src="js/lib/js.cookie.js"></script>
+     <script src="js/speakHTMLText_Cleaned.js"></script>
+     <script src="js/contextMenu.js"></script>
+     <script src="js/reloader.js"></script>
+     <script src="js/dropzone.js"></script>
+
+     <script src="js/list.js"></script>
+     <script src="js/nlp_compromise.js"></script>
+
+     <link rel="stylesheet" type="text/css" href="/js/speak.css">
+     <link rel="stylesheet" type="text/css" href="css/layouts.css">
+
+     <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+
+     <link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">
+     <link rel="stylesheet" type="text/css" href="css/lib/bootstrap.min.css">
+
+     <style>
+         body {
+             font-family: Helvetica, Arial;
+         }
+     </style>
+     <script src="js/lib/bootstrap.min.js"></script>
+ -->
+
+    <script src="js/tinymce/tinymce.min.js"></script>
+
+    <style>
+        .highlight {
+            background-color: #00b68f;
+            opacity: 0.3;
+
+            background-color: #EEF8C8;
+            opacity: 1;
+
+        }
+        .highlight2 {
+            background-color: #C6E746;
+            opacity: 0.3;
+        }
+    </style>
+    <script src="../../../../../../AppData/Local/Temp/tinymce.js"></script>
+</head>
+<body>
+
+<!--<div class="highlight highlight2" >sdffffffffff
+dfg
+dfg
+</div>-->
+<!-- initially hidden right-click menu -->
+<div class="hideContextMenu" id="rmenu">
+    <ul>
+        <li>
+            <a  onclick="contextMenuHelper.copy()">Copy</a>
+        </li>
+    </ul>
+</div>
+
+<!--
+$($('iframe')[1]).contents().find("head")
+var head = jQuery("#frame1").contents().find("head");
+var css = '<style type="text/css">' +
+'.container{background:blue}; ' +
+'</style>';
+jQuery(head).append(css);
+});
+-->
+<div class="ui-widget">
+    <label for="tags"> </label>
+    <input id="tags" class="txt2">
+    <span id="txtStatus2"></span>
+</div>
+
+<div class="hideContextMenu" id="contextAddBookmark">
+    <div id="contextAddBookmark_lbl" ></div>
+
+    <textarea id="contextAddBookmark_txt"
+              placeholder="important b/c ... inspires me to ..."
+              style="height: 200px; width: 150px; border: solid 1px white;"></textarea>
+
+    <br />
+    <button id="btnAddNote">Add Notes</button>
+    <button id="btnContextMenuClose">Close</button>
+    <br />
+    <br />
+    <div  id="btnBar" >
+        <button id="btnQuote">Quote</button>
+        <button >Cool</button>
+        <br />
+        <button id="btnTryThis">TODO</button>
+        <br />
+        <button id="btnEpiphany">Epi</button>
+        <button id="btnPainful">Pain</button>
+    </div>
+
+    <span id="contextSentiments" ></span>
+    <br />
+    <div id="txtAreaforBookMark" style="max-height: 100px; max-width: 150px; overflow: auto;" >sdfsdf</div>
+
+</div>
+<!--
+idea:
+use non eitalbe area that is updated when i add items , the real tags are stored in the otuer div which teh user cannot edit
+-->
+<div style="overflow-y: auto">
+
+    <textarea id="mainContent">
+        <p class="highlight">asdfa</p><p class="">sdf</p><p class="">as</p>
+        <!-- <div class="myclass mceNonEditable">Contents</div>-->
+        <p class="">df</p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfadfadf</span></span></p><p class=""><br data-mce-bogus="1" class=""></p><p class="">dfsdfsdfsdf</p>
+    </textarea>
+    <textarea id="mainContent">
+        <p class="highlight">asdfa</p><p class="">sdf</p><p class="">as</p>
+        <!-- <div class="myclass mceNonEditable">Contents</div>-->
+        <p class="">df</p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfadfadf</span></span></p><p class=""><br data-mce-bogus="1" class=""></p><p class="">dfsdfsdfsdf</p>
+    </textarea>
+    <textarea id="mainContent">
+        <p class="highlight">asdfa</p><p class="">sdf</p><p class="">as</p>
+        <!-- <div class="myclass mceNonEditable">Contents</div>-->
+        <p class="">df</p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfadfadf</span></span></p><p class=""><br data-mce-bogus="1" class=""></p><p class="">dfsdfsdfsdf</p>
+    </textarea>
+    <textarea id="mainContent">
+        <p class="highlight">asdfa</p><p class="">sdf</p><p class="">as</p>
+        <!-- <div class="myclass mceNonEditable">Contents</div>-->
+        <p class="">df</p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfasdf</span></span></p><p class=""><span style="text-decoration: line-through;" data-mce-style="text-decoration: line-through;"><span class="">asdfadfadf</span></span></p><p class=""><br data-mce-bogus="1" class=""></p><p class="">dfsdfsdfsdf</p>
+    </textarea>
+
+</div>
+<br />
+<div id="txtEdit">
+
+</div>
+<span id="speakingBox">speaking</span>
+<div id="txtConsole" >sttaus</div>
+<button onclick="reverse()">asdf</button>
+<div id="controlBox"> </div>
+
+<script src="js/pid/pid.js"></script>
+<script src="js/pid/pid2.js"></script>
+
+
+
+<xscript src="http://localhost:10110/socket.io-1.2.0.js" ></xscript>
+<script>
+    //window.baseBaseUrlPort = '10110'
+    window.baseBaseUrlPort = 3000
+</script>
+<script src="http://localhost:10110/reloader.js" ></script>
+<script>
+    reloader.reloadWhen('tinymce_pid2.html')
+    //reloader.filter = '/ExtBookzz/'
+    reloader.reloadWhenFx('drawPB.js', function onTestOneJs(a,b,c){
+        //console.log('pussy', a,b,c)
+        //window.drawPBJS.go();
+    })
+    //reloader
+</script>
+
+
+
+
+
+</body>
+
+
+</html>

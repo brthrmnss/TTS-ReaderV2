@@ -1816,7 +1816,7 @@ window.fx = function fc(){
             //var utils = {};
             //utils.
 
-            debugger
+            //debugger
             if (  $('#voc_startOnSelection').length == 0 ) {
                 console.log('injected html not found, try do ready again...')
                 setTimeout(doReady, 300)
@@ -2042,7 +2042,7 @@ window.fx = function fc(){
 
 
 
-            if ( cfg2.skipHandleFrames) {
+            if ( cfg2  &&  cfg2.skipHandleFrames) {
                 return;
             }
             // debugger

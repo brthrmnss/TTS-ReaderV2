@@ -529,11 +529,13 @@ app.get("/store_doc", storeBookmark)
 app.post("/store_doc", storeBookmark)
 
 
+/*
 // application -------------------------------------------------------------
 app.get("*",function(req,res){
 	// load the single view file (angular will handle the page changes on the front-end)
 	res.sendFile(__dirname +'/www/index.html');
 });
+*/
 
 // GET ALL ENTRIES
 app.post('/getRecentFiles', function(req, res){

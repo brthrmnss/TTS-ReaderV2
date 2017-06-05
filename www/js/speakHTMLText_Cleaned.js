@@ -1237,6 +1237,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
                 h.addSentence2Fragment = function addSentence2Fragment(str, _parent, why) {
                     //create span, add to currentSpans to track sentence fragement
                     var span = $('<span>' + str + '</span>');
+                    span = $('<span />')
+                    span.text(str) //try to put '<scritp> in tag it will fail
                     if  ( h.data.debugWithOpacity ) {
                         span.css({opacity:'0.2'});
                     }
