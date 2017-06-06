@@ -155,6 +155,11 @@ function defineBookDirUtils() {
 			dirReferrer = unescape(referer).split('epub.html/')[1]
 			//console.error('change it ..', fileOrig, dirReferrer)
 		}
+		if (referer && referer.indexOf('epubV2.html') != -1) {
+			dirReferrer = unescape(referer).split('epub.html/')[1]
+			//console.error('change it ..', fileOrig, dirReferrer)
+		}
+		
 
 		function getDirForBook(dir) {
 			var dirBook = sh.fs.getFileNameOnly(dir).replace(/[^\w\s]/gi, '')
@@ -257,7 +262,12 @@ function defineBookDirUtils() {
 var utils = defineBookDirUtils()
 
 
-app.get("/epub.html/*",function onEditEpub(req,res){
+app.get("/epub.html/*",onEditEpub)
+app.get("/epubV2.html/*",onEditEpub)
+
+
+
+function onEditEpub(req,res){
 	//asdf.g
 	var file =  req.params[0];
 	var fileOrig = file;
@@ -316,6 +326,9 @@ app.get("/epub.html/*",function onEditEpub(req,res){
 		options.fxDone  = function done(file){
 			var fileContent = fs.readFileSync(file, 'utf8')
 			var fileEpubHtml = __dirname + '/www/epub.html'
+			if ( req.originalUrl.includes('epubV2') ) {
+				fileEpubHtml = __dirname + '/www/epubV2.html'
+			}
 			var epub = fs.readFileSync(fileEpubHtml, 'utf8')
 			//src="../images/00003.jpeg"/></span></p>
 			//epub = sh.replace(epub, 'src="../', 'src="')
@@ -490,7 +503,7 @@ app.get("/epub.html/*",function onEditEpub(req,res){
 	return;
 	// load the single view file (angular will handle the page changes on the front-end)
 	res.sendFile(epub);
-});
+};
 
 
 app.use(express.static(__dirname + '/www'));                 	// set the static files location /www/img will be /img for users
