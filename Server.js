@@ -149,17 +149,17 @@ function defineBookDirUtils() {
 			var referer = req.headers['referer'];
 		}
 
-		console.info('referer', fileOrig, referer);
+
 		var dirReferrer = null;
 		if (referer && referer.indexOf('epub.html') != -1) {
 			dirReferrer = unescape(referer).split('epub.html/')[1]
 			//console.error('change it ..', fileOrig, dirReferrer)
 		}
 		if (referer && referer.indexOf('epubV2.html') != -1) {
-			dirReferrer = unescape(referer).split('epub.html/')[1]
+			dirReferrer = unescape(referer).split('epubV2.html/')[1]
 			//console.error('change it ..', fileOrig, dirReferrer)
 		}
-		
+		console.info('referer', fileOrig, referer, dirReferrer);
 
 		function getDirForBook(dir) {
 			var dirBook = sh.fs.getFileNameOnly(dir).replace(/[^\w\s]/gi, '')
@@ -279,10 +279,15 @@ function onEditEpub(req,res){
 	var books2 = [];
 
 	var referer  = req.headers['referer'];
-	console.info('referer', fileOrig, referer);
+	console.info('>referer', fileOrig, referer);
 	var dirReferrer = null;
-	if ( referer && referer.indexOf('epub.html') != -1 ) {
-		dirReferrer = unescape(referer).split('epub.html/')[1];
+	var rootApp = 'epub.html'
+	var rootApp2 = 'epubV2.html'
+	if ( referer && referer.includes(rootApp2)) {
+		rootApp = rootApp2;
+	}
+	if ( referer && referer.indexOf(rootApp) != -1 ) {
+		dirReferrer = unescape(referer).split(rootApp+'/')[1];
 		//console.error('change it ..', fileOrig, dirReferrer)
 		if ( dirReferrer && dirReferrer.indexOf('?') != -1 ) {
 			dirReferrer = dirReferrer.split('?')[0];

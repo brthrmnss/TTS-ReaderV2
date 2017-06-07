@@ -1494,6 +1494,9 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
                             //return;
                         }
 
+                        if ( child.nodeName == 'LI') {
+                            h.addSentence2('',null, 'list tag')
+                        }
                         //console.warn('addingX ' +  tab +  child.nodeName,child )
                         // debugger;
                         if ($.isString(child) || child.nodeName == '#text') {
