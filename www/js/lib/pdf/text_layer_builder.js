@@ -195,6 +195,13 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
       // console.log(style)
       //textDiv.setAttribute('asdf', '33rrwf')
       textDiv.setAttribute('origFont', geom.fontName)
+      textDiv.setAttribute('strx', geom.str)
+
+    /*  if ( geom.str.split(' ').length == 1) {
+        if ( geom.str.length > 15 ) {
+          debugger
+        }
+      }*/
       //debugger;
 
 

@@ -37,7 +37,7 @@ sh.dv = function defaultValue(input, ifNullUse){
 }
 
 sh.qq = function qq(text){
-    return "\"" + text + "\"";
+    return "\"" + text + "\"";say
 };
 
 sh.isWin = function isWin() {

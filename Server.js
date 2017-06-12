@@ -545,6 +545,42 @@ function storeBookmark (req,res){
 
 app.get("/store_doc", storeBookmark)
 app.post("/store_doc", storeBookmark)
+app.post(//"/js/tinymce/plugins/spellchecker/"
+	'/nanospell/server/ajax/php/tinyspell.php'
+	, spellCheck)
+function spellCheck(req, res){
+
+	//{id: "c0", method: "spellcheck", params: {lang: "en",…}}
+
+//{"id":"c0","result": {"chekc":["check"],"functionallity":["functionality","functionally"],"esveryone":["everyone"],"Fromm":["From","Form","Fro mm","Frame"],"perpsective":["perspective"],"ideel":["ideal","idle","id eel","idol"],"experiense":["experience","expedience","experienced","experiences","experience's"],"TinyMCE":[],"spellcheck":["spell check","spell heck","spellchecker"],"evenn":["even","Even","event","evens"],"aree":["are","area","aerie","agree"],"ussing":["using","us sing","issuing","sussing"],"NanoSpell":[],"jsut":["just","","joust","jest"],"werks":["works","work's","weeks","perks"],"automaticaly":["automatically"],"seemlessly":["seamlessly"]}}
+
+	var body = req.body
+
+	if ( body.method == 'spellcheck') {
+		var result = {}
+
+		result.id = body.id;
+
+		var words = body.params.words;
+
+		var wordsResults = {}
+
+		sh.each(words, function on(k,word) {
+
+			var alts = [];
+			wordsResults[word] = alts
+
+		});
+
+		result.result = wordsResults;
+		//var words = data.params.words;
+		res.json(result)
+		return
+	}
+
+
+	res.send('asdf')
+}
 
 
 /*

@@ -63,8 +63,14 @@ rip.dictSettings["[Stephen_Biddle]_Military_Power_Explaining_Victor(Book4You).pd
 
 bookSettings = sh.clone(bookSettings)
 //bookSettings.tryToDetect3Columns = true;
-bookSettings.margin = {l:5,t:4,r:7,b:7};
+bookSettings.margin = {l:5,t:8,r:7,b:7};
 rip.dictSettings["[Various]_Edge_-.August.2016(bookzz.org).pdf"] = bookSettings;
+
+
+bookSettings = sh.clone(bookSettings)
+//bookSettings.tryToDetect3Columns = true;
+bookSettings.margin = {l:2,t:4,r:2,b:7};
+rip.dictSettings["LEVEL-1 LISA BAKER 194P (NXPowerLite Copy).pdf"] = bookSettings;
 
 
 

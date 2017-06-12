@@ -73,16 +73,23 @@ c.dbg.debugKeyUpEvents = false;
 c.dbg.debugNodeChangeEvents = false;
 
 tinymce.init({ selector:'textarea',
-    height: 500,
+    //height: 500,
     theme: 'modern',
-    plugins: "noneditable",
+    plugins: "noneditable, autoresize",
+
+    autoresize_bottom_margin: -10,
+    autoresize_min_height: 50,
+    autoresize_on_init: true,
+    statusbar: false,
+    //menubar: "tools",
+    external_plugins: {"nanospell": "/nanospell/plugin.js"},
     /*plugins: "spellchecker",
      menubar: "tools",
      toolbar: "spellchecker",*/
     // toolbar: "file edit insert view format table tools undo redo | currentdate",
     toolbar: [
         'undo redo | styleselect | bold italic | link image',
-        'alignleft aligncenter alignright | bullist numlist'
+        'alignleft aligncenter alignright | bullist numlist, spellchecker'
     ],
     setup: function(editor) {
 
@@ -196,6 +203,22 @@ tinymce.init({ selector:'textarea',
             console.debug('dblclick: ' + e.keyCode);
             c.status('doubleclick')
             helper.playAllSentences();
+        });
+
+
+
+
+        editor.on('dblclick',function(e) {
+            console.debug('dblclick: ' + e.keyCode);
+            c.status('doubleclick')
+            helper.playAllSentences();
+        });
+
+
+
+        editor.on('focus',function(e) {
+            console.debug('on focued: ' + e.keyCode);
+
         });
 
 
@@ -357,7 +380,32 @@ tHelper.playAllSentences = function readText() {
 };
 
 
+function setup() {
 
+    var mces = $('.mce-tinymce.mce-panel')
+    mces.each(function grabTOolbar(k,v) {
+        var ui = $(v)
+        var c = ui.find('.mce-container.mce-menubar')
+        var t = ui.find('.mce-container.mce-toolbar')
+        var parent = c.parent();
+        var u = uiUtils.tag('div');
+        u.addClass('booToolbar')
+        u.append(c);
+        u.append(t);
+
+        ui.css('border-top', '0px')
+        ui.css('margin-top', '-1px')
+
+
+        ui.find('.mce-toolbar-grp').hide();
+        u.css('position', 'fixed')
+        u.css('background-color', '#F0F0F0')
+        u.css('top','0px');
+        $('body').append(u)
+
+    })
+}
+setTimeout(setup, 1500)
 
 //   debugger
 tHelper.setupPaste()
@@ -367,3 +415,6 @@ tHelper.setupControlBox = function setup() {
     //utils.ignoreAddLinkThings('Speak On Paste')
 }
 tHelper.setupControlBox();
+
+
+
