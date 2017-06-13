@@ -1,6 +1,23 @@
 /**
  * Created by user2 on 2/14/16.
  */
+
+uiUtils.absHelper = function abs(div2, l, t, r, b ) {
+    div2.css('position', 'absolute')
+    if ( l == 0 ) { l = '0px'}
+    if ( t == 0 ) { t = '0px'}
+    if ( r == 0 ) { r = '0px'}
+    if ( b == 0 ) { b = '0px'}
+    if ( l )
+        div2.css('left', l )
+    if ( t )
+        div2.css('top', t )
+    if ( r )
+        div2.css('right', r )
+    if ( b )
+        div2.css('bottom', b )
+}
+
 window.showPDFWorkerOperations = false;
 window.showPDFWorkerOperations2 = false;
 
@@ -72,8 +89,18 @@ bookSettings = sh.clone(bookSettings)
 bookSettings.margin = {l:2,t:4,r:2,b:7};
 rip.dictSettings["LEVEL-1 LISA BAKER 194P (NXPowerLite Copy).pdf"] = bookSettings;
 
+function defineBookSettingOverrides() {
+    var bookSettings = {};
+    //bookSettings = sh.clone(bookSettings)
+    bookSettings.tryToDetect3Columns = true;
+    bookSettings.margin = {l:8,t:9,r:9,b:9};
+    //rip.settings.margin.b = 10
+    bookSettings.startOnPage = null;
+    bookSettings.combineDivsToSentMode = true;
+    rip.dictSettings['Skyscraper  The Making of a Building Karl Sabbagh 400p_0140152849 (NXPowerLite Copy).pdf'] = bookSettings;
+}
 
-
+defineBookSettingOverrides();
 
 //rip.settings.margin.t = 20
 
@@ -473,6 +500,15 @@ function createTransportPanel() {
             window.processPage();
             // }
         });
+
+
+    if ( rip.settings.autoAnnotate) {
+        setTimeout(function processPage() {
+            window.processPage()
+        },1200)
+        //window.processPage();
+    }
+
     window.uiUtils.addBtn( {text:'Name'},
         function onScanBookForREadableSentences(startReadingWhenProcesse) {
             console.log(pH.data.bookname)
@@ -942,6 +978,24 @@ window.fx2 = function fx2 (play, playIndex) {
     var bookSettings = {};
     bookSettings = rip.dictSettings[pH.data.bookname];
 
+    window.createBookSettings = function createBookSettings() {
+
+        var bookStr = `       var bookSettings = {};
+        //bookSettings = sh.clone(bookSettings)
+        bookSettings.tryToDetect3Columns = true;
+        bookSettings.margin = {l:8,t:5,r:9,b:10};
+        rip.settings.margin.b = 10
+        bookSettings.startOnPage = null;
+        rip.dictSettings['pH.data.bookname'] = bookSettings;
+ `
+        bookStr = bookStr.replace('pH.data.bookname',pH.data.bookname )
+        console.log(bookStr)
+//TODO: fox F on page $scope.pdfCurrentPage 144
+//$scope.pdfViewerAPI.goToPage(144)
+//1.2
+
+    }
+
     if ( bookSettings ) {
         $.each(bookSettings, function ok(k,v) {
             rip.settings[k] = v;
@@ -970,6 +1024,8 @@ window.fx2 = function fx2 (play, playIndex) {
             }
             pos.left = span.css('left').replace('px', '')
             pos.left = parseFloat(pos.left)
+            pos.width = span.width() ;
+            pos.right = span.width()+pos.left;
             return pos;
         }
         pH.utils.quantize = function quantize(xxx, quantizeTo) {
@@ -1198,403 +1254,6 @@ window.fx2 = function fx2 (play, playIndex) {
 
             return __spans;
         }
-
-        sSH.getSizeOfColumn = function getSizeOfColumn(columnSet, allSpans) {
-
-            var colDimensions;// = {};
-
-
-
-            var fontSizeAvg = [];
-
-
-            $.each(columnSet.spans, function filterSpansInMargin(k,span) {
-                span = $(span)
-                var spanText = span.text();
-                var xy = rUtils.getSpanDimensions(span);
-
-                fontSizeAvg.push(xy.fontSizeAsNumber)
-
-
-                if ( colDimensions == null ) {
-                    colDimensions = {};
-                    colDimensions.x = xy.x;
-                    colDimensions.y = xy.y;
-                    colDimensions.maxX = xy.maxX;
-                    colDimensions.maxY = xy.maxY;
-                }
-
-                if ( xy.x < colDimensions.x ) {
-                    colDimensions.x = xy.x;
-                }
-                if ( xy.y < colDimensions.y ) {
-                    colDimensions.y = xy.y;
-                }
-
-                if ( xy.maxX > colDimensions.maxX ) {
-                    colDimensions.maxX = xy.maxX;
-                }
-
-                if ( xy.maxY > colDimensions.maxY ) {
-                    colDimensions.maxY = xy.maxY;
-                }
-
-                /*
-                 if ( xy.x < margins.minX ) {
-                 console.error('removing', 'x too small', xy, spanText)
-                 return;
-                 }
-                 if ( xy.x > margins.maxX ) {
-                 console.error('removing', 'x too big', xy, spanText)
-                 return;
-                 }
-                 if ( xy.y < margins.minY ) {
-                 console.error('removing', 'y too small', xy, spanText)
-                 return;
-                 }
-                 if ( xy.y > margins.maxY ) {
-                 console.error('removing', 'y too big', xy, spanText)
-                 return;
-                 }
-                 */
-                //return;
-                //filteredSpans.push(span)
-            })
-
-            var avgFontSize = rUtils.average(fontSizeAvg);
-
-            rUtils.searchForSpansInArea = function findItemsInBox(spansToSearch, box) { //searchForSpansInArea
-                var dictX = {}
-                var dictY = {}
-                var fxName = 'detectColumns.findItemsInBox';
-                console.log(fxName, 'find a box for', spansToSearch.length, box )
-
-
-                var foundSpans = [];
-
-                if ( box.maxX == null ) {
-                    box.maxX = box.x + box.width
-                }
-                if ( box.maxY == null ) {
-                    box.maxY = box.y + box.height
-                }
-
-                $.each(spansToSearch, function filterSpansInMargin(k,span) {
-                    span = $(span)
-                    var spanText = span.text();
-                    var xy = rUtils.getSpanDimensions(span);
-                    if ( spanText.includes('XYZ')) {
-                        //  console.log(fxName, xy, spanText)
-                    }
-                    if ( xy.x >= box.x) {
-                        if ( xy.maxX <= box.maxX) {
-                            if ( xy.y >= box.y ) {
-                                if ( xy.maxY <= box.maxY) {
-                                    foundSpans.push(span)
-                                }
-                            }
-                        }
-                    }
-                })
-                console.log(fxName, 'find a box Result ', foundSpans.length, foundSpans )
-                return foundSpans;
-                //go to page 144
-            }
-
-            colDimensions.height    =   colDimensions.maxY - colDimensions.y;
-            colDimensions.width     =   colDimensions.maxX - colDimensions.x;
-
-            var extTopOfCol = sh.clone(colDimensions)
-
-            var heightOfSearchBox = avgFontSize*1.8
-            extTopOfCol.height = heightOfSearchBox
-            extTopOfCol.y = extTopOfCol.y - extTopOfCol.height
-            extTopOfCol.height = heightOfSearchBox  * 1.4 //add a litle overhang JIC
-            extTopOfCol.maxY =  extTopOfCol.y + extTopOfCol.height;
-
-            var extraSpans = rUtils.searchForSpansInArea(allSpans,extTopOfCol)
-
-            extTopOfCol.color = 'orange'
-            rUtils.drawBlock(extTopOfCol, 'extra search area')
-
-            rUtils.enlarge = function enlarge(box,elnargeWit) {
-                if ( $.isArray(elnargeWit) ) {
-                }else {
-                    elnargeWit = [elnargeWit];
-                }
-
-                var fxName = 'detectColumns.enlarge';
-
-
-                var c = sh.clone(box)
-                $.each(elnargeWit, function filterSpansInMargin(k,span) {
-                    span = $(span)
-                    var spanText = span.text();
-                    var xy = rUtils.getSpanDimensions(span);
-                    //if ( spanText.includes('XYZ')) {
-                    //  console.log(fxName, xy, spanText)
-                    //}/
-                    //debugger;
-                    if ( xy.x < box.x) {
-                        box.x = xy.x;
-                    }
-
-                    if ( xy.y < box.y) {
-                        box.y = xy.y;
-                    }
-
-                    if ( xy.maxX > box.maxX) {
-                        box.maxX = xy.maxX;
-                    }
-
-                    if ( xy.maxY > box.maxY ) {
-                        box.maxY = xy.maxY;
-                    }
-
-                    console.log(fxName, box, c, xy)
-                })
-
-                box.height = box.maxY - box.y
-                box.width = box.maxX - box.x
-            }
-
-            if ( extraSpans.length > 0 ) {
-
-                //add to annotation to thsi ...
-                rUtils.annot(extraSpans, 'Add ed this to a column')
-
-                $.each(extraSpans, function onAdd(k,v) {
-                    columnSet.spans.push(v);
-                    rUtils.enlarge(colDimensions, v)
-                })
-            }
-
-            //catch all things in spring
-            var extraSpans2 = rUtils.searchForSpansInArea(allSpans,colDimensions)
-            if ( extraSpans2.length > 0 ) {
-                fxName = 'detectColumns.addextra'
-                //add to annotation to thsi ...
-                //rUtils.annot(extraSpans2, 'Add ed this to a column')
-
-                var rawColumSetSpans = []
-                $.each(columnSet.spans, function addRaw(k,v) {
-                    rawColumSetSpans.push(v[0]);
-                })
-
-                //    debugger
-                $.each(extraSpans2, function onAdd(k,v) {
-                    var rawUI = v[0]
-                    var included = rawColumSetSpans.includes(rawUI)
-                    if ( included == true ) {
-                        return;
-                    }
-
-                    span = $(v)
-                   // span.css('border-bottom', 'solid 2px '+ 'red')
-                    span.addClass('wasGrabbedToColoumn')
-                    console.log(fxName, 'a name', span.text(), rawUI)
-                    // return;
-
-                    columnSet.spans.push(v);
-                    //rUtils.enlarge(colDimensions, v)
-                })
-            }
-
-            var fxName = 'detectColumns.size'
-            console.log(fxName, 'maxV', avgFontSize, colDimensions, extraSpans)
-
-            return colDimensions
-        }
-
-        rUtils.drawBlock = function drawBlock(size, name, size2) {
-            var div2 = $('<div/>')
-            // div2 = div.clone();
-            div2.css('background-color', 'blue')
-            if ( size.color ) {
-                div2.css('background-color', size.color)
-            }
-            div2.css('opacity', '0.5')
-            div2.text(name)
-            div2.css('left', size.left+ 'px' )
-            div2.css('width', size.width+ 'px' )
-            div2.css('top', size.top +'px' )
-
-            if ( size.x ) {
-                div2.css('left', size.x +'px' )
-            }
-            div2.css('height', size.height +'px' )
-            if ( size.y ) {
-                div2.css('top', size.y +'px' )
-            }
-            console.log('detectColumns', '---size',  size)
-
-            div2.css('position', 'absolute')
-            div2.addClass('annottatino_Columns')
-            // parent.append(div2)
-            // margins.minX = width;
-            pH.data.ui.append(div2)
-        }
-
-
-        rUtils.removeUiWithClass('annottatino_Columns')
-
-        sSH.detectColumns = function detectColumns(__spans) {
-            //if two rows appear ... then two rows
-            var fxName = 'detectColumns'
-            var xVals = {};
-            $.each(__spans, function (indexSpan,v) {
-                var span = $(v);
-                //var fontSize = pH.utils.getFontSize(v);
-                var left = pH.utils.getPos(v).left;
-
-                var lineHeight = rUtils.getFontSize(span)
-
-                left = pH.utils.quantize(left, 5)
-
-                //console.log(fxName,'sorted by x spans',lineHeight)
-
-                var arr = xVals[left];
-                if ( arr == null ) arr = [];
-                arr.push(span)
-                xVals[left] = arr;
-
-
-                // rUtils.addToArrayDict(dictYRowToSentence, )
-            })
-            var colCount = 0;
-            var maxColX = 0;
-            var columnSets = [];
-
-            var drawBBB = true;
-            /*
-
-             TODO:
-             store the x values
-             try to find if all the items do not width
-             use width to limti items
-             get width of all tiems at oclumn adn draw column
-             push the x down fo items int eh colum
-             if any go over .. there is aproblem and abort operation
-
-
-             */
-
-
-            var  str = 'FAEADD,F38898,F0D1B5,E8A789,653C26'
-            rUtils.colors = {};
-            rUtils.colors.addColorSet = function addColorSet(name, str) {
-                var y  = '#'+str.split(',').join(',#')
-                var colors = y.split(',')
-                rUtils.colors[name] = colors;
-            }
-            rUtils.colors.makeCircle = function makeCircle(name) {
-                if ( $.isString(name)) {
-                    colors = rUtils.colors[name]
-                }
-
-                var y = new rUtils.GoThroughEach(colors)
-                return y;
-            }
-
-
-            rUtils.colors.addColorSet('sizeAnd7', str)
-            var colorLoop_colColors =  rUtils.colors.makeCircle('sizeAnd7')
-
-            console.log(fxName,'sorted by x spans',xVals)
-            //,  sortedByX)
-            $.each(xVals, function (xPosition,spansAtX) {
-                /*   if ( spansAtX.length > _spans.length*.){
-                 console.log('sorted by x spans', 'has 2 columns')
-                 }*/
-                if ( spansAtX.length > 10){
-                    if ( maxColX < xPosition ) maxColX = xPosition;
-                    colCount++
-                    console.log(fxName, 'sorted by x spans', 'found column',  xPosition)
-                    var columnSet = {};
-                    columnSet.spans = spansAtX
-                    columnSet.size = spansAtX.length
-                    columnSet.name = 'Column ' + columnSets.length +1
-                    //columnSets[xPosition] = columnSet;
-                    columnSets.push(columnSet)
-                    columnSet.dim = sSH.getSizeOfColumn(columnSet, __spans)
-                    //console.log(fxName, '~~~~~~s',  columnSet.dim)
-                    columnSet.dim.color = colorLoop_colColors.next();
-
-
-                    if ( drawBBB ) {
-                        //return;
-                        rUtils.drawBlock(
-                            columnSet.dim,
-                            sh.join(columnSet.name, spansAtX.length),
-                            sh.joinStr( columnSet.dim,'x', 'y', 'width', 'height')
-                        )
-
-                    }
-
-
-                    if ( columnSets.length > 1 ) {
-                        $.each(spansAtX, function (k, span) {
-                            var top = pH.utils.getPos(span).top;
-                            console.log(fxName,  '--- overriding', columnSets.length, span.text())
-                            span.attr('top-override', top+pH.pageHeight*columnSets.length);
-                        })
-                    }
-
-                }
-            })
-            console.log(fxName,  'column list', columnSets)
-            /*if ( colCount > 1) {
-             console.log(fxName,  'found column', 'has',colCount,'columns')
-             //add and override property to all spans
-             $.each(__spans, function (indexSpan,v) {
-             var span = $(v);
-             //var fontSize = pH.utils.getFontSize(v);
-             var left = pH.utils.getPos(v).left;
-             left = pH.utils.quantize(left, 5)
-             if ( left >= maxColX ) {
-             //console.log(fxName,   'found column @', 'has',left,maxColX)
-             var top = pH.utils.getPos(v).top;
-             span.attr('top-override', top+pH.pageHeight);
-             }
-
-             })
-
-             }*/
-
-            return __spans;
-        }
-
-        if ( rip.settings.tryToDetect2Columns ) {
-            //fix an add visual anotations
-            _spans = sSH.detectTwoPages(_spans);
-        }
-
-
-        if ( rip.settings.tryToDetect3Columns ) {
-            //fix an add visual anotations
-            _spans = sSH.detectColumns(_spans);
-        }
-
-
-        uiUtils.absHelper = function abs(div2, l, t, r, b ) {
-            div2.css('position', 'absolute')
-            if ( l == 0 ) { l = '0px'}
-            if ( t == 0 ) { t = '0px'}
-            if ( r == 0 ) { r = '0px'}
-            if ( b == 0 ) { b = '0px'}
-            if ( l )
-                div2.css('left', l )
-            if ( t )
-                div2.css('top', t )
-            if ( r )
-                div2.css('right', r )
-            if ( b )
-                div2.css('bottom', b )
-        }
-
-        rUtils.classNameBroken = 'brokenLine'
-        rUtils.removeUiWithClass(rUtils.classNameBroken);
-
         sSH.addMargins = function addMargins(_spans_, margins) {
             var filteredSpans = [];
             var parent = $(_spans_[0]).parent()
@@ -1696,9 +1355,532 @@ window.fx2 = function fx2 (play, playIndex) {
         }
 
 
+
+        sSH.getSizeOfColumn = function getSizeOfColumn(columnSet, ___allSpans) {
+
+            var colDimensions;// = {};
+
+
+
+            var fontSizeAvg = [];
+
+
+            $.each(columnSet.spans, function filterSpansInMargin(k,span) {
+                span = $(span)
+                var spanText = span.text();
+                var xy = rUtils.getSpanDimensions(span);
+
+                fontSizeAvg.push(xy.fontSizeAsNumber)
+
+
+                if ( colDimensions == null ) {
+                    colDimensions = {};
+                    colDimensions.x = xy.x;
+                    colDimensions.y = xy.y;
+                    colDimensions.maxX = xy.maxX;
+                    colDimensions.maxY = xy.maxY;
+                }
+
+                if ( xy.x < colDimensions.x ) {
+                    colDimensions.x = xy.x;
+                }
+                if ( xy.y < colDimensions.y ) {
+                    colDimensions.y = xy.y;
+                }
+
+                if ( xy.maxX > colDimensions.maxX ) {
+                    colDimensions.maxX = xy.maxX;
+                }
+
+                if ( xy.maxY > colDimensions.maxY ) {
+                    colDimensions.maxY = xy.maxY;
+                }
+
+                /*
+                 if ( xy.x < margins.minX ) {
+                 console.error('removing', 'x too small', xy, spanText)
+                 return;
+                 }
+                 if ( xy.x > margins.maxX ) {
+                 console.error('removing', 'x too big', xy, spanText)
+                 return;
+                 }
+                 if ( xy.y < margins.minY ) {
+                 console.error('removing', 'y too small', xy, spanText)
+                 return;
+                 }
+                 if ( xy.y > margins.maxY ) {
+                 console.error('removing', 'y too big', xy, spanText)
+                 return;
+                 }
+                 */
+                //return;
+                //filteredSpans.push(span)
+            })
+
+            var avgFontSize = rUtils.average(fontSizeAvg);
+
+
+
+            colDimensions.height    =   colDimensions.maxY - colDimensions.y;
+            colDimensions.width     =   colDimensions.maxX - colDimensions.x;
+
+            var extTopOfCol = sh.clone(colDimensions)
+
+            var heightOfSearchBox = avgFontSize*1.8
+            extTopOfCol.height = heightOfSearchBox
+            extTopOfCol.y = extTopOfCol.y - extTopOfCol.height
+            extTopOfCol.height = heightOfSearchBox  * 1.4 //add a litle overhang JIC
+            extTopOfCol.maxY =  extTopOfCol.y + extTopOfCol.height;
+
+            var extraSpans = rUtils.searchForSpansInArea(___allSpans,extTopOfCol)
+
+            extTopOfCol.color = 'orange'
+            rUtils.drawBlock(extTopOfCol, 'extra search area')
+
+            rUtils.enlarge = function enlarge(box,elnargeWit) {
+                if ( $.isArray(elnargeWit) ) {
+                }else {
+                    elnargeWit = [elnargeWit];
+                }
+
+                var fxName = 'detectColumns.enlarge';
+
+
+                var c = sh.clone(box)
+                $.each(elnargeWit, function filterSpansInMargin(k,span) {
+                    span = $(span)
+                    var spanText = span.text();
+                    var xy = rUtils.getSpanDimensions(span);
+                    //if ( spanText.includes('XYZ')) {
+                    //  console.log(fxName, xy, spanText)
+                    //}/
+                    //debugger;
+                    if ( xy.x < box.x) {
+                        box.x = xy.x;
+                    }
+
+                    if ( xy.y < box.y) {
+                        box.y = xy.y;
+                    }
+
+                    if ( xy.maxX > box.maxX) {
+                        box.maxX = xy.maxX;
+                    }
+
+                    if ( xy.maxY > box.maxY ) {
+                        box.maxY = xy.maxY;
+                    }
+
+                    console.log(fxName, box, c, xy)
+                })
+
+                box.height = box.maxY - box.y
+                box.width = box.maxX - box.x
+            }
+
+            if ( extraSpans.length > 0 ) {
+
+                //add to annotation to thsi ...
+                rUtils.annot(extraSpans, 'Add ed this to a column')
+
+                $.each(extraSpans, function onAdd(k,v) {
+                    columnSet.spans.push(v);
+                    rUtils.enlarge(colDimensions, v)
+                })
+            }
+
+            //catch all things in spring
+            var extraSpans2 = rUtils.searchForSpansInArea(___allSpans,colDimensions)
+            if ( extraSpans2.length > 0 ) {
+                fxName = 'detectColumns.addextra'
+                //add to annotation to thsi ...
+                //rUtils.annot(extraSpans2, 'Add ed this to a column')
+
+                var rawColumSetSpans = []
+                $.each(columnSet.spans, function addRaw(k,v) {
+                    rawColumSetSpans.push(v[0]);
+                })
+
+                //    debugger
+                $.each(extraSpans2, function onAdd(k,v) {
+                    var rawUI = v[0]
+                    var included = rawColumSetSpans.includes(rawUI)
+                    if ( included == true ) {
+                        return;
+                    }
+
+                    span = $(v)
+                    // span.css('border-bottom', 'solid 2px '+ 'red')
+                    span.addClass('wasGrabbedToColoumn')
+                    console.log(fxName, 'a name', span.text(), rawUI)
+                    // return;
+
+                    columnSet.spans.push(v);
+                    //rUtils.enlarge(colDimensions, v)
+                })
+            }
+
+            var fxName = 'detectColumns.size'
+            console.log(fxName, 'maxV', avgFontSize, colDimensions, extraSpans)
+
+            return colDimensions
+        }
+
+        rUtils.drawBlock = function drawBlock(size, name, size2) {
+            var div2 = $('<div/>')
+            // div2 = div.clone();
+            div2.css('background-color', 'blue')
+            if ( size.color ) {
+                div2.css('background-color', size.color)
+            }
+            div2.css('opacity', '0.5')
+            div2.text(name)
+            div2.css('left', size.left+ 'px' )
+            div2.css('width', size.width+ 'px' )
+            div2.css('top', size.top +'px' )
+
+            if ( size.x ) {
+                div2.css('left', size.x +'px' )
+            }
+            div2.css('height', size.height +'px' )
+            if ( size.y ) {
+                div2.css('top', size.y +'px' )
+            }
+            console.log('detectColumns', '---size',  size)
+
+            div2.css('position', 'absolute')
+            div2.addClass('annottatino_Columns')
+            // parent.append(div2)
+            // margins.minX = width;
+            pH.data.ui.append(div2)
+        }
+
+
+        rUtils.removeUiWithClass('annottatino_Columns')
+
+        sSH.detectColumns = function detectColumns(___spans_dC) {
+            //if two rows appear ... then two rows
+            var fxName = 'detectColumns';
+
+
+            var  dictSpansByRow = {}
+            var xVals = {};
+            // debugger
+            $.each(___spans_dC, function (indexSpan,v) {
+                var span = $(v);
+                //var fontSize = pH.utils.getFontSize(v);
+                var spanPos = pH.utils.getPos(v);
+                var left = spanPos.left;
+
+                var lineHeight = rUtils.getFontSize(span)
+
+                left = pH.utils.quantize(left, 5)
+
+                //search out 10px to see if there is an adjacent item
+
+                //console.log(fxName,'sorted by x spans',lineHeight)
+
+                var arr = xVals[left];
+                if ( arr == null ) arr = [];
+                arr.push(span)
+                xVals[left] = arr;
+
+                var yVal_Quantized = pH.utils.quantize(spanPos.top, 5)
+                var dictSpansAtRow_ByX = dictSpansByRow[yVal_Quantized];
+                if ( dictSpansAtRow_ByX == null ) dictSpansAtRow_ByX = {};
+                dictSpansAtRow_ByX[ left ] = span //add if array
+                dictSpansByRow[yVal_Quantized] = dictSpansAtRow_ByX;
+
+                //var rowSpans = []
+                //dictSpansByRows[]
+                // rUtils.addToArrayDict(dictYRowToSentence, )
+            })
+
+            $.each(xVals, function onRemoveItems_FromCol_ThatDoNotIndicateColumn (xVal, colSpans) {
+
+                //return;
+                //debugger
+                var colSpansFiltered = [];
+                //colSpansFiltered = colSpans
+                $.each(colSpans, function onRemoveIfBad(k,_span) {
+                    var span = $(_span);
+                    var spanPos = pH.utils.getPos(_span);
+                    var yVal_Quantized = pH.utils.quantize(spanPos.top, 5)
+                    var dictSpansAtRow_ByX = dictSpansByRow[yVal_Quantized]
+                    var xMin = spanPos.right
+                    var xMax = spanPos.right+10
+
+                    var remove = false;
+                    $.each(dictSpansAtRow_ByX, function onGoThrough(k,v) {
+                        var spanPos2 = pH.utils.getPos(v);
+                        if ( spanPos2.left  > xMin && spanPos2.left < xMax ) {
+                            //debugger
+                            remove = true
+                            return false;
+                        }
+                    })
+                    if ( remove == true ) {
+                        return;
+                    }
+                    colSpansFiltered.push(_span)
+                })
+                xVals[xVal] = colSpansFiltered
+
+                return;
+                var span = $(v);
+                //var fontSize = pH.utils.getFontSize(v);
+                var spanPos = pH.utils.getPos(v);
+
+                var yVal_Quantized = pH.utils.quantize(spanPos.top, 5)
+
+                var dictSpansAtRow_ByX = dictSpansByRow[yVal_Quantized];
+
+
+
+                return;
+
+                var span = $(v);
+                //var fontSize = pH.utils.getFontSize(v);
+                var spanPos = pH.utils.getPos(v);
+                var left = spanPos.left;
+
+                var lineHeight = rUtils.getFontSize(span)
+
+                left = pH.utils.quantize(left, 5)
+
+                //search out 10px to see if there is an adjacent item
+
+
+
+                //console.log(fxName,'sorted by x spans',lineHeight)
+
+                var arr = xVals[left];
+                if ( arr == null ) arr = [];
+                arr.push(span)
+                xVals[left] = arr;
+
+                var yVal_Quantized = pH.utils.quantize(spanLeft.top, 5)
+                var dictSpansAtRow_ByX = dictSpansByRow[yVal_Quantized];
+                if ( dictSpansAtRow_ByX == null ) dictSpansAtRow_ByX = {};
+                dictAtRow[ left ] = span //add if array
+                dictSpansByRow[yVal_Quantized] = dictSpansAtRow_ByX;
+
+                //var rowSpans = []
+                //dictSpansByRows[]
+                // rUtils.addToArrayDict(dictYRowToSentence, )
+            })
+
+
+
+            var colCount = 0;
+            var maxColX = 0;
+            var columnSets = [];
+
+            var drawBBB = true;
+            /*
+
+             TODO:
+             store the x values
+             try to find if all the items do not width
+             use width to limti items
+             get width of all tiems at oclumn adn draw column
+             push the x down fo items int eh colum
+             if any go over .. there is aproblem and abort operation
+
+
+             */
+
+
+
+
+            rUtils.defineSearchFx = function defineSearchFx(___spans_dC2) {
+                ___spans_dC2
+                rUtils.searchForSpansInArea = function findItemsInBox(spansToSearch, box) { //searchForSpansInArea
+                    var dictX = {}
+                    var dictY = {}
+                    var fxName = 'detectColumns.findItemsInBox';
+                    console.log(fxName, 'find a box for', spansToSearch.length, box)
+
+                    var foundSpans = [];
+
+                    if (box.maxX == null) {
+                        box.maxX = box.x + box.width
+                    }
+                    if (box.maxY == null) {
+                        box.maxY = box.y + box.height
+                    }
+
+                    $.each(spansToSearch, function filterSpansInMargin(k, span) {
+                        span = $(span)
+                        var spanText = span.text();
+                        var xy = rUtils.getSpanDimensions(span);
+                        if (spanText.includes('XYZ')) {
+                            //  console.log(fxName, xy, spanText)
+                        }
+                        if (xy.x >= box.x) {
+                            if (xy.maxX <= box.maxX) {
+                                if (xy.y >= box.y) {
+                                    if (xy.maxY <= box.maxY) {
+                                        foundSpans.push(span)
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    console.log(fxName, 'find a box Result ', foundSpans.length, foundSpans)
+                    return foundSpans;
+                    //go to page 144
+                }
+                /*   rUtils.searchForSpansInArea = function findItemsInBox(spansToSearch, box) { //searchForSpansInArea
+                 var dictX = {}
+                 var dictY = {}
+                 var fxName = 'detectColumns.findItemsInBox';
+                 console.log(fxName, 'find a box for', spansToSearch.length, box)
+
+
+                 var foundSpans = [];
+
+                 if (box.maxX == null) {
+                 box.maxX = box.x + box.width
+                 }
+                 if (box.maxY == null) {
+                 box.maxY = box.y + box.height
+                 }
+
+                 $.each(spansToSearch, function filterSpansInMargin(k, span) {
+                 span = $(span)
+                 var spanText = span.text();
+                 var xy = rUtils.getSpanDimensions(span);
+                 if (spanText.includes('XYZ')) {
+                 //  console.log(fxName, xy, spanText)
+                 }
+                 if (xy.x >= box.x) {
+                 if (xy.maxX <= box.maxX) {
+                 if (xy.y >= box.y) {
+                 if (xy.maxY <= box.maxY) {
+                 foundSpans.push(span)
+                 }
+                 }
+                 }
+                 }
+                 })
+                 console.log(fxName, 'find a box Result ', foundSpans.length, foundSpans)
+                 return foundSpans;
+                 //go to page 144
+                 }*/
+            }
+            rUtils.defineSearchFx(___spans_dC);
+
+            var  str = 'FAEADD,F38898,F0D1B5,E8A789,653C26'
+            rUtils.colors = {};
+            rUtils.colors.addColorSet = function addColorSet(name, str) {
+                var y  = '#'+str.split(',').join(',#')
+                var colors = y.split(',')
+                rUtils.colors[name] = colors;
+            }
+            rUtils.colors.makeCircle = function makeCircle(name) {
+                if ( $.isString(name)) {
+                    colors = rUtils.colors[name]
+                }
+
+                var y = new rUtils.GoThroughEach(colors)
+                return y;
+            }
+
+
+            rUtils.colors.addColorSet('sizeAnd7', str)
+            var colorLoop_colColors =  rUtils.colors.makeCircle('sizeAnd7')
+
+            console.log(fxName,'sorted by x spans',xVals)
+            //,  sortedByX)
+            $.each(xVals, function onDoXToColumns (xPosition,spansAtX) {
+                /*   if ( spansAtX.length > _spans.length*.){
+                 console.log('sorted by x spans', 'has 2 columns')
+                 }*/
+                if ( spansAtX.length > 10 ) {
+                    if ( maxColX < xPosition ) maxColX = xPosition;
+                    colCount++
+                    console.log(fxName, 'sorted by x spans', 'found column',  xPosition)
+                    var columnSet = {};
+                    columnSet.spans = spansAtX
+                    columnSet.size = spansAtX.length
+                    columnSet.name = 'Column ' + columnSets.length +1
+                    //columnSets[xPosition] = columnSet;
+                    columnSets.push(columnSet)
+                    columnSet.dim = sSH.getSizeOfColumn(columnSet, ___spans_dC)
+                    //console.log(fxName, '~~~~~~s',  columnSet.dim)
+                    columnSet.dim.color = colorLoop_colColors.next();
+
+
+                    if ( drawBBB ) {
+                        //return;
+                        rUtils.drawBlock(
+                            columnSet.dim,
+                            sh.join(columnSet.name, spansAtX.length),
+                            sh.joinStr( columnSet.dim,'x', 'y', 'width', 'height')
+                        )
+
+                    }
+
+
+                    if ( columnSets.length > 1 ) {
+                        $.each(spansAtX, function (k, span) {
+                            var top = pH.utils.getPos(span).top;
+                            console.log(fxName,  '--- overriding', columnSets.length, span.text())
+                            span.attr('top-override', top+pH.pageHeight*columnSets.length);
+                        })
+                    }
+
+                }
+            })
+            console.log(fxName,  'column list', columnSets)
+            /*if ( colCount > 1) {
+             console.log(fxName,  'found column', 'has',colCount,'columns')
+             //add and override property to all spans
+             $.each(___spans_dC, function (indexSpan,v) {
+             var span = $(v);
+             //var fontSize = pH.utils.getFontSize(v);
+             var left = pH.utils.getPos(v).left;
+             left = pH.utils.quantize(left, 5)
+             if ( left >= maxColX ) {
+             //console.log(fxName,   'found column @', 'has',left,maxColX)
+             var top = pH.utils.getPos(v).top;
+             span.attr('top-override', top+pH.pageHeight);
+             }
+
+             })
+
+             }*/
+
+            return ___spans_dC;
+        }
+
+
+
         if ( rip.settings.margin ) {
             _spans = sSH.addMargins(_spans, rip.settings.margin)
         }
+
+
+
+        if ( rip.settings.tryToDetect2Columns ) {
+            //fix an add visual anotations
+            _spans = sSH.detectTwoPages(_spans);
+        }
+
+
+        if ( rip.settings.tryToDetect3Columns ) {
+            //fix an add visual anotations
+            _spans = sSH.detectColumns(_spans);
+        }
+
+
+
+        rUtils.classNameBroken = 'brokenLine'
+        rUtils.removeUiWithClass(rUtils.classNameBroken);
+
+
 
 
 
@@ -2205,7 +2387,7 @@ window.fx2 = function fx2 (play, playIndex) {
                 var lastElement = cSH.uiElements_lastElement//.slice(-1)[0]
 
                 if (lastElement == null) {
-                    console.log('broken slip', null)
+                    console.log('broken slip - exit', null)
                     return
 
                 }
@@ -2578,12 +2760,39 @@ window.fx2 = function fx2 (play, playIndex) {
 
 
 
+                var fontIsDiff =  cSH.currentStyle.fontSize != cSH.lastStyle.fontSize
+
+
+                // debugger
+                if ( rip.settings.combineDivsToSentMode ) {
+                    //console.log('why add sen test fontsize quantdiff',
+                    //    fontSize_Diff, fontSize, fontSize1)
+                    var fontSize = rUtils.clearPixels(cSH.currentStyle.fontSize)
+                    var fontSize1 = rUtils.clearPixels(cSH.lastStyle.fontSize)
+                    var fontSize_Diff = fontSize1-fontSize
+                    var fxT =   'why add sen'
+                    fxT = '';
+                    console.log('combineDivsToSentMode', fxT,
+                        fontSize_Diff, fontSize, fontSize1)
+
+                    if ( fontSize_Diff < Math.max(fontSize,fontSize1)*.2 ) {
+
+                        //var fontIsQuantizedDiff =   cSH.currentStyle.fontSize != cSH.lastStyle.fontSize
+                        if ( fontIsDiff ) {
+                            fontIsDiff = false;
+                            console.log('combineDivsToSentMode',
+                                fxT, 'is smaller')
+                        }
+                    }
+                    //return;
+                }
+
+                var fontFamilyIsDiff =  cSH.currentStyle.fontFamily != cSH.lastStyle.fontFamily
+
                 if (cSI.sentenceNotAdded &&
-                    cSH.currentStyle.fontFamily != cSH.lastStyle.fontFamily ||
-                    cSH.currentStyle.fontSize != cSH.lastStyle.fontSize   ){
+                    (  fontIsDiff ||  fontFamilyIsDiff )  ){
                     var arr = [cSH.currentStyle.fontFamily , cSH.lastStyle.fontFamily ,
                         cSH.currentStyle.fontSize, cSH.lastStyle.fontSize]
-
 
                     var same = '';
                     if ( cSH.currentStyle.yQuantized == cSH.lastStyle.yQuantized) {
@@ -2592,6 +2801,8 @@ window.fx2 = function fx2 (play, playIndex) {
                         console.error('error quantized')
                     }
                     console.log('-yQuantized', cSH.currentStyle.yQuantized);
+
+
                     //cSI.addSentenceToList('fonts Orig different ' + arr + same);
                     cSI.addSentenceToList('fonts different ' + arr + same);
 
@@ -2686,6 +2897,14 @@ window.fx2 = function fx2 (play, playIndex) {
                     '."', '!"', '?"',
                     '.”', '!”', '?”'
                 ]
+
+                if ( rip.settings.extendedEndings != false  ) {
+                    endingStr = endingStr.concat( [
+                        ': ', '; '
+                    ] )
+                }
+
+
                 $.each(htmlArr, function (k,char) {
                     if ( k == 0 ) {
                         if (cSH.lastStyle != null ) {
