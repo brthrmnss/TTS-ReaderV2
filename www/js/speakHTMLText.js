@@ -2129,7 +2129,7 @@ window.fx = function fc(){
         console.log( "ready!", self!==top );
         //   $( document ).ready( doReady ) ;
         // doReady()
-
+        debugger
         if ( window.IInitSpeaker) {
             window.initSpeakerControls = initSpeakerControls;
             return;
