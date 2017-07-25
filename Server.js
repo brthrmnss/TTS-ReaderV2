@@ -11,6 +11,10 @@ var MergeEpub = require('./www/js/MergeEpub.js').MergeEpub;
 var JSONFileHelper = require('./www/js/JSONFileHelper').JSONFileHelper
 
 
+console.log('change dir')
+process.chdir(__dirname);
+
+
 
 var baseUrl = 'http://127.0.0.1:4444'
 var request = require('request');

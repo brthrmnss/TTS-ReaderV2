@@ -2092,6 +2092,9 @@ window.fx = function fc(){
 
                     t.setupSentences();
                     // onInit()
+
+
+                    
                     // $('#xIdFrame').html( innerHTML) ;
                 }
                 $('iframe').ready(iframeReady);
@@ -2129,7 +2132,7 @@ window.fx = function fc(){
         console.log( "ready!", self!==top );
         //   $( document ).ready( doReady ) ;
         // doReady()
-        debugger
+        //debugger
         if ( window.IInitSpeaker) {
             window.initSpeakerControls = initSpeakerControls;
             return;

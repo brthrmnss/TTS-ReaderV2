@@ -216,8 +216,16 @@
 	</div>
 	
 	<!-- RECENT FILE -->
-	<div id="recentFiles" align="center" class="list-group inline" style="width: 25%; background-color: #eee">
-		<a data-ng-repeat="f in fileForm.files track by $index" data-seek="{{f.seek}}" class="list-group-item" data-ng-click="loadFileInFrame(f.file)" sibs>{{f.file}}</a>
+	<div id="recentFiles" align="center" class="list-group inline"
+		 style="width: 25%; background-color: #eee;
+		  height:calc(100vh - 100px);     overflow-y: auto;">
+		<a data-ng-repeat="f in fileForm.files track by $index"
+		   data-seek="{{f.seek}}" class="list-group-item"
+		   title="{{f.file}}"
+		   style="overflow: hidden;"
+		   data-ng-click="loadFileInFrame(f.file)" sibs>
+			{{f.file}}
+		</a>
 	</div>
 	<!-- FILE CONTENT -->
 	<div class="inline" style="width: 73.8%; height: 80%">

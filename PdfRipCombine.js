@@ -126,7 +126,16 @@ if (module.parent == null) {
     options.dirBook = '/uploads/the_responsive_city_engaging_c.pdf'
     options.dirBook = '/uploads/[Donald_A._Norman]_Living_with_Complexity(BookZZ.org).pdf'
 
-    options.maxPages = 10
+    options.dirBook = '/uploads/[Donald_A._Norman]_Living_with_Complexity(BookZZ.org).pdf'
+    options.dirBook = '/uploads/[Michael_Strangelove]_Post-TV_Piracy,_Cord-Cuttin(book4you.org).pdf'
+    //options.dirBook = '/uploads/[Wheeler_Winston_Dixon]_Streaming_Movies,_Media,_(book4you.org).pdf'
+
+
+    options.dirBook = '/uploads/[Anja_Schwarz,_Lars_Eckstein_(eds.)]_Postcolonial_(book4you.org).pdf'
+    //G:\Dropbox\projects\delegation\Reader\TTS-Reader\rips\uploads\[Anja_Schwarz,_Lars_Eckstein_(eds.)]_Postcolonial_(book4you.org).pdf
+    //options.dirBook = '/uploads/[Jane_Hathaway]_El-Hajj_Beshir_Agha(book4you.org).pdf'
+
+    //options.maxPages = 10
     options.oddName = 'asdftest'
 
     t.loadConfig(options);
