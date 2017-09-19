@@ -37,7 +37,7 @@ sh.dv = function defaultValue(input, ifNullUse){
 }
 
 sh.qq = function qq(text){
-    return "\"" + text + "\"";say
+    return "\"" + text + "\"";
 };
 
 sh.isWin = function isWin() {
@@ -58,6 +58,8 @@ function SayServerLite(){
     if ( sh.fileExists(dirTrash)) {
         self.settings.useTrash = true
     }
+    self.settings.fastMode = true
+    self.settings.returnJSONAudio = false;
 
     /**
      * Setup middleware and routes
@@ -127,6 +129,12 @@ function SayServerLite(){
             var json = {}
             json.src="audio/rx-wav;base64,";
             self.speak(function result(body){
+                if (self.settings.returnJSONAudio != true) {
+                    console.error('done');
+                    res.json(json)
+                    return;
+                }
+                else {
                 fs.readFile(__dirname+'/www/cache/sound.wav', function(err, original_data){
                     if ( original_data == null ) {
                         res.json(json);
@@ -137,6 +145,7 @@ function SayServerLite(){
                     // SEND RESULT
                     res.json(json);
                 });
+                }
             }, text , rate, voice, file, playAudio, speakOpts);
         }
 
@@ -167,6 +176,7 @@ function SayServerLite(){
 
         p.speak = function speak(fx, text, rate, voice, file, playAudio, speakOpts){
             var isMac = sh.isWin() == false
+            speakOpts = sh.dv(speakOpts, {})
             if ( speakOpts.speakOnce   ){
                 if (  self.speaking != 0 && self.speaking != null ) {
                     console.warn('ignoring speaking', self.speaking)
@@ -179,6 +189,11 @@ function SayServerLite(){
 
             //},30*1000)
             console.log("speak.text: "+text);
+            if (text == 'zzz beep zzz') {
+                var fileSong = __dirname + '/' + 'www/' + 'audio/' + 'tone.mp3'
+                self.utils.playSong(fileSong, fx)
+                return;
+            }
             var child_process = require('child_process');
             if ( isMac ) {
                 var gb = "say "
@@ -226,7 +241,7 @@ function SayServerLite(){
                 if ( speakOpts.playAudio && speakOpts.cacheAudio) {
                     var cachedFile = self.data.cache[text]
                     if ( cachedFile ) {
-                        console.log('cached', text)
+                        console.log('>>> found cached', text)
                         self.utils.playSong(cachedFile, fx)
                         return;
                     }
@@ -328,7 +343,7 @@ function SayServerLite(){
                     }
 
 
-
+                    if (fx)
                     fx(true);
                     //console.log('done speaking', text, stdout);
                 });
@@ -339,13 +354,83 @@ function SayServerLite(){
         }
 
         p.utils = {}
+        p.utils.getDuration = function getDuration(fileSong, fx) {
+            var txt = null
+
+            var timer = sh.newTimer()
+
+            try {
+                txt = sh.runAsync(
+                    [
+                        sh.fs.join(__dirname, 'bin', 'windows', 'ffmpeg.exe'),
+                        '-i',
+                        sh.qq(fileSong)
+                    ].join(' '), doneRunningDuration)
+            } catch (e) {
+                txt = e.message;
+                //this is an error b/c we hav eno action just ge tduraction
+            }
+
+
+            function doneRunningDuration(df) {
+                //console.error('ok', txt)
+                var txtOutput = df.message;
+                var strDuration = sh.getContentAfter(txtOutput, 'Duration: ')
+                strDuration = sh.getContentBefore(strDuration, ',')
+
+                strDuration = strDuration.trim()
+                var dbg = strDuration.split(':')
+
+                sh.each(dbg, function onK(k, v) {
+                    dbg[k] = parseFloat(dbg[k]);
+                })
+
+                var sec = dbg[0] * sh.time.hours
+                    + dbg[1] * sh.time.minutes
+                    + dbg[2] * 1
+
+
+                var ms = sec * 1000
+                sec -= .2
+                var timeDiff = timer.stop()
+                console.log('sec', sec)
+                sec -= timeDiff;
+                console.log('td', timeDiff)
+                console.log('duration', strDuration, dbg, sec, ms)
+                fx(sec);
+            }
+        }
         p.utils.playSong = function playSong(fileSong, fx) {
-            sh.run(
+
+
+            var h = {}
+            h.fxCallbackInvoked = false;
+
+            if (self.settings.fastMode) {
+                self.utils.getDuration(fileSong, function onDuration(secs) {
+                    var ms = secs * 1000;
+                    setTimeout(function okn() {
+                        fx()
+                    }, ms);
+                    h.fxCallbackInvoked = true;
+                })
+
+
+            }
+
+            sh.runAsync(
                 [
-                    sh.fs.join(__dirname,'bin','windows','cmdmp3.exe'),
+                    sh.fs.join(__dirname, 'bin', 'windows', 'cmdmp3.exe'),
                     sh.qq(fileSong)
-                ].join(' '))
-            if ( fx ) fx(true);
+                ].join(' '),
+
+                function onDone() {
+                    if (h.fxCallbackInvoked == false) {
+                        fx();
+                    }
+                    //console.error('eeeer')
+                })
+
         }
 
         p.listVoices = function listVoices(req, res){

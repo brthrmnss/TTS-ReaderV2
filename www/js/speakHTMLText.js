@@ -1895,6 +1895,20 @@ window.fx = function fc(){
                 addEventListeners(true)
             }
             function onKeyUp(e) {
+                if ( e && e.target) {
+                    if ( e.target.id = 'contextAddBookmark_txt') {
+                        console.log('ignore bookmark text')
+                        return;
+                    }
+                    if ( e.target.type == 'textarea') {
+                        console.log('ignore textarea')
+                        return;
+                    }
+                    if ( e.target.type == 'text') {
+                        console.log('ignore text')
+                        return;
+                    }
+                }
                 if ( window.debugKeys ) {
                     console.debug('doneKes', e.keyCode)
                 }

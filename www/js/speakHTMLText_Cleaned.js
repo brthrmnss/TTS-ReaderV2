@@ -1433,6 +1433,10 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
                     $.each(children, function process(i, child) {
 
                         //debugger
+                        var ui = $(child)
+                        if ( ui.hasClass('doNotReadComp')) {
+                            return;
+                        }
 
                         //why: debug ba d node types
                         //console.error('adding ' +  tab +  child.nodeName)
@@ -1677,7 +1681,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker(){
                 }
                 // debugger
                 console.log('trim',  sentence.trim().endsWith('reply'), sentence)
-                if (  sentence.trim().endsWith('reply') ) {
+                if ( false &&  sentence.trim().endsWith('reply') ) {
                     if ( self.voice == 'IVONA 2 Brian' ) {
                         //self.voice = 'IVONA 2 Joey'
                         self.voice = 'IVONA 2 Emma';

@@ -2081,7 +2081,7 @@ function defineUtils() {
         }
 
 
-        p.getUrlVar = function getUrlVar() {
+        p.getUrlVars = function getUrlVars() {
             var urlFinal = location.href;
             if (urlFinal.includes('#')) {
                 urlFinal = urlFinal.split('#')[0];
@@ -2131,15 +2131,17 @@ function defineUtils() {
     function defineUI() {
         p.utils.loadPage = function loadPage(cfg) {
             var div = $(cfg.div)
-            if (div && div.empty() && cfg.id) {
-                //var id = cfg.id;
-                if (cfg.id.startsWith('#') == false) {
-                    cfg.id = '#' + cfg.id;
+            if ( cfg.noGet != true ) {
+                if (div && div.empty() && cfg.id) {
+                    //var id = cfg.id;
+                    if (cfg.id.startsWith('#') == false) {
+                        cfg.id = '#' + cfg.id;
+                    }
+                    div = u.cfg.getDiv(cfg.id);
                 }
-                div = u.cfg.getDiv(cfg.id);
-            }
-            if (div.length == 0) {
-                throw new Error('could not find area ' + cfg.div);
+                if (div.length == 0) {
+                    throw new Error('could not find area ' + cfg.div);
+                }
             }
             //debugger
             $.ajax({
@@ -2151,9 +2153,11 @@ function defineUtils() {
                     var output = p.utils.parseBodyHTML(data);
 
 
+                    if ( cfg.noGet != true ) {
+                         
                     //debugger;
                     div.html(output.body.html());
-
+                    }
                     output.addStyles();
 
                     cfg.ui = div;

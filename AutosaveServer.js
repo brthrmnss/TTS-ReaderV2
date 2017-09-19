@@ -65,6 +65,9 @@ function TinyMCESaveServer() {
         app.get('/readFile', function onReadFile (req, res) {
             var name = req.query.name;
             var content = sh.readFile(dirSaves+name+'.html')
+
+
+            console.log(dirSaves+name)
             res.send(content);
 
         });

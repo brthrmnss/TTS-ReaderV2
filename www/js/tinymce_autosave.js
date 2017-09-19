@@ -132,6 +132,10 @@ function bendIt () {
                     data.name = nameOverride;
                 }
                 uiUtils.getUrl(url,data, function onRetrievedData(sdf){
+                    if (sdf == 'undefined') {
+                        sdf = $('<div></div>')
+                        return;
+                    }
                     console.log('onRetrievedData', sdf)
                     tinyMCE.get('mainContent').setContent(sdf)
                     callIfDefined(fxDone)

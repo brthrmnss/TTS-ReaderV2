@@ -14,7 +14,12 @@ var JSONFileHelper = require('./www/js/JSONFileHelper').JSONFileHelper
 console.log('change dir')
 process.chdir(__dirname);
 
-
+if (!String.prototype.includes) {
+	String.prototype.includes = function() {
+		'use strict';
+		return String.prototype.indexOf.apply(this, arguments) !== -1;
+	};
+}
 
 var baseUrl = 'http://127.0.0.1:4444'
 var request = require('request');
@@ -25,7 +30,7 @@ var request = require('request');
 // UPLOAD FILES
 var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, __dirname +'/www/uploads/')			// DESTINATION FILES
+		cb(null, __dirname +'/uploads/')			// DESTINATION FILES
 	},
 	filename: function (req, file, cb) {
 		if(typeof file === 'undefined')
@@ -167,8 +172,8 @@ function defineBookDirUtils() {
 
 		function getDirForBook(dir) {
 			var dirBook = sh.fs.getFileNameOnly(dir).replace(/[^\w\s]/gi, '')
-			var dirEpub = __dirname + '/www/uploads/extracted/' + dirBook + 'epub'
-			var dirHTMLz = __dirname + '/www/uploads/extracted/' + dirBook + 'htmlz'
+			var dirEpub = __dirname + '/uploads/extracted/' + dirBook + 'epub'
+			var dirHTMLz = __dirname + '/uploads/extracted/' + dirBook + 'htmlz'
 
 
 			if (sh.fileExists(dirEpub)) {
@@ -182,10 +187,10 @@ function defineBookDirUtils() {
 
 
 		var dirBook = sh.fs.getFileNameOnly(file).replace(/[^\w\s]/gi, '')
-		var dirEpub = __dirname + '/www/uploads/extracted/' + dirBook + 'epub'
-		var dirHTMLz = __dirname + '/www/uploads/extracted/' + dirBook + 'htmlz'
-		//var dirHTMLz = __dirname+'/wwww/uploads/extracted/'+getFileNameOnly(file)+'.epub'
-		//var dirHTMLz2 = __dirname+'/www/uploads/extracted/'+ 'Shirtmaking_ Developing Skills  David Coffinhtmlz'
+		var dirEpub = __dirname + '/uploads/extracted/' + dirBook + 'epub'
+		var dirHTMLz = __dirname + '/uploads/extracted/' + dirBook + 'htmlz'
+		//var dirHTMLz = __dirname+'/wuploads/extracted/'+getFileNameOnly(file)+'.epub'
+		//var dirHTMLz2 = __dirname+'/uploads/extracted/'+ 'Shirtmaking_ Developing Skills  David Coffinhtmlz'
 		//console.log(dirEpub, sh.fileExists(dirEpub))
 		//console.log(dirHTMLz, sh.fileExists(dirHTMLz))
 		//console.log(dirHTMLz2, sh.fileExists(dirHTMLz2))
@@ -301,8 +306,8 @@ function onEditEpub(req,res){
 
 	function getDirForBook(dir){
 		var dirBook = sh.fs.getFileNameOnly(dir).replace(/[^\w\s]/gi, '')
-		var dirEpub = 	__dirname+'/www/uploads/extracted/'+dirBook+'epub'
-		var dirHTMLz = __dirname+'/www/uploads/extracted/'+dirBook+'htmlz'
+		var dirEpub = 	__dirname+'/uploads/extracted/'+dirBook+'epub'
+		var dirHTMLz = __dirname+'/uploads/extracted/'+dirBook+'htmlz'
 
 
 		if ( sh.fileExists(dirEpub) ) {
@@ -316,13 +321,14 @@ function onEditEpub(req,res){
 
 
 	var dirBook = sh.fs.getFileNameOnly(file).replace(/[^\w\s]/gi, '')
-	var dirEpub = 	__dirname+'/www/uploads/extracted/'+dirBook+'epub'
-	var dirHTMLz = __dirname+'/www/uploads/extracted/'+dirBook+'htmlz'
-	//var dirHTMLz = __dirname+'/wwww/uploads/extracted/'+getFileNameOnly(file)+'.epub'
-	//var dirHTMLz2 = __dirname+'/www/uploads/extracted/'+ 'Shirtmaking_ Developing Skills  David Coffinhtmlz'
+	var dirEpub = 	__dirname+'/uploads/extracted/'+dirBook+'epub'
+	var dirHTMLz = __dirname+'/uploads/extracted/'+dirBook+'htmlz'
+	//var dirHTMLz = __dirname+'/wuploads/extracted/'+getFileNameOnly(file)+'.epub'
+	//var dirHTMLz2 = __dirname+'/uploads/extracted/'+ 'Shirtmaking_ Developing Skills  David Coffinhtmlz'
 	//console.log(dirEpub, sh.fileExists(dirEpub))
 	//console.log(dirHTMLz, sh.fileExists(dirHTMLz))
 	//console.log(dirHTMLz2, sh.fileExists(dirHTMLz2))
+	console.log('looking for', dirEpub)
 	if ( sh.fileExists(dirEpub) ) {
 		//asdf.g
 
@@ -357,6 +363,8 @@ function onEditEpub(req,res){
 			}
 
 			j.add(bookJSON, true, 'originalUrl');
+
+			console.log('ok')
 
 			//epub = epub.replace(/src="\.\.\//gi, '~~~~')
 			if ( req.query.endAt != null ) {
@@ -497,6 +505,10 @@ function onEditEpub(req,res){
 		}
 		console.error('issues', y)
 		console.error('issues', file)
+		if ( file.includes('kobo.js')) {
+			res.send('//who is kobo?');
+			return;
+		}
 		fileContent = fs.readFileSync( __dirname + '/' + y, 'utf8' );
 		res.send(fileContent);
 	} else { //send raw file
@@ -513,10 +525,24 @@ function onEditEpub(req,res){
 	// load the single view file (angular will handle the page changes on the front-end)
 	res.sendFile(epub);
 };
+sh.fs.exists = function fileExists(dir, error) {
+	var fs = require("fs")
+	var fileFound = fs.existsSync(dir)
 
-
+	if (fileFound == false && error) {
+		console.error('could not find ', dir, fileFound)
+		sh.throw('notfound - ' + error)
+	}
+	return fileFound;
+}
+sh.fs.exists(__dirname + '/www', 'y u not have it?')
 app.use(express.static(__dirname + '/www'));                 	// set the static files location /www/img will be /img for users
-app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
+//app.use(express.static();
+app.use('/uploads', express.static(__dirname + '/uploads'))
+//app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({limit: '5mb', 'extended':'true'}));
+
 app.use(bodyParser.json());                                     // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 
@@ -526,6 +552,10 @@ function storeBookmark (req,res){
 	var fileBookmarks = null;
 	if (body.dir != 'free') {
 		var obj = utils.getDirObject(body.dir);
+		if ( obj == null ) {
+			console.log('obj is null')
+			return res.send('do not undersatnd dir')
+		}
 		var dir = obj.dir;
 		var dirBookmarks = __dirname + '/'+'bookmarks/'//+ sh.getFileName(dir);
 		fileBookmarks = dirBookmarks + sh.getFileName(dir)+'.json';
@@ -629,6 +659,20 @@ app.post('/upload', upload.single('file'), function(req, res){
 	}
 	res.status(204).end(); req.filename;
 });
+app.post('/writeArticle', function onWriteArticle(req, res){
+
+	console.log("body: "+JSON.stringify(req.body));//.replace(/\\/g, ""));
+	if(typeof req.body !== 'undefined'){
+
+		var vas = req.body.content;
+		var fileHTML = __dirname+'/'+'www/testArticles/'+Math.random()+ '.html'
+
+		sh.writeFile( fileHTML, vas)
+
+	}
+	res.status(204).end();
+});
+
 
 // UPDATE RECENT FILES LIST
 app.post('/updateRecentsFiles', function(req, res){
@@ -653,7 +697,7 @@ app.post('/readFile/:name', function(req, res){
 	//console.log("query: "+JSON.stringify(req.query));
 	//console.log("param: "+JSON.stringify(req.param));
 
-	fs.readFile(__dirname+'/www/uploads/'+req.body['file_name'], function (err, data){
+	fs.readFile(__dirname+'/uploads/'+req.body['file_name'], function (err, data){
 		if(err){
 			return console.log(err);
 		}

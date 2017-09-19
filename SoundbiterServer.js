@@ -16,7 +16,7 @@ var request = require('request');
 // UPLOAD FILES
 var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, __dirname +'/www/uploads/')			// DESTINATION FILES
+		cb(null, __dirname +'/uploads/')			// DESTINATION FILES
 	},
 	filename: function (req, file, cb) {
 		if(typeof file === 'undefined')

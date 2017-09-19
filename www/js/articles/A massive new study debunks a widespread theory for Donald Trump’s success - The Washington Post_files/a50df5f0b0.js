@@ -1,1 +1,0 @@
-(function($){try{wp_pb.StaticMethods.addCustomResponsiveClasses()}catch(e){}})(jQuery);

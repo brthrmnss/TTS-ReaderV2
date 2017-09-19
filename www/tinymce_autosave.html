@@ -11,6 +11,7 @@
     <script src="js/nlp_compromise.js"></script>
     <script src="js/lib/js.cookie.js"></script>
 
+    <script src="js/ui_utils.js"></script>
     <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
 <!--
    <link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">
@@ -129,18 +130,64 @@
             var content = b.text();
             var children = b.children();
             var children = b.find('*');
-            children.removeClass('highlight')
+            children.removeClass('highlight');
         }
 
+        c.dbg = {}
+        c.dbg.debugKeyEvents = false;
+        c.dbg.debugKeyUpEvents = false;
+        c.dbg.debugNodeChangeEvents = false;
         tinymce.init({ selector:'textarea',
             height: 500,
             theme: 'modern',
             /*plugins: "spellchecker",
              menubar: "tools",
              toolbar: "spellchecker",*/
-            plugins:["nonbreaking", 'indent'],
+            plugins:["nonbreaking"/*, 'indent']*/],
             nonbreaking_force_tab: true,
+// toolbar: "file edit insert view format table tools undo redo | currentdate",
+            toolbar: [
+                'undo redo | styleselect | bold italic | link image',
+                'alignleft aligncenter alignright | bullist numlist'
+            ],
             setup: function(editor) {
+                window.ed = editor;
+
+                var ed = editor;
+                ed.on('keydown', function onCatchATab(event) {
+                    if (event.keyCode == 9) { // tab pressed
+                        if (event.shiftKey) {
+                            ed.execCommand('Outdent');
+                            //ed.execCommand('Strikeout');
+                            //ed.execCommand('Strikethrough');
+                        }
+                        else {
+                            ed.execCommand('Indent');
+                        }
+
+                        event.preventDefault();
+                        return false;
+                    }
+
+                    // if (event.keyCode == 83) { // ctrl alt s
+                    if (event.keyCode == 68) { // ctrl alt d
+
+                        //strick through .....
+                        if (event.ctrlKey && event.altKey ) {
+                            ed.execCommand('Strikethrough');
+                            window.ed.selection.select(c.element)
+                            event.preventDefault();
+                            return false;
+                        }
+                        else {
+                            //ed.execCommand('Indent');
+                        }
+                    }
+
+
+
+
+                });
                 editor.on('change', function(e) {
                     console.log('change event', e);
 

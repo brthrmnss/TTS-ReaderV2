@@ -1,0 +1,855 @@
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>TinyMCE Reader</title>
+
+    <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+    <script src="js/lib/jquery-1.11.2.min.js"></script>
+
+
+    <script src="js/list.js"></script>
+    <script src="js/nlp_compromise.js"></script>
+    <script src="js/lib/js.cookie.js"></script>
+
+    <script src="js/ui_utils.js"></script>
+
+    <!--    <script src="js/speakHTMLText_Cleaned.js"></script>-->
+     <script src="js/speakHTMLText_CleanedV2.js"></script>
+    <!--
+    <script src="js/speakHTMLText_CleanedV2_Working.js"></script>
+    -->
+    <script src="js/removeDiacritics.js"></script>
+
+    <!--<script src="js/reloader.js"></script>-->
+    <!-- <script src="js/lib/jquery-1.11.2.min.js"></script>
+     <script src="js/lib/js.cookie.js"></script>
+     <script src="js/speakHTMLText_Cleaned.js"></script>
+     <script src="js/contextMenu.js"></script>
+     <script src="js/reloader.js"></script>
+     <script src="js/dropzone.js"></script>
+
+     <script src="js/list.js"></script>
+     <script src="js/nlp_compromise.js"></script>
+
+     <link rel="stylesheet" type="text/css" href="/js/speak.css">
+     <link rel="stylesheet" type="text/css" href="css/layouts.css">
+
+     <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+
+     <link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">
+     <link rel="stylesheet" type="text/css" href="css/lib/bootstrap.min.css">
+
+     <style>
+         body {
+             font-family: Helvetica, Arial;
+         }
+     </style>
+     <script src="js/lib/bootstrap.min.js"></script>
+
+
+
+ -->
+
+    <script src="js/tinymce/tinymce.min.js"></script>
+    <script>
+
+
+        function initStyles() {
+
+            /*
+             background-color: #EEF8C8;
+             opacity: 1;
+             */
+
+            var head = $($('iframe')[1]).contents().find("head")
+            var css = '<style type="text/css">' +
+                    '.highlight{background-color: #EEF8C8; opacity: 1;}; ' +
+                    '</style>';
+            $(head).append(css);
+        }
+        setTimeout(initStyles, 2000)
+
+        window.handleIframes = false
+        var c = {};
+
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function () {
+                var context = this, args = arguments;
+                var later = function () {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        }
+        ;
+
+        c.speakCurrentElement = function () {
+            console.log('speak current');
+
+            var ui = $(c.element);
+
+            var text = ui.text().trim();
+            $('#txtEdit').text(text);
+            $('#speakingBox').show();
+            $('#speakingBox').attr('title', text);
+            c.status('speking:' + text)
+            console.log('speak current element');
+            window.speak({text: text});
+            ui.addClass('highlight')
+        }
+
+        c.status = function (c) {
+            console.log('speak current');
+            $('#txtConsole').text(c);
+        }
+
+        c.highlight = function highligiht() {
+
+        }
+
+        c.removeHighlight = function removeHighlight() {
+            if (tinyMCE.get('mainContent') == null)
+                return;
+            var content = tinyMCE.get('mainContent').getContent();
+            var b = $(tinyMCE.get('mainContent').getBody());
+            var content = b.text();
+            var children = b.children();
+            var children = b.find('*');
+            children.removeClass('highlight');
+        }
+
+        c.loadPage = function loadPage(url) {
+
+            var cfg = {};
+            cfg.url = url;
+            cfg.noGet = true;
+            cfg.fxDone = function onFxDone(div, body, cc) {
+                var b = $(tinyMCE.get('mainContent').getBody());
+                b.html(div)
+                c.postPasteProcess()
+                // debugger
+            }
+            uiUtils.utils.loadPage(cfg)
+        }
+
+        c.bodyHTML = function bodyHTML() {
+            var mainContent = tinyMCE.get('mainContent')
+            var body = mainContent.getBody();
+            var b = $(body)
+            return b.html();
+        }
+
+        c.postPasteProcess = function postPasteProcess() {
+
+            var mainContent = tinyMCE.get('mainContent')
+            var body = mainContent.getBody();
+
+            var b = $(body)
+
+
+            $(body).find('iframe').remove();
+            $(body).find('#main-navigation').remove()
+
+
+            var imgYahoo = b.find('#uh-logo');
+            if (imgYahoo.length > 0 &&
+                    imgYahoo.attr('href').includes('yahoo.com')) {
+                //$(body).find('#modal-header').css('background', 'red')
+
+                b.find('#mega-uh').remove();
+
+                b.find('.modal-actions').remove();
+
+                var viewer = b.find('#content-col')
+                if (viewer.length > 0) {
+                    b.html(viewer.html())
+                }
+
+
+                // debugger
+                return;
+            }
+
+            function doesHaveImageSrc(id, href) {
+                var imgYahoo = b.find('#' + id);
+                if (imgYahoo.length > 0 &&
+                        imgYahoo.attr('src').includes(href)) {
+                    return true;
+                }
+                return false
+            }
+
+            function removeUIComps(ids) {
+                var args = uiUtils.convertArgumentsToArray(arguments)
+                $.each(args, function ok(k, v) {
+                    var ui = b.find(v)
+                    ui.remove();
+                })
+            }
+
+
+
+
+            c.dom = {}
+            c.dom.b = b;
+            c.dom.hasId = function hasId(id) {
+                var result = c.dom.b.find('#'+id)
+                if ( result.length > 0 ) {
+                    return true;
+                }
+                return false;
+            }
+            c.dom.replaceWith = function replaceWith(id) {
+                var result = c.dom.b.find( id)
+                result = $(result)
+                c.dom.b.html(result.html())
+                /*if ( result.length > 0 ) {
+                    return true;
+                }
+                return false;*/
+            }
+            c.dom.doNotRead = function doNotRead(id) {
+                var result = c.dom.b.find( id)
+                result = $(result)
+                result.addClass('doNotReadComp')
+            }
+
+            c.dom.removeTextThatSays = function removeTextThatSays(fxCall) {
+                var arr = b.find('*').contents().filter(function () {
+                    return this.nodeType === 3;
+                });
+
+
+                arr.add(b.find('span'))
+                arr.each(function ok(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+                    var text = ui.text().trim()
+
+                    var text2 = text.replace(/ +(?= )/g, '');
+                    var result = fxCall(text, ui, text2)
+                    if (result == true) {
+                        ui.remove()
+                        return;
+                    }
+                    //debugger;
+                })
+            }
+
+            c.dom.removeTextThatSays2 = function removeTextThatSays2(removeExactText) {
+                c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+                            //console.log('content', x2)
+                            if (x.trim()==removeExactText) {
+                                return true;
+                            }
+                        }
+                )
+            }
+            /*var arr = [
+                c.dom.hasId('logocont'), c.dom.hasId('center_col')
+            ]
+            debugger*/
+            if ( c.dom.hasId('logocont') && c.dom.hasId('center_col')){
+
+                console.clear()
+                console.debug('clear google')
+
+                removeUIComps('#top_nav', '#sfcnt', '#appbar',
+                        '#searchform', '.sfbgx', '#gac_scont')
+
+                c.dom.replaceWith('#center_col')
+                c.dom.doNotRead('#fprs')
+                return;
+            }
+
+            if (doesHaveImageSrc('logo', 'dailymail.co.uk')) {
+                //  debugger;
+
+                var article = b.find('#js-article-text')
+                b.html(article.html())
+
+                b.find('.mol-video').remove()
+
+                removeUIComps('#articleIconLinksContainer')
+
+                removeUIComps(
+                        '.mol-style-bold',
+                        '.byline-section',
+                        '.related-carousel',
+                        '#most-watched-videos-wrapper',
+                        '.teads-inread sm-screen', '.adHolder', '.teads-inread', '#taboola-below-main-column', '#most-read-news-wrapper')
+
+                removeUIComps('#external-source-links', '#wideCommentAdvert', '.rc-header.link-ccow',
+                        '.shareArticles')
+
+                removeUIComps('.mobile-gallery')
+
+                //comments
+                removeUIComps('.gr5ox', '.reply-buttons')
+                c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+
+                            console.log('content', x2)
+                            if (x2.includes('hours ago')) {
+                                return true;
+                            }
+                        }
+                )
+                return;
+            }
+
+
+            b.find('.js-inject-promo').remove()
+            b.find('.social-kit-top').remove()
+            b.find('.article-embed-share').remove()
+            b.find('.social-kit-bottom').remove()
+            // debugger;
+
+
+            $(body).find('#main-header').remove()
+            $(body).find('.social-tools').remove()
+
+
+            if (b.find('#sr-header-area')) { //reddit?
+                b.find('#sr-header-area').remove();
+                b.find('.tabmenu').remove();
+                b.find('.menuarea').remove()
+                b.find('#header-bottom-right').remove()
+                b.find('.score').remove()
+                b.find('.side').remove();
+                b.find('.tagline').remove();
+                b.find('.domain').addClass('doNotReadComp');
+                b.find('.trending-subreddits-content').remove();
+                b.find('#siteTable_organic').remove();
+
+                b.find('a').each(function ok(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+                    var text = ui.text().trim()
+                    if (ui.text() == 'share') {
+                        ui.remove()
+                    }
+                    if (ui.text() == 'report') {
+                        ui.remove()
+                    }
+
+
+                    if (ui.text().includes('comments')) {
+                        //href item?id=
+                        ui.addClass('doNotReadComp')
+                    }
+                    //debugger;
+                })
+            }
+            c.speakSettings = {};
+            c.speakSettings.doNotDing = false;
+            if (b.find('#hnmain')) {
+                c.speakSettings.doNotDing = true;
+                b.find('span.pagetop').remove();
+                b.find('.pocket-hn-botton').remove();
+                b.find('.pocket-hn-button').remove()
+                b.find('.pocket-hn-button').remove()
+                b.find('.score').remove()
+                b.find('.age').remove();
+                b.find('.hnuser').remove();
+                b.find('a').each(function ok(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+                    if (ui.text() == 'hide') {
+                        ui.remove()
+                    }
+
+                    if (ui.text().includes('comments')) {
+                        //href item?id=
+                        ui.addClass('doNotReadComp')
+                    }
+                    if (ui.text().includes('comment')) {
+                        //href item?id=
+                        ui.addClass('doNotReadComp')
+                    }
+                    //debugger;
+                })
+
+                b.find('.sitestr').each(function addFromToSource(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+
+                    ui.text('  from ' + ui.text() + ' .')
+                    c.dom.doNotRead(ui)
+                    //debugger;
+                })
+
+
+                //debugger
+                var arr = b.find('*').contents().filter(function () {
+                    return this.nodeType === 3;
+                });
+                arr
+                        .each(
+                                function removeByAndBrokenBar(k, v) {
+
+                                    if (v.wholeText.includes('|') ||
+                                            v.wholeText.trim() == '|') {
+                                        // debugger;
+                                        v.data = ' ';
+                                        v.text = ' '
+                                        v.nodeValue = ' ';
+                                        // v.remove();
+                                    }
+                                    if (v.wholeText.trim() == 'by') {
+                                        v.remove();
+                                    }
+
+                                    console.log(v)
+                                    //debugger
+                                })
+
+                c.dom.removeTextThatSays2('discuss')
+                c.readBrokenBar = false;
+                return;
+            }
+
+
+            if (b.find('img[alt="The New York Times"]')) {
+
+                console.debug('is new york times')
+
+                b.find('#masthead').remove()
+                b.find('#ribbon').remove()
+
+                var article = b.find('article')
+                article = $(article)
+                b.html(article.html())
+
+                b.find('.newsletter-signup').remove()
+                b.find('.story-meta-footer-sharetools').remove()
+                b.find('#newsletter-promo').remove()
+                b.find('.story-translations').remove()
+                b.find('.visually-hidden').remove()
+                b.find('.skip-to-text-link').remove()
+                b.find('.story-interrupter').remove()
+                b.find('.story-translations').remove()
+                b.find('.story-info').remove()
+                b.find('.story-print-citation').remove()
+                b.find('.supplemental').remove();
+                b.find('.story-body').css('width', '') //remove();
+                b.find('p').each(function removeStyling(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+                    ui.css('width', '')
+                    ui.css('font-family', 'helvetica')
+                })
+
+                b.find('.sitestr').each(function addFromToSource(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+
+                    ui.text('. from ' + ui.text() + ' .')
+                    c.dom.doNotRead(ui)
+                    //debugger;
+                })
+
+                //debugger
+                var arr = b.find('*').contents().filter(function () {
+                    return this.nodeType === 3;
+                });
+                arr
+                        .each(
+                                function removeByAndBrokenBar(k, v) {
+
+                                    if (v.wholeText.includes('|') ||
+                                            v.wholeText.trim() == '|') {
+                                        // debugger;
+                                        v.data = ' ';
+                                        v.text = ' '
+                                        v.nodeValue = ' ';
+                                        // v.remove();
+                                    }
+                                    if (v.wholeText.trim() == 'by') {
+                                        v.remove();
+                                    }
+
+                                    console.log(v)
+                                    //debugger
+                                })
+
+
+                c.readBrokenBar = false;
+            }
+        }
+
+
+        tinymce.init({
+            selector: 'textarea',
+            height: 500,
+            theme: 'modern',
+            /*plugins: "spellchecker",
+             menubar: "tools",
+             toolbar: "spellchecker",*/
+            setup: function (editor) {
+                editor.on('change', function (e) {
+                    console.log('change event', e);
+                });
+                editor.on('undo', function (e) {
+                    console.log('undo event', e);
+                });
+
+                var play2 = debounce(c.speakCurrentElement, 500);
+                editor.on('keydown', function (e) {
+                    console.debug('Key down event: ' + e.keyCode);
+                  //  var content = tinyMCE.get('mainContent').getContent();
+                   // Cookies.set('prevContent', content);
+                    if ( e.ctrlKey) {
+                        console.debug('ctrlOnly')
+                        c.ctrlOnly = true;
+                    } else {
+                        c.ctrlOnly = false
+                    }
+                })
+                editor.on('keyup', function (e) {
+                    console.debug('Key up event: ' + e.keyCode);
+                    var content = tinyMCE.get('mainContent').getContent();
+                    Cookies.set('prevContent', content);
+
+
+                    if (e.keyCode == 86 && e.ctrlKey) {
+                        console.debug('paste')
+                        c.pasted = true;
+
+
+                        if (window.location.toString().includes('save=true')) {
+                            //true saving the page ....
+                            //debugger;
+                            var data = {};
+                            data.content = c.bodyHTML();
+                            data.path = 'testArticles'
+                            uiUtils.postUrl('writeArticle', data,
+                                    function fxDone() {
+                                        console.log('saved')
+                                    })
+                        }
+
+                        c.postPasteProcess()
+                        setTimeout(function playAllSenctencesLater() {
+                            tHelper.playAllSentences();
+                        }, 300)
+                        return;
+                    }
+
+                    console.debug(e.keyCode, e.ctrlKey)
+                    return
+
+                    play2()
+                });
+
+                editor.on('dblclick', function (e) {
+                    console.debug('dblclick: ' + e.keyCode);
+                    c.status('doubleclick')
+                    helper.playAllSentences();
+                });
+
+
+                editor.on('nodeChangeX', function (e) {
+                    console.log('node event', e.element);
+                    if (c.element == e.element) {
+                        return
+                    }
+                    c.element = e.element
+                    var ui = $(e.element);
+
+                    // var ui = $(c.element)
+                    // var text = ui.text()
+                    // debugger;
+                    // console.debug(text, content.split(text)[1]);
+                    // var final = text  + content.split(text)[1];
+                    console.debug('txt to speac', text);
+
+                    if (c.readBrokenBar) {
+                        debugger
+                        text = text.split('|').join('')
+                    }
+
+                    window.speak(text)
+                    // play2()
+                })
+
+                editor.on('nodeChange', function onNodeChanged(e, wait) {
+                    if (wait != false) {
+                        setTimeout(function waitFewSecs() {
+                            onNodeChanged(e, false)
+                        }, 100)
+                        return;
+                    }
+                    if ( c.inited !== true ) {
+                        return;
+                    }
+                    if ( c.ctrlOnly === true ) {
+                        return; //not useful
+                    }
+                    if ( e.element) {
+                        if ( e.element.id == 'tinymce' && e.element.nodeName == 'body') {
+                            return;
+                        }
+                    }
+                    console.log('node event', e.element, c.pasted);
+                    if (c.pasted == true) {
+                        c.pasted = false;
+                        return;
+                    }
+                    if (c.element == e.element) {
+                        return
+                    }
+
+                    c.element = e.element
+                    var ui = $(e.element);
+
+
+                    $('#txtEdit').text(ui.text())
+                    c.removeHighlight()
+                    window.speak({text: ui.text()})
+                    ui.addClass('highlight')
+                });
+
+                if (uiUtils.getUrlVal('loadRecent')) {
+                    //c.loadPage('testArticles/0.7704380748327821.html')
+                    // c.loadPage('testArticles/0.9368877713568509.html')
+                    //c.loadPage('testArticles/0.020375478779897094.html')
+                    //c.loadPage('testArticles/0.6278695156797767.html')
+                    c.loadPage('testArticles/hn-listing.html')
+                }
+
+                setTimeout(function setFocus() {
+                    tinyMCE.get('mainContent').focus();
+                }, 100)
+                setTimeout(function setFocus() {
+                    c.inited = true;
+                }, 1500)
+
+
+
+            }
+        })
+        ;
+
+        function reverse() {
+            var val = Cookies.get('prevContent');
+            console.log('set to ', val)
+            tinyMCE.get('mainContent').setContent(val)
+        }
+
+
+        var tHelper = {};
+        window.tHelper = tHelper;
+
+        tHelper.setupPaste = function setupPaste() {
+            $("body").on("change keyup paste", tHelper.pasteHandle)
+        }
+
+        tHelper.pasteHandle = function pasteHandle(event, txt) {
+
+            console.log('pasted')
+
+            if (txt == null) {
+                var currentVal = $(this).val();
+
+            } else {
+                currentVal = txt;
+            }
+            var txtOrig = currentVal;
+
+            //fix issues with text
+            currentVal = currentVal.replace(//gm, "");
+            currentVal = currentVal.replace(/’/gm, "'");
+
+            if (currentVal == oldVal) {
+                return; //check to prevent multiple simultaneous triggers
+            }
+        };
+
+        tHelper.playAllSentences = function readText() {
+            var tiny = tinyMCE.get('mainContent');
+            var content = tinyMCE.get('mainContent').getContent();
+            var b = $(tinyMCE.get('mainContent').getBody());
+            var b2 = $(b)
+            b2.find('.highlight').removeClass('highlight')
+            var content = b.text();
+            var children = b.children();
+            var foundElement = false;
+            console.debug('dblclick: ', children);
+            var text = '';
+
+            var toDiv = $($('iframe')[1]).contents().find('body')
+            window.sentenceHelper.setupSentences(toDiv, toDiv);
+
+            $.each(c.speakSettings, function copyTo(k,v) {
+                window.sentenceHelper.settings[k]=v
+            } );
+            window.speak('paste command')
+            window.speak('paste')
+            setTimeout(function call() {
+                console.debug('go play all ..')
+                window.sentenceHelper.onPlay2UI()
+                return;
+                setTimeout(function call() {
+                    console.debug('go play all ..')
+                    window.sentenceHelper.onPlay2UI()
+                }, 200)
+            }, 700)
+
+            return;
+            $.each(children, function addEachChild(k, v) {
+                var ui = $(v)
+                var p = $(c.element).parent()[0]
+                console.log(v, ui, p)
+                if (v == c.element)
+                    foundElement = true
+                if (v == p)
+                    foundElement = true
+                if (foundElement)
+                    text += ui.text().trim() + ' ';
+            })
+
+            // var ui = $(c.element)
+            // var text = ui.text()
+            // debugger;
+            // console.debug(text, content.split(text)[1]);
+            // var final = text  + content.split(text)[1];
+            console.debug('txt to speac', text);
+            window.speak(text)
+            // play2()
+        };
+
+
+        //   debugger
+        tHelper.setupPaste()
+
+        tHelper.setupControlBox = function setup() {
+            //utils.addCheckbox('Speak On Paste')
+            //utils.ignoreAddLinkThings('Speak On Paste')
+        }
+        tHelper.setupControlBox();
+
+
+    </script>
+
+    <style>
+        .highlight {
+            background-color: #00b68f;
+            opacity: 0.3;
+
+            background-color: #EEF8C8;
+            opacity: 1;
+
+        }
+
+        .highlight2 {
+            background-color: #C6E746;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+<!--<div class="highlight highlight2" >sdffffffffff
+dfg
+dfg
+</div>-->
+<!-- initially hidden right-click menu -->
+<div class="hideContextMenu" id="rmenu">
+    <ul>
+        <li>
+            <a onclick="contextMenuHelper.copy()">Copy</a>
+        </li>
+    </ul>
+</div>
+
+<!--
+$($('iframe')[1]).contents().find("head")
+var head = jQuery("#frame1").contents().find("head");
+var css = '<style type="text/css">' +
+'.container{background:blue}; ' +
+'</style>';
+jQuery(head).append(css);
+});
+-->
+
+<div class="hideContextMenu" id="contextAddBookmark">
+    <div id="contextAddBookmark_lbl"></div>
+
+    <textarea id="contextAddBookmark_txt"
+              placeholder="important b/c ... inspires me to ..."
+              style="height: 200px; width: 150px; border: solid 1px white;"></textarea>
+
+    <br/>
+    <button id="btnAddNote">Add Notes</button>
+    <button id="btnContextMenuClose">Close</button>
+    <br/>
+    <br/>
+    <div id="btnBar">
+        <button id="btnQuote">Quote</button>
+        <button>Cool</button>
+        <br/>
+        <button id="btnTryThis">TODO</button>
+        <br/>
+        <button id="btnEpiphany">Epi</button>
+        <button id="btnPainful">Pain</button>
+    </div>
+
+    <span id="contextSentiments"></span>
+    <br/>
+    <div id="txtAreaforBookMark" style="max-height: 100px; max-width: 150px; overflow: auto;">sdfsdf</div>
+
+</div>
+
+
+
+<textarea id="mainContent">
+</textarea>
+
+
+<br/>
+<div id="txtEdit">
+
+</div>
+<span id="speakingBox">speaking</span>
+<div id="txtConsole">sttaus</div>
+<button onclick="reverse()">reverse</button>
+<button onclick="  tHelper.playAllSentences()">playall</button>
+|
+<button onclick="uiUtils.setUrlVal('loadRecent', true)">loadRecent</button>
+<button onclick="uiUtils.setUrlVal('save', true)">autoSave</button>
+<div id="controlBox"></div>
+
+
+<script type="text/javascript" src="http://127.0.0.1:10110/jquery.js"></script>
+<!--
+<script type="text/javascript" src="http://127.0.0.1:10110/ui_utils.js"></script>
+-->
+<script type="text/javascript" src="http://127.0.0.1:10110/g/js/reloaderGH.js"></script>
+
+
+<script>
+    function onReloader() {
+        reloader.reloadWhenSelf();
+        reloader.reloadWhen('ui_utils.js');
+        reloader.filter = '/TTS-Reader/';
+        reloader.reloadWhenFx('drawPB.js', function onTestOneJs(a, b, c) {
+        })
+        reloader.loadFromOrig = true;
+        //C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/test3/testFramework.js
+        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/', '')
+        //reloader
+    }
+    window.onReloader = onReloader;
+    window.setupReloader = onReloader
+</script>
+
+</body>
+
+
+</html>

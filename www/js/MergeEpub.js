@@ -424,20 +424,20 @@ if (module.parent == null) {
     options.fileToExtract = '/home/user/trash/downloads/Wiz Khalifa - No Sleep.mp3.zip'
     var go = new MergeEpub()
     var dir = 'C:/trash/epub/HBR\'s 10 Must Reads on Leadersh - Harvard Business Review'
-    // dir = 'g:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Blender For Dummiesr  Adam Fowlerepub'
-    //dir = 'g:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/The Power of Now  Tolle_ Eckhartepub'
+    // dir = 'g:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Blender For Dummiesr  Adam Fowlerepub'
+    //dir = 'g:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/The Power of Now  Tolle_ Eckhartepub'
 
 
-    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/The Age of the Unthinkable_ Why  Joshua Cooper Ramoepub'
+    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/The Age of the Unthinkable_ Why  Joshua Cooper Ramoepub'
     options.dir = dir;
 
-    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Profit Over People_ Neoliberali  Noam Chomskyepub'
-    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Medical Herbalism  David Hoffmann FNIMH AHGepub'
-    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Tokyo Fashion City  Philomena Keetepub'
-    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/The Power of Presence  Kristi Hedgesepub'
-    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/Babylonjs Essentials  Unknownepub'
+    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Profit Over People_ Neoliberali  Noam Chomskyepub'
+    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Medical Herbalism  David Hoffmann FNIMH AHGepub'
+    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Tokyo Fashion City  Philomena Keetepub'
+    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/The Power of Presence  Kristi Hedgesepub'
+    dir = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Babylonjs Essentials  Unknownepub'
 
-    var dirExtracted = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/www/uploads/extracted/';
+    var dirExtracted = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/';
     var dirLeaf = '150 Best Mini Interior Ideas  Francesc Zamoraepub'
     dir = dirExtracted + '/' + dirLeaf
 
