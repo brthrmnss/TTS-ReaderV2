@@ -141,7 +141,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
         self.data.repeatCountIndex = 5
         self.data.rr = new RecentAndResume();
 
-        self.settings = {}; 
+        self.settings = {};
 
         p.startOnSel = function startOnSel() {
             console.log('startSel', self.sel)
@@ -836,7 +836,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 //var rate = 7
                 var voice = null;
                 if (voice == null) {
-                    voice = 'IVONA 2 Emma';
+                    voice = 'IVONA 2 Kendra';
                     voice = 'IVONA 2 Brian';
                     voice = self.voice;
                 }
@@ -845,7 +845,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 if (sentence.trim().endsWith('reply')) {
                     if (self.voice == 'IVONA 2 Brian') {
                         //self.voice = 'IVONA 2 Joey'
-                        self.voice = 'IVONA 2 Emma';
+                        self.voice = 'IVONA 2 Kendra';
                     } else {
                         self.voice = 'IVONA 2 Brian'
                     }
@@ -1279,6 +1279,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         if (self.data.quoteMode) {
                             self.data.quoteModeCounter++;
                         }
+                        //TODO, if in quote and see start quoate .. then the quote neve rended
                     }
 
 
@@ -1449,7 +1450,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
 
                     var validSentenceEndings = ['. ', '! ', '? ', '" ',
-                        '",', ' "']; //do not split numbers
+                        '",', ' "', '")']; //do not split numbers
 
                     var invalidSentenceStrs = ['Dr', 'St']
                     var prevStr = '';
@@ -1926,7 +1927,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 //var rate = 7
                 var voice = null;
                 if (voice == null) {
-                    voice = 'IVONA 2 Emma';
+                    voice = 'IVONA 2 Kendra';
                     voice = 'IVONA 2 Brian';
                     voice = self.voice;
                 }
@@ -1935,7 +1936,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 if (sentence.trim().endsWith('reply')) {
                     if (self.voice == 'IVONA 2 Brian') {
                         //self.voice = 'IVONA 2 Joey'
-                        self.voice = 'IVONA 2 Emma';
+                        self.voice = 'IVONA 2 Kendra';
                     } else {
                         self.voice = 'IVONA 2 Brian'
                     }
@@ -1962,7 +1963,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 sentence = sentence.replace(/\./gi, ".");
                 sentence = sentence.replace(/\./gi, ".");
 
-                sentence = sentence.replace(/TIL/gi, "Today I Learned");
+                sentence = sentence.replace(/ TIL /g, "Today I Learned");
 
                 sentence = sentence.replace(/github/gi, "get hub");
 
