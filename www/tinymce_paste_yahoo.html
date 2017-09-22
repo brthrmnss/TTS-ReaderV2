@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="utf-8"/>
-    <title>TinyMCE Reader</title>
+    <title>Paste - TinyMCE Reader</title>
 
     <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
     <script src="js/lib/jquery-1.11.2.min.js"></script>
@@ -15,7 +15,7 @@
     <script src="js/ui_utils.js"></script>
 
     <!--    <script src="js/speakHTMLText_Cleaned.js"></script>-->
-     <script src="js/speakHTMLText_CleanedV2.js"></script>
+    <script src="js/speakHTMLText_CleanedV2.js"></script>
     <!--
     <script src="js/speakHTMLText_CleanedV2_Working.js"></script>
     -->
@@ -194,28 +194,40 @@
             }
 
 
-
-
             c.dom = {}
             c.dom.b = b;
             c.dom.hasId = function hasId(id) {
-                var result = c.dom.b.find('#'+id)
-                if ( result.length > 0 ) {
+                var result = c.dom.b.find('#' + id)
+                if (result.length > 0) {
                     return true;
                 }
                 return false;
             }
             c.dom.replaceWith = function replaceWith(id) {
-                var result = c.dom.b.find( id)
+                var result = c.dom.b.find(id)
                 result = $(result)
                 c.dom.b.html(result.html())
                 /*if ( result.length > 0 ) {
-                    return true;
-                }
-                return false;*/
+                 return true;
+                 }
+                 return false;*/
             }
+            c.dom.padding0 = function padding0(id) {
+                var result = c.dom.b.find(id)
+                result = $(result)
+                result.css('padding', '0px')
+                return result
+            }
+            c.dom.clearWidth = function clearWidth(id) {
+                var result = c.dom.b.find(id)
+                result = $(result)
+                result.css('max-width', '')
+                result.css('width', '')
+                return result
+            }
+            c.dom.removeUIComps = removeUIComps;
             c.dom.doNotRead = function doNotRead(id) {
-                var result = c.dom.b.find( id)
+                var result = c.dom.b.find(id)
                 result = $(result)
                 result.addClass('doNotReadComp')
             }
@@ -224,7 +236,6 @@
                 var arr = b.find('*').contents().filter(function () {
                     return this.nodeType === 3;
                 });
-
 
                 arr.add(b.find('span'))
                 arr.each(function ok(k, v) {
@@ -242,20 +253,54 @@
                 })
             }
 
+            c.dom.hasLinkWithText = function hasLinkWithText(searchForTxt) {
+
+                var hasIt = false;
+                var arr = b.find('a')
+                arr.each(function ok(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+                    var text = ui.text().trim()
+
+                    if ( searchForTxt.includes(text) ) {
+                        hasIt = true
+                        return false;
+                    }
+                })
+
+                return hasIt
+            }
+
             c.dom.removeTextThatSays2 = function removeTextThatSays2(removeExactText) {
                 c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
                             //console.log('content', x2)
-                            if (x.trim()==removeExactText) {
+                            if (x.trim() == removeExactText) {
                                 return true;
                             }
                         }
                 )
             }
+
+            c.dom.removeIfTextIncludes =
+                    function removeTextThatSays2(ifIncludes) {
+                        c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+                                    //console.log('content', x2)
+                                    if (x.trim().includes(ifIncludes)) {
+                                        return true;
+                                    }
+                                }
+                        )
+                    }
+
+            $.fn.exists = function doesQueryReturnResults() {
+                return this.length !== 0;
+            }
+
             /*var arr = [
-                c.dom.hasId('logocont'), c.dom.hasId('center_col')
-            ]
-            debugger*/
-            if ( c.dom.hasId('logocont') && c.dom.hasId('center_col')){
+             c.dom.hasId('logocont'), c.dom.hasId('center_col')
+             ]
+             debugger*/
+            if (c.dom.hasId('logocont') && c.dom.hasId('center_col')) {
 
                 console.clear()
                 console.debug('clear google')
@@ -267,6 +312,33 @@
                 c.dom.doNotRead('#fprs')
                 return;
             }
+
+            var logoMedium = c.dom.b.find('.siteNav-logo');
+            if (logoMedium.length > 0 && logoMedium.attr('href').includes('medium.com')) {
+
+                console.clear()
+                console.debug('clear medium')
+
+                /*      removeUIComps('#top_nav', '#sfcnt', '#appbar',
+                 '#searchform', '.sfbgx', '#gac_scont')
+                 */
+                c.dom.replaceWith('article')
+                //section-inner sectionLayout--insetColumn
+                var inset = c.dom.padding0('.section-inner.sectionLayout--insetColumn')
+                inset.css('max-width', null)
+                inset.css('max-width', '')
+                inset.css('width', '')
+                //  c.dom.doNotRead('#fprs')
+                var div = c.dom.b.find('.col.u-size12of12.js-postMetaLockup')
+                c.dom.clearWidth('.col.u-size12of12.js-postMetaLockup')
+                c.dom.clearWidth('.u-maxWidth740')
+                c.dom.removeUIComps('.js-followState')
+                c.dom.removeIfTextIncludes('Clapping shows you')
+                c.dom.removeIfTextIncludes('Show your support')
+                c.dom.removeUIComps('.postActions', '.postPromotionWrapper')
+                return;
+            }
+
 
             if (doesHaveImageSrc('logo', 'dailymail.co.uk')) {
                 //  debugger;
@@ -310,12 +382,12 @@
             b.find('.social-kit-bottom').remove()
             // debugger;
 
-
+            //debugger
             $(body).find('#main-header').remove()
             $(body).find('.social-tools').remove()
 
 
-            if (b.find('#sr-header-area')) { //reddit?
+            if (b.find('#sr-header-area').length > 0) { //reddit?
                 b.find('#sr-header-area').remove();
                 b.find('.tabmenu').remove();
                 b.find('.menuarea').remove()
@@ -348,7 +420,7 @@
             }
             c.speakSettings = {};
             c.speakSettings.doNotDing = false;
-            if (b.find('#hnmain')) {
+            if (b.find('#hnmain').length > 0) {
                 c.speakSettings.doNotDing = true;
                 b.find('span.pagetop').remove();
                 b.find('.pocket-hn-botton').remove();
@@ -415,7 +487,9 @@
             }
 
 
-            if (b.find('img[alt="The New York Times"]')) {
+            debugger
+            if (b.find('img[alt="The New York Times"]').exists()
+                 || b.find('image[alt="The New York Times"]').exists() ) {
 
                 console.debug('is new york times')
 
@@ -481,6 +555,41 @@
 
                 c.readBrokenBar = false;
             }
+
+            if (b.find('div.content').length > 0 && b.find('.article-text-wrap').length > 0) {
+                //debugger;
+                c.dom.replaceWith('div.content')
+                c.dom.padding0('.article-text-wrap')
+            }
+
+            if (c.dom.hasLinkWithText('Powered by SMF')) {
+               // debugger;
+                c.dom.removeUIComps('.tborder', '.signature')
+                c.dom.doNotRead('.poster_info')
+                c.dom.doNotRead('.subject')
+                c.dom.doNotRead('.smalltext')
+                c.dom.doNotRead('.quote')
+                c.dom.doNotRead('.quoteheader')
+                return;
+            }
+
+            if (b.find('article').exists()) {
+                var comments = b.find('entry_comments')
+                c.dom.replaceWith('article')
+
+                c.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
+                return;
+            }
+
+            if (b.find('#content').exists()) {
+                var comments = b.find('entry_comments')
+                c.dom.replaceWith('#content')
+                c.dom.removeUIComps('div.sidebar')
+                //c.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
+                return;
+            }
+
+
         }
 
 
@@ -502,9 +611,9 @@
                 var play2 = debounce(c.speakCurrentElement, 500);
                 editor.on('keydown', function (e) {
                     console.debug('Key down event: ' + e.keyCode);
-                  //  var content = tinyMCE.get('mainContent').getContent();
-                   // Cookies.set('prevContent', content);
-                    if ( e.ctrlKey) {
+                    //  var content = tinyMCE.get('mainContent').getContent();
+                    // Cookies.set('prevContent', content);
+                    if (e.ctrlKey) {
                         console.debug('ctrlOnly')
                         c.ctrlOnly = true;
                     } else {
@@ -585,14 +694,14 @@
                         }, 100)
                         return;
                     }
-                    if ( c.inited !== true ) {
+                    if (c.inited !== true) {
                         return;
                     }
-                    if ( c.ctrlOnly === true ) {
+                    if (c.ctrlOnly === true) {
                         return; //not useful
                     }
-                    if ( e.element) {
-                        if ( e.element.id == 'tinymce' && e.element.nodeName == 'body') {
+                    if (e.element) {
+                        if (e.element.id == 'tinymce' && e.element.nodeName == 'body') {
                             return;
                         }
                     }
@@ -615,12 +724,17 @@
                     ui.addClass('highlight')
                 });
 
-                if (uiUtils.getUrlVal('loadRecent')) {
+                if (uiUtils.getUrlVal('loadRecent') == 'true') {
+                    debugger
                     //c.loadPage('testArticles/0.7704380748327821.html')
                     // c.loadPage('testArticles/0.9368877713568509.html')
                     //c.loadPage('testArticles/0.020375478779897094.html')
                     //c.loadPage('testArticles/0.6278695156797767.html')
-                    c.loadPage('testArticles/hn-listing.html')
+                    // c.loadPage('testArticles/hn-listing.html')
+                    var url = 'medium.html'
+                    url = 'btctalk.html'
+                    url = 'nyt2.html'
+                    c.loadPage('testArticles/' + url)
                 }
 
                 setTimeout(function setFocus() {
@@ -629,7 +743,6 @@
                 setTimeout(function setFocus() {
                     c.inited = true;
                 }, 1500)
-
 
 
             }
@@ -686,9 +799,9 @@
             var toDiv = $($('iframe')[1]).contents().find('body')
             window.sentenceHelper.setupSentences(toDiv, toDiv);
 
-            $.each(c.speakSettings, function copyTo(k,v) {
-                window.sentenceHelper.settings[k]=v
-            } );
+            $.each(c.speakSettings, function copyTo(k, v) {
+                window.sentenceHelper.settings[k] = v
+            });
             window.speak('paste command')
             window.speak('paste')
             setTimeout(function call() {
@@ -807,7 +920,6 @@ jQuery(head).append(css);
 </div>
 
 
-
 <textarea id="mainContent">
 </textarea>
 
@@ -821,8 +933,9 @@ jQuery(head).append(css);
 <button onclick="reverse()">reverse</button>
 <button onclick="  tHelper.playAllSentences()">playall</button>
 |
-<button onclick="uiUtils.setUrlVal('loadRecent', true)">loadRecent</button>
-<button onclick="uiUtils.setUrlVal('save', true)">autoSave</button>
+<button onclick="window.loadRecent=!window.loadRecent; uiUtils.setUrlVal('loadRecent', window.loadRecent)">loadRecent
+</button>
+<button onclick="window.autoSave=!window.autoSave; uiUtils.setUrlVal('save', window.autoSave)">autoSave</button>
 <div id="controlBox"></div>
 
 
