@@ -1,9 +1,753 @@
 [
 	{
 		"originalUrl": "/epubV2.html/Babylon.js%20Essentials%20-%20Unknown.epub",
-		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
 		"name": "Babylonjs Essentials  Unknown"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Mind%20Illuminated_%20A%20Complet%20-%20John%20Yates.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Mind Illuminated_ A Complet  John Yatesepub/epub.html",
+		"name": "The Mind Illuminated_ A Complet  John Yates"
+	},
+	{
+		"originalUrl": "/epubV2.html/Siddhartha's%20Brain_%20Unlocking%20t%20-%20James%20Kingsland.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Siddharthas Brain_ Unlocking t  James Kingslandepub/epub.html",
+		"name": "Siddharthas Brain_ Unlocking t  James Kingsland"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Plant%20Paradox_%20The%20Hidden%20D%20-%20Gundry,%20Steven%20R.,%20M.D_.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Plant Paradox_ The Hidden D  Gundry Steven R MD_epub/epub.html",
+		"name": "The Plant Paradox_ The Hidden D  Gundry Steven R MD_"
+	},
+	{
+		"originalUrl": "/epubV2.html/Farewell%20My%20Lovely%20-%20Raymond%20Chandler.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Farewell My Lovely  Raymond Chandlerepub/epub.html",
+		"name": "Farewell My Lovely  Raymond Chandler"
+	},
+	{
+		"originalUrl": "/epubV2.html/testdialog.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/testdialogepub/epub.html",
+		"name": "testdialog"
+	},
+	{
+		"originalUrl": "/epubV2.html/Cybercrime%20and%20Digital%20Forensic%20-%20Thomas%20J%20Holt.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Cybercrime and Digital Forensic  Thomas J Holtepub/epub.html",
+		"name": "Cybercrime and Digital Forensic  Thomas J Holt"
+	},
+	{
+		"originalUrl": "/epubV2.html/testquotes.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/testquotesepub/epub.html",
+		"name": "testquotes"
+	},
+	{
+		"originalUrl": "/epubV2.html/Sex%20Workers,%20Psychics,%20and%20Numb%20-%20LaShawn%20Harris.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Sex Workers Psychics and Numb  LaShawn Harrisepub/epub.html",
+		"name": "Sex Workers Psychics and Numb  LaShawn Harris"
+	},
+	{
+		"originalUrl": "/epubV2.html/Move%20Fast%20and%20Break%20Things_%20How%20-%20Jonathan%20Taplin.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Move Fast and Break Things_ How  Jonathan Taplinepub/epub.html",
+		"name": "Move Fast and Break Things_ How  Jonathan Taplin"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Hacked%20World%20Order_%20How%20Nat%20-%20Adam%20Segal.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Hacked World Order_ How Nat  Adam Segalepub/epub.html",
+		"name": "The Hacked World Order_ How Nat  Adam Segal"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Hacked%20World%20Order_%20How%20Nat%20-%20Adam%20Segal.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Hacked World Order_ How Nat  Adam Segalepub/epub.html",
+		"name": "The Hacked World Order_ How Nat  Adam Segal"
+	},
+	{
+		"originalUrl": "/epub.html/Freehand%20Fashion_%20Learn%20to%20sew%20-%20Chinelo%20Bally.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Freehand Fashion_ Learn to sew  Chinelo Ballyepub/epub.html",
+		"name": "Freehand Fashion_ Learn to sew  Chinelo Bally"
+	},
+	{
+		"originalUrl": "/epubv2.html/The%20Silk%20Roads%20-%20Peter%20Frankopan.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Silk Roads  Peter Frankopanepub/epub.html",
+		"name": "The Silk Roads  Peter Frankopan"
+	},
+	{
+		"originalUrl": "/epubV2.html/Start%20Small,%20Stay%20Small_%20A%20Deve%20-%20Rob%20Walling.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Start Small Stay Small_ A Deve  Rob Wallingepub/OEBPS/epub.html",
+		"name": "Start Small Stay Small_ A Deve  Rob Walling"
+	},
+	{
+		"originalUrl": "/epub.html/Start%20Small,%20Stay%20Small_%20A%20Deve%20-%20Rob%20Walling.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Start Small Stay Small_ A Deve  Rob Wallingepub/OEBPS/epub.html",
+		"name": "Start Small Stay Small_ A Deve  Rob Walling"
+	},
+	{
+		"originalUrl": "/epubV2.html/Running%20Lean_%20Iterate%20from%20Plan%20-%20Ash%20Maurya.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Running Lean_ Iterate from Plan  Ash Mauryaepub/epub.html",
+		"name": "Running Lean_ Iterate from Plan  Ash Maurya"
+	},
+	{
+		"originalUrl": "/epubv2.html/The%20Lean%20Product%20Playbook_%20How%20-%20Dan%20Olsen.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Lean Product Playbook_ How  Dan Olsenepub/epub.html",
+		"name": "The Lean Product Playbook_ How  Dan Olsen"
+	},
+	{
+		"originalUrl": "/epub.html/Running%20Lean_%20Iterate%20from%20Plan%20-%20Ash%20Maurya.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Running Lean_ Iterate from Plan  Ash Mauryaepub/epub.html",
+		"name": "Running Lean_ Iterate from Plan  Ash Maurya"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Lean%20Product%20Playbook_%20How%20-%20Dan%20Olsen.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Lean Product Playbook_ How  Dan Olsenepub/epub.html",
+		"name": "The Lean Product Playbook_ How  Dan Olsen"
+	},
+	{
+		"originalUrl": "/epubV2.html/Dangerous%20-%20Milo%20Yiannopoulos.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Dangerous  Milo Yiannopoulosepub/epub.html",
+		"name": "Dangerous  Milo Yiannopoulos"
+	},
+	{
+		"originalUrl": "/epub.html/Dangerous%20-%20Milo%20Yiannopoulos.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Dangerous  Milo Yiannopoulosepub/epub.html",
+		"name": "Dangerous  Milo Yiannopoulos"
+	},
+	{
+		"originalUrl": "/epubv2.html/Pitch%20Anything_%20An%20Innovative%20M%20-%20Oren%20Klaff.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Pitch Anything_ An Innovative M  Oren Klaffepub/epub.html",
+		"name": "Pitch Anything_ An Innovative M  Oren Klaff"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Likeable%20Social%20Business%20-%20Dave%20Kerpen.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Likeable Social Business  Dave Kerpenepub/epub.html",
+		"name": "The Likeable Social Business  Dave Kerpen"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Rational%20Animal_%20How%20Evolut%20-%20Douglas%20T.%20Kenrick.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Rational Animal_ How Evolut  Douglas T Kenrickepub/epub.html",
+		"name": "The Rational Animal_ How Evolut  Douglas T Kenrick"
+	},
+	{
+		"originalUrl": "/epubV2.html/World%20Without%20Mind_%20The%20Existen%20-%20Franklin%20Foer.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/World Without Mind_ The Existen  Franklin Foerepub/epub.html",
+		"name": "World Without Mind_ The Existen  Franklin Foer"
+	},
+	{
+		"originalUrl": "/epubV2.html/Life%203.0_%20Being%20Human%20in%20the%20Ag%20-%20Max%20Tegmark.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Life 30_ Being Human in the Ag  Max Tegmarkepub/epub.html",
+		"name": "Life 30_ Being Human in the Ag  Max Tegmark"
+	},
+	{
+		"originalUrl": "/epub.html/World%20Without%20Mind_%20The%20Existen%20-%20Franklin%20Foer.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/World Without Mind_ The Existen  Franklin Foerepub/epub.html",
+		"name": "World Without Mind_ The Existen  Franklin Foer"
+	},
+	{
+		"originalUrl": "/epub.html/Life%203.0_%20Being%20Human%20in%20the%20Ag%20-%20Max%20Tegmark.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Life 30_ Being Human in the Ag  Max Tegmarkepub/epub.html",
+		"name": "Life 30_ Being Human in the Ag  Max Tegmark"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Silk%20Roads%20-%20Peter%20Frankopan.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Silk Roads  Peter Frankopanepub/epub.html",
+		"name": "The Silk Roads  Peter Frankopan"
+	},
+	{
+		"originalUrl": "/epub.html/Malign%20Velocities_%20Acceleration%20-%20Noys,%20Benjamin.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Malign Velocities_ Acceleration  Noys Benjaminepub/epub.html",
+		"name": "Malign Velocities_ Acceleration  Noys Benjamin"
+	},
+	{
+		"originalUrl": "/epubV2.html/This%20Is%20Why%20We%20Can't%20Have%20Nice%20-%20Whitney%20Phillips.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/This Is Why We Cant Have Nice  Whitney Phillipsepub/epub.html",
+		"name": "This Is Why We Cant Have Nice  Whitney Phillips"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Upside%20of%20Your%20Dark%20Side_%20W%20-%20Todd%20Kashdan.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Upside of Your Dark Side_ W  Todd Kashdanepub/epub.html",
+		"name": "The Upside of Your Dark Side_ W  Todd Kashdan"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Confidence%20Code_%20The%20Scienc%20-%20Katty%20Kay.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Confidence Code_ The Scienc  Katty Kayepub/epub.html",
+		"name": "The Confidence Code_ The Scienc  Katty Kay"
+	},
+	{
+		"originalUrl": "/epub.html/Building%20Slack%20Bots%20-%20Paul%20Asjes.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Building Slack Bots  Paul Asjesepub/epub.html",
+		"name": "Building Slack Bots  Paul Asjes"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Likeable%20Social%20Business%20-%20Dave%20Kerpen.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Likeable Social Business  Dave Kerpenepub/epub.html",
+		"name": "The Likeable Social Business  Dave Kerpen"
+	},
+	{
+		"originalUrl": "/epub.html/Copycat%20Marketing%20101_%20How%20To%20C%20-%20Burke%20Hedges.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Copycat Marketing 101_ How To C  Burke Hedgesepub/epub.html",
+		"name": "Copycat Marketing 101_ How To C  Burke Hedges"
+	},
+	{
+		"originalUrl": "/epub.html/Everybody%20Lies%20-%20Seth%20Stephens-Davidowitz.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Everybody Lies  Seth StephensDavidowitzepub/epub.html",
+		"name": "Everybody Lies  Seth StephensDavidowitz"
+	},
+	{
+		"originalUrl": "/epub.html/Sex%20Workers,%20Psychics,%20and%20Numb%20-%20LaShawn%20Harris.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Sex Workers Psychics and Numb  LaShawn Harrisepub/epub.html",
+		"name": "Sex Workers Psychics and Numb  LaShawn Harris"
+	},
+	{
+		"originalUrl": "/epub.html/This%20Is%20Why%20We%20Can't%20Have%20Nice%20-%20Whitney%20Phillips.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/This Is Why We Cant Have Nice  Whitney Phillipsepub/epub.html",
+		"name": "This Is Why We Cant Have Nice  Whitney Phillips"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Amazon%20Way_%2014%20Leadership%20P%20-%20John%20Rossman.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Amazon Way_ 14 Leadership P  John Rossmanepub/epub.html",
+		"name": "The Amazon Way_ 14 Leadership P  John Rossman"
+	},
+	{
+		"originalUrl": "/epubv2.html/The%20Upside%20of%20Your%20Dark%20Side_%20W%20-%20Todd%20Kashdan.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Upside of Your Dark Side_ W  Todd Kashdanepub/epub.html",
+		"name": "The Upside of Your Dark Side_ W  Todd Kashdan"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20San%20Francisco%20Fallacy_%20The%20-%20Jonathan%20Siegel.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The San Francisco Fallacy_ The  Jonathan Siegelepub/epub.html",
+		"name": "The San Francisco Fallacy_ The  Jonathan Siegel"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Upside%20of%20Your%20Dark%20Side_%20W%20-%20Todd%20Kashdan.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Upside of Your Dark Side_ W  Todd Kashdanepub/epub.html",
+		"name": "The Upside of Your Dark Side_ W  Todd Kashdan"
+	},
+	{
+		"originalUrl": "/epubV2.html/HBR%20Guide%20to%20Leading%20Teams%20(HBR%20-%20Mary%20Shapiro.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/HBR Guide to Leading Teams HBR  Mary Shapiroepub/epub.html",
+		"name": "HBR Guide to Leading Teams HBR  Mary Shapiro"
+	},
+	{
+		"originalUrl": "/epub.html/HBR%20Guide%20to%20Leading%20Teams%20(HBR%20-%20Mary%20Shapiro.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/HBR Guide to Leading Teams HBR  Mary Shapiroepub/epub.html",
+		"name": "HBR Guide to Leading Teams HBR  Mary Shapiro"
+	},
+	{
+		"originalUrl": "/epubv2.html/The%20San%20Francisco%20Fallacy_%20The%20-%20Jonathan%20Siegel.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The San Francisco Fallacy_ The  Jonathan Siegelepub/epub.html",
+		"name": "The San Francisco Fallacy_ The  Jonathan Siegel"
+	},
+	{
+		"originalUrl": "/epub.html/The%20San%20Francisco%20Fallacy_%20The%20-%20Jonathan%20Siegel.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The San Francisco Fallacy_ The  Jonathan Siegelepub/epub.html",
+		"name": "The San Francisco Fallacy_ The  Jonathan Siegel"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Facebook%20Effect%20-%20David%20Kirkpatrick.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Facebook Effect  David Kirkpatrickepub/epub.html",
+		"name": "The Facebook Effect  David Kirkpatrick"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Facebook%20Effect%20-%20David%20Kirkpatrick.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Facebook Effect  David Kirkpatrickepub/epub.html",
+		"name": "The Facebook Effect  David Kirkpatrick"
+	},
+	{
+		"originalUrl": "/epubV2.html/Design%20Leadership_%20How%20Top%20Desi%20-%20Richard%20Banfield.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Design Leadership_ How Top Desi  Richard Banfieldepub/epub.html",
+		"name": "Design Leadership_ How Top Desi  Richard Banfield"
+	},
+	{
+		"originalUrl": "/epubv2.html/Design%20Leadership_%20How%20Top%20Desi%20-%20Richard%20Banfield.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Design Leadership_ How Top Desi  Richard Banfieldepub/epub.html",
+		"name": "Design Leadership_ How Top Desi  Richard Banfield"
+	},
+	{
+		"originalUrl": "/epub.html/Design%20Leadership_%20How%20Top%20Desi%20-%20Richard%20Banfield.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Design Leadership_ How Top Desi  Richard Banfieldepub/epub.html",
+		"name": "Design Leadership_ How Top Desi  Richard Banfield"
+	},
+	{
+		"originalUrl": "/epub.html/Pitch%20Anything_%20An%20Innovative%20M%20-%20Oren%20Klaff.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Pitch Anything_ An Innovative M  Oren Klaffepub/epub.html",
+		"name": "Pitch Anything_ An Innovative M  Oren Klaff"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Cheating%20Culture_%20Why%20More%20-%20Callahan,%20David.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Cheating Culture_ Why More  Callahan Davidepub/epub.html",
+		"name": "The Cheating Culture_ Why More  Callahan David"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Cheating%20Culture_%20Why%20More%20-%20Callahan,%20David.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Cheating Culture_ Why More  Callahan Davidepub/epub.html",
+		"name": "The Cheating Culture_ Why More  Callahan David"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Sweet%20Spot_%20How%20to%20Find%20You%20-%20Christine%20Carter,%20Ph.D_.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Sweet Spot_ How to Find You  Christine Carter PhD_epub/epub.html",
+		"name": "The Sweet Spot_ How to Find You  Christine Carter PhD_"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Awakened%20Mind_%20Biofeedback%20-%20Nona%20Coxhead.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Awakened Mind_ Biofeedback  Nona Coxheadepub/epub.html",
+		"name": "The Awakened Mind_ Biofeedback  Nona Coxhead"
+	},
+	{
+		"originalUrl": "/epub.html/Slavery%20by%20Another%20Name%20-%20Douglas%20A.%20Blackmon.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Slavery by Another Name  Douglas A Blackmonepub/epub.html",
+		"name": "Slavery by Another Name  Douglas A Blackmon"
+	},
+	{
+		"originalUrl": "/epub.html/More%20than%20Just%20Race%20-%20William%20Julius%20Wilson.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/More than Just Race  William Julius Wilsonepub/epub.html",
+		"name": "More than Just Race  William Julius Wilson"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Awakened%20Mind_%20Biofeedback%20-%20Nona%20Coxhead.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Awakened Mind_ Biofeedback  Nona Coxheadepub/epub.html",
+		"name": "The Awakened Mind_ Biofeedback  Nona Coxhead"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Sweet%20Spot_%20How%20to%20Find%20You%20-%20Christine%20Carter,%20Ph.D_.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Sweet Spot_ How to Find You  Christine Carter PhD_epub/epub.html",
+		"name": "The Sweet Spot_ How to Find You  Christine Carter PhD_"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Mind%20Illuminated_%20A%20Complet%20-%20John%20Yates.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Mind Illuminated_ A Complet  John Yatesepub/epub.html",
+		"name": "The Mind Illuminated_ A Complet  John Yates"
+	},
+	{
+		"originalUrl": "/epub.html/Siddhartha's%20Brain_%20Unlocking%20t%20-%20James%20Kingsland.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Siddharthas Brain_ Unlocking t  James Kingslandepub/epub.html",
+		"name": "Siddharthas Brain_ Unlocking t  James Kingsland"
+	},
+	{
+		"originalUrl": "/epub.html/Celebrity,%20Inc._%20How%20Famous%20Peo%20-%20Jo%20Piazza.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Celebrity Inc_ How Famous Peo  Jo Piazzaepub/epub.html",
+		"name": "Celebrity Inc_ How Famous Peo  Jo Piazza"
+	},
+	{
+		"originalUrl": "/epub.html/Savvy_%20Dealing%20With%20People,%20Pow%20-%20Jane%20Clarke.epub",
+		"fileHtml": "/Users/user2/Dropbox/projects/delegation/Reader/TTS-Reader/www/epub.html",
+		"file": "/Users/user2/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Savvy_ Dealing With People Pow  Jane Clarkeepub/epub.html",
+		"name": "Savvy_ Dealing With People Pow  Jane Clarke"
+	},
+	{
+		"originalUrl": "/epub.html/Matchmakers_%20The%20New%20Economics%20-%20David%20S.%20Evans.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Matchmakers_ The New Economics  David S Evansepub/epub.html",
+		"name": "Matchmakers_ The New Economics  David S Evans"
+	},
+	{
+		"originalUrl": "/epub.html/First%20Impressions_%20What%20You%20Don%20-%20White%20Phd,%20Valerie.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/First Impressions_ What You Don  White Phd Valerieepub/epub.html",
+		"name": "First Impressions_ What You Don  White Phd Valerie"
+	},
+	{
+		"originalUrl": "/epub.html/Captivate%20-%20Vanessa%20Van%20Edwards.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Captivate  Vanessa Van Edwardsepub/epub.html",
+		"name": "Captivate  Vanessa Van Edwards"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Passage%20of%20Power%20-%20Robert%20A.%20Caro.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Passage of Power  Robert A Caroepub/epub.html",
+		"name": "The Passage of Power  Robert A Caro"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Future%20of%20Power%20-%20Joseph%20S.%20Nye%20Jr_.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Future of Power  Joseph S Nye Jr_epub/epub.html",
+		"name": "The Future of Power  Joseph S Nye Jr_"
+	},
+	{
+		"originalUrl": "/epub.html/Silence%20on%20the%20Wire%20-%20Michal%20Zalewski.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Silence on the Wire  Michal Zalewskiepub/epub.html",
+		"name": "Silence on the Wire  Michal Zalewski"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Weird%20and%20the%20Eerie%20-%20Fisher,%20Mark;.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Weird and the Eerie  Fisher Markepub/epub.html",
+		"name": "The Weird and the Eerie  Fisher Mark"
+	},
+	{
+		"originalUrl": "/epub.html/Sense%20and%20Respond_%20How%20Successf%20-%20Jeff%20Gothelf.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Sense and Respond_ How Successf  Jeff Gothelfepub/epub.html",
+		"name": "Sense and Respond_ How Successf  Jeff Gothelf"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Art%20of%20the%20Steal%20-%20Frank%20W.%20Abagnale.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Art of the Steal  Frank W Abagnaleepub/epub.html",
+		"name": "The Art of the Steal  Frank W Abagnale"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Art%20of%20Intrusion_%20The%20Real%20-%20Kevin%20Mitnick.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Art of Intrusion_ The Real  Kevin Mitnickepub/epub.html",
+		"name": "The Art of Intrusion_ The Real  Kevin Mitnick"
+	},
+	{
+		"originalUrl": "/epub.html/Procedural%20Generation%20in%20Game%20D%20-%20Tanya%20X.%20Short.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Procedural Generation in Game D  Tanya X Shortepub/epub.html",
+		"name": "Procedural Generation in Game D  Tanya X Short"
+	},
+	{
+		"originalUrl": "/epub.html/Move%20Fast%20and%20Break%20Things_%20How%20-%20Jonathan%20Taplin.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Move Fast and Break Things_ How  Jonathan Taplinepub/epub.html",
+		"name": "Move Fast and Break Things_ How  Jonathan Taplin"
+	},
+	{
+		"originalUrl": "/epub.html/Judgment_%20How%20Winning%20Leaders%20M%20-%20Noel%20M.%20Tichy.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Judgment_ How Winning Leaders M  Noel M Tichyepub/epub.html",
+		"name": "Judgment_ How Winning Leaders M  Noel M Tichy"
+	},
+	{
+		"originalUrl": "/epub.html/How%20Linux%20Works_%20What%20Every%20Sup%20-%20Brian%20Ward.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/How Linux Works_ What Every Sup  Brian Wardepub/epub.html",
+		"name": "How Linux Works_ What Every Sup  Brian Ward"
+	},
+	{
+		"originalUrl": "/epub.html/The%20First%2090%20Days,%20Updated%20and%20-%20Watkins,%20Michael%20D_.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The First 90 Days Updated and  Watkins Michael D_epub/epub.html",
+		"name": "The First 90 Days Updated and  Watkins Michael D_"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Power%20Broker_%20Robert%20Moses%20-%20Robert%20A.%20Caro.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Power Broker_ Robert Moses  Robert A Caroepub/epub.html",
+		"name": "The Power Broker_ Robert Moses  Robert A Caro"
+	},
+	{
+		"originalUrl": "/epub.html/Destined%20for%20War%20-%20Graham%20Allison.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Destined for War  Graham Allisonepub/epub.html",
+		"name": "Destined for War  Graham Allison"
+	},
+	{
+		"originalUrl": "/epub.html/Platform%20Revolution%20-%20Sangeet%20Paul%20Choudary.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Platform Revolution  Sangeet Paul Choudaryepub/epub.html",
+		"name": "Platform Revolution  Sangeet Paul Choudary"
+	},
+	{
+		"originalUrl": "/epub.html/Business%20Models%20for%20Teams_%20See%20-%20Tim%20Clark.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Business Models for Teams_ See  Tim Clarkepub/epub.html",
+		"name": "Business Models for Teams_ See  Tim Clark"
+	},
+	{
+		"originalUrl": "/epub.html/OpenCV%20with%20Python%20Blueprints%20-%20Michael%20Beyeler.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/OpenCV with Python Blueprints  Michael Beyelerepub/epub.html",
+		"name": "OpenCV with Python Blueprints  Michael Beyeler"
+	},
+	{
+		"originalUrl": "/epub.html/The%20New%20Trading%20for%20a%20Living_%20P%20-%20Alexander%20Elder.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The New Trading for a Living_ P  Alexander Elderepub/epub.html",
+		"name": "The New Trading for a Living_ P  Alexander Elder"
+	},
+	{
+		"originalUrl": "/epub.html/Project%20Psychology_%20Using%20Psych%20-%20De%20Mascia,%20Sharon,%20Ms.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Project Psychology_ Using Psych  De Mascia Sharon Msepub/epub.html",
+		"name": "Project Psychology_ Using Psych  De Mascia Sharon Ms"
+	},
+	{
+		"originalUrl": "/epub.html/War%20and%20Peace%20and%20War%20-%20Turchin,%20Peter.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/War and Peace and War  Turchin Peterepub/epub.html",
+		"name": "War and Peace and War  Turchin Peter"
+	},
+	{
+		"originalUrl": "/epub.html/Ultrasociety_%20How%2010,000%20Years%20-%20Peter%20Turchin.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Ultrasociety_ How 10000 Years  Peter Turchinepub/epub.html",
+		"name": "Ultrasociety_ How 10000 Years  Peter Turchin"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Four%20Steps%20to%20the%20Epiphany%20-%20Blank,%20Steve.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Four Steps to the Epiphany  Blank Steveepub/epub.html",
+		"name": "The Four Steps to the Epiphany  Blank Steve"
+	},
+	{
+		"originalUrl": "/epub.html/Car%20Builder%20Journal_%20RCR%20SuperL%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Car Builder Journal_ RCR SuperL  Unknownepub/epub.html",
+		"name": "Car Builder Journal_ RCR SuperL  Unknown"
+	},
+	{
+		"originalUrl": "/epub.html/Designed%20for%20Use%20(for%20Dee%20Robin%20-%20Lukas%20Mathis.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Designed for Use for Dee Robin  Lukas Mathisepub/epub.html",
+		"name": "Designed for Use for Dee Robin  Lukas Mathis"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Truth%20Doesn't%20Have%20to%20Hurt%20-%20Deb%20Bright.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Truth Doesnt Have to Hurt  Deb Brightepub/epub.html",
+		"name": "The Truth Doesnt Have to Hurt  Deb Bright"
+	},
+	{
+		"originalUrl": "/epub.html/A%20Rulebook%20for%20Arguments%20(Fourt%20-%20Anthony%20Weston.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/A Rulebook for Arguments Fourt  Anthony Westonepub/epub.html",
+		"name": "A Rulebook for Arguments Fourt  Anthony Weston"
+	},
+	{
+		"originalUrl": "/epub.html/Who%20Gets%20What--And%20Why%20-%20Alvin%20Roth.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Who Gets WhatAnd Why  Alvin Rothepub/epub.html",
+		"name": "Who Gets WhatAnd Why  Alvin Roth"
+	},
+	{
+		"originalUrl": "/epub.html/How%20to%20Think%20About%20Money%20-%20Jonathan%20Clements.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/How to Think About Money  Jonathan Clementsepub/epub.html",
+		"name": "How to Think About Money  Jonathan Clements"
+	},
+	{
+		"originalUrl": "/epub.html/Meaningful_%20The%20Story%20of%20Ideas%20-%20Bernadette%20Jiwa.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Meaningful_ The Story of Ideas  Bernadette Jiwaepub/epub.html",
+		"name": "Meaningful_ The Story of Ideas  Bernadette Jiwa"
+	},
+	{
+		"originalUrl": "/epub.html/The%20End%20of%20Average%20-%20Todd%20Rose.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The End of Average  Todd Roseepub/epub.html",
+		"name": "The End of Average  Todd Rose"
+	},
+	{
+		"originalUrl": "/epub.html/Wealth%20Building%20Strategies%20for%20-%20John%20Endris.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Wealth Building Strategies for  John Endrisepub/epub.html",
+		"name": "Wealth Building Strategies for  John Endris"
+	},
+	{
+		"originalUrl": "/epub.html/I,%20Spy%20-%20Daniel%20Ribacoff.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/I Spy  Daniel Ribacoffepub/epub.html",
+		"name": "I Spy  Daniel Ribacoff"
+	},
+	{
+		"originalUrl": "/epub.html/Dangerous%20Personalities_%20An%20FBI%20-%20Joe%20Navarro.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Dangerous Personalities_ An FBI  Joe Navarroepub/epub.html",
+		"name": "Dangerous Personalities_ An FBI  Joe Navarro"
+	},
+	{
+		"originalUrl": "/epub.html/digital%20prohibition%20piracy%20and.%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/digital prohibition piracy and  Unknownepub/epub.html",
+		"name": "digital prohibition piracy and  Unknown"
+	},
+	{
+		"originalUrl": "/epub.html/The%2011%20Laws%20of%20Likability_%20Rela%20-%20LEDERMAN,%20Michelle%20Tillis.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The 11 Laws of Likability_ Rela  LEDERMAN Michelle Tillisepub/epub.html",
+		"name": "The 11 Laws of Likability_ Rela  LEDERMAN Michelle Tillis"
+	},
+	{
+		"originalUrl": "/epub.html/Simply%20Said_%20Communicating%20Bett%20-%20Jay%20Sullivan.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Simply Said_ Communicating Bett  Jay Sullivanepub/epub.html",
+		"name": "Simply Said_ Communicating Bett  Jay Sullivan"
+	},
+	{
+		"originalUrl": "/epub.html/Well-Spoken%20Thesaurus_%20The%20Most%20-%20Tom%20Heehler.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/WellSpoken Thesaurus_ The Most  Tom Heehlerepub/epub.html",
+		"name": "WellSpoken Thesaurus_ The Most  Tom Heehler"
+	},
+	{
+		"originalUrl": "/epub.html/Auschwitz%20-%20Miklos%20Nyiszli.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Auschwitz  Miklos Nyiszliepub/epub.html",
+		"name": "Auschwitz  Miklos Nyiszli"
+	},
+	{
+		"originalUrl": "/epub.html/Platform%20-%20Michael%20Hyatt.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Platform  Michael Hyattepub/epub.html",
+		"name": "Platform  Michael Hyatt"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Start-Up%20J%20Curve_%20The%20Six%20S%20-%20Howard%20Love.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The StartUp J Curve_ The Six S  Howard Loveepub/epub.html",
+		"name": "The StartUp J Curve_ The Six S  Howard Love"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Informal%20Media%20Economy%20-%20Ramon%20Lobato.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Informal Media Economy  Ramon Lobatoepub/epub.html",
+		"name": "The Informal Media Economy  Ramon Lobato"
+	},
+	{
+		"originalUrl": "/epub.html/Popular_%20The%20Power%20of%20Likabilit%20-%20Mitch%20Prinstein.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Popular_ The Power of Likabilit  Mitch Prinsteinepub/epub.html",
+		"name": "Popular_ The Power of Likabilit  Mitch Prinstein"
+	},
+	{
+		"originalUrl": "/epub.html/Crypto%20-%20Steven%20Levy.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Crypto  Steven Levyepub/epub.html",
+		"name": "Crypto  Steven Levy"
+	},
+	{
+		"originalUrl": "/epub.html/Digital%20Ethnography_%20Anthropolo%20-%20Underberg,%20Natalie%20M_.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Digital Ethnography_ Anthropolo  Underberg Natalie M_epub/epub.html",
+		"name": "Digital Ethnography_ Anthropolo  Underberg Natalie M_"
+	},
+	{
+		"originalUrl": "/epub.html/The%20Narrow%20Road%20-%20Felix%20Dennis.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The Narrow Road  Felix Dennisepub/epub.html",
+		"name": "The Narrow Road  Felix Dennis"
+	},
+	{
+		"originalUrl": "/epub.html/Smart%20Mobs_%20The%20Next%20Social%20Rev%20-%20Howard%20Rheingold.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Smart Mobs_ The Next Social Rev  Howard Rheingoldepub/epub.html",
+		"name": "Smart Mobs_ The Next Social Rev  Howard Rheingold"
+	},
+	{
+		"originalUrl": "/epub.html/Architectural%20Detailing_%20Functi%20-%20Edward%20Allen.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Architectural Detailing_ Functi  Edward Allenepub/epub.html",
+		"name": "Architectural Detailing_ Functi  Edward Allen"
+	},
+	{
+		"originalUrl": "/epub.html/[K.%20Jaishankar]%20Cyber%20Criminolo%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/K Jaishankar Cyber Criminolo  Unknownepub/epub.html",
+		"name": "K Jaishankar Cyber Criminolo  Unknown"
+	},
+	{
+		"originalUrl": "/epub.html/VR%20UX%20-%20Casey%20Fictum.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/VR UX  Casey Fictumepub/epub.html",
+		"name": "VR UX  Casey Fictum"
+	},
+	{
+		"originalUrl": "/epub.html/Don't%20Reply%20All_%2018%20Email%20Tacti%20-%20Hassan%20Osman.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Dont Reply All_ 18 Email Tacti  Hassan Osmanepub/epub.html",
+		"name": "Dont Reply All_ 18 Email Tacti  Hassan Osman"
+	},
+	{
+		"originalUrl": "/epub.html/MODE%20ONE_%20Let%20The%20Women%20Know%20Wh%20-%20Alan%20Roger%20Currie.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/MODE ONE_ Let The Women Know Wh  Alan Roger Currieepub/epub.html",
+		"name": "MODE ONE_ Let The Women Know Wh  Alan Roger Currie"
+	},
+	{
+		"originalUrl": "/epub.html/Teamwork_%20What%20Must%20Go%20Right_Wh%20-%20Carl%20Larson.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Teamwork_ What Must Go Right_Wh  Carl Larsonepub/epub.html",
+		"name": "Teamwork_ What Must Go Right_Wh  Carl Larson"
+	},
+	{
+		"originalUrl": "/epub.html/B0054M06EO%20EBOK%20-%20Paterson,%20Randy.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/B0054M06EO EBOK  Paterson Randyepub/epub.html",
+		"name": "B0054M06EO EBOK  Paterson Randy"
+	},
+	{
+		"originalUrl": "/epub.html/New%20York%20City_%2010%20Locals%20Tell%20Y%20-%20Gigi%20Griffis.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/New York City_ 10 Locals Tell Y  Gigi Griffisepub/epub.html",
+		"name": "New York City_ 10 Locals Tell Y  Gigi Griffis"
+	},
+	{
+		"originalUrl": "/epub.html/Software%20Takes%20Command%20-%20Manovich,%20Lev;.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Software Takes Command  Manovich Levepub/epub.html",
+		"name": "Software Takes Command  Manovich Lev"
+	},
+	{
+		"originalUrl": "/epub.html/Wired%20for%20Story_%20The%20Writer's%20G%20-%20Cron,%20Lisa.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Wired for Story_ The Writers G  Cron Lisaepub/epub.html",
+		"name": "Wired for Story_ The Writers G  Cron Lisa"
 	},
 	{
 		"originalUrl": "/epubV2.html/the_four_steps_to_the_epiphany.epub",
@@ -12,16 +756,16 @@
 		"name": "the_four_steps_to_the_epiphany"
 	},
 	{
-		"originalUrl": "/epub.html/the_four_steps_to_the_epiphany.epub",
-		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/the_four_steps_to_the_epiphanyepub/epub.html",
-		"name": "the_four_steps_to_the_epiphany"
-	},
-	{
 		"originalUrl": "/epub.html/Your%20Brain%20at%20Work%20-%20David%20Rock.epub",
 		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Your Brain at Work  David Rockepub/epub.html",
 		"name": "Your Brain at Work  David Rock"
+	},
+	{
+		"originalUrl": "/epub.html/the_four_steps_to_the_epiphany.epub",
+		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/the_four_steps_to_the_epiphanyepub/epub.html",
+		"name": "the_four_steps_to_the_epiphany"
 	},
 	{
 		"originalUrl": "/epub.html/test2.epub",
@@ -40,12 +784,6 @@
 		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/In the Lands of the Enchanted M  Torres Claudioepub/epub.html",
 		"name": "In the Lands of the Enchanted M  Torres Claudio"
-	},
-	{
-		"originalUrl": "/epub.html/New%20York%20City_%2010%20Locals%20Tell%20Y%20-%20Gigi%20Griffis.epub",
-		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/New York City_ 10 Locals Tell Y  Gigi Griffisepub/epub.html",
-		"name": "New York City_ 10 Locals Tell Y  Gigi Griffis"
 	},
 	{
 		"originalUrl": "/epub.html/The%20Filmmaker's%20Eye_%20Learning%20(%20-%20Gustavo%20Mercado.epub",
@@ -100,12 +838,6 @@
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Opulent Interiors of the Gilded  Lewis Arnoldepub/epub.html",
 		"name": "Opulent Interiors of the Gilded  Lewis Arnold"
-	},
-	{
-		"originalUrl": "/epub.html/Architectural%20Detailing_%20Functi%20-%20Edward%20Allen.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Architectural Detailing_ Functi  Edward Allenepub/epub.html",
-		"name": "Architectural Detailing_ Functi  Edward Allen"
 	},
 	{
 		"originalUrl": "/epub.html/Building%20Structures%20Illustrated%20-%20Francis%20D.%20K.%20Ching.epub",
@@ -298,12 +1030,6 @@
 		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/The First Apartment Book  Kyle Schunemanepub/epub.html",
 		"name": "The First Apartment Book  Kyle Schuneman"
-	},
-	{
-		"originalUrl": "/epub.html/Siddhartha's%20Brain_%20Unlocking%20t%20-%20James%20Kingsland.epub",
-		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Siddharthas Brain_ Unlocking t  James Kingslandepub/epub.html",
-		"name": "Siddharthas Brain_ Unlocking t  James Kingsland"
 	},
 	{
 		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/saves/test2.html",
@@ -538,12 +1264,6 @@
 		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Tokyo Fashion City  Philomena Keetepub/epub.html",
 		"name": "Tokyo Fashion City  Philomena Keet"
-	},
-	{
-		"originalUrl": "/epub.html/Don't%20Reply%20All_%2018%20Email%20Tacti%20-%20Hassan%20Osman.epub",
-		"fileHtml": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "g:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/uploads/extracted/Dont Reply All_ 18 Email Tacti  Hassan Osmanepub/epub.html",
-		"name": "Dont Reply All_ 18 Email Tacti  Hassan Osman"
 	},
 	{
 		"originalUrl": "/epub.html/Value%20Creation%20Thinking%20-%20Bartley%20Madden.epub",

@@ -72,7 +72,7 @@ function onGetRecentBooks(req,res) {
 	var json = sh.readJSONFile('recent_files.json', [], true)
 	var recents = {};
 	recents.name = 'upload new'
-	recents.originalUrl = 'epub.html'
+	recents.originalUrl = 'epub_upload.html'
 	json.unshift(recents)
 	json.unshift({})
 	var str = ''
@@ -295,6 +295,10 @@ function onEditEpub(req,res){
 	if ( referer && referer.includes(rootApp2)) {
 		rootApp = rootApp2;
 	}
+	/*if ( referer && referer.includes(rootApp2)) {
+		rootApp = rootApp2;
+	}*/
+	
 	if ( referer && referer.indexOf(rootApp) != -1 ) {
 		dirReferrer = unescape(referer).split(rootApp+'/')[1];
 		//console.error('change it ..', fileOrig, dirReferrer)
@@ -655,7 +659,12 @@ app.post('/upload', upload.single('file'), function(req, res){
 		console.log(args)
 		args = args.join(' ')
 		console.log(args)
-		var code = execSync('unzip ' +args);
+		try {
+			var code = execSync('unzip ' + args);
+		} catch ( e ) {
+			console.error(e)
+			console.error('prob book existed ... already ')
+		}
 	}
 	res.status(204).end(); req.filename;
 });
@@ -663,11 +672,14 @@ app.post('/writeArticle', function onWriteArticle(req, res){
 
 	console.log("body: "+JSON.stringify(req.body));//.replace(/\\/g, ""));
 	if(typeof req.body !== 'undefined'){
-
 		var vas = req.body.content;
-		var fileHTML = __dirname+'/'+'www/testArticles/'+Math.random()+ '.html'
-
+		var fileName = Math.random()+ '.html'
+		var fileHTML = __dirname+'/'+'www/testArticles/'+fileName
 		sh.writeFile( fileHTML, vas)
+
+		var fileLastSave = __dirname+'/'+'www/testArticles/'+'lastSavedArticle.txt'
+		var json = fileName;
+		sh.writeFile(fileLastSave, json)
 
 	}
 	res.status(204).end();

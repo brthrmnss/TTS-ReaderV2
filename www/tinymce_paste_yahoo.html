@@ -261,8 +261,11 @@
                     //console.log(k,v)
                     var ui = $(v)
                     var text = ui.text().trim()
+                    if ( text.length < searchForTxt.length ) {
+                        return;
+                    }
 
-                    if ( searchForTxt.includes(text) ) {
+                    if (searchForTxt.includes(text)) {
                         hasIt = true
                         return false;
                     }
@@ -489,7 +492,7 @@
 
             debugger
             if (b.find('img[alt="The New York Times"]').exists()
-                 || b.find('image[alt="The New York Times"]').exists() ) {
+                    || b.find('image[alt="The New York Times"]').exists()) {
 
                 console.debug('is new york times')
 
@@ -563,7 +566,7 @@
             }
 
             if (c.dom.hasLinkWithText('Powered by SMF')) {
-               // debugger;
+                // debugger;
                 c.dom.removeUIComps('.tborder', '.signature')
                 c.dom.doNotRead('.poster_info')
                 c.dom.doNotRead('.subject')
@@ -577,6 +580,12 @@
                 var comments = b.find('entry_comments')
                 c.dom.replaceWith('article')
 
+                //rolling stone
+                c.dom.clearWidth('.content-rail').css('width', '');
+                c.dom.clearWidth('.center-rail').css('width', '');
+                c.dom.clearWidth('.content-head').css('width', '');
+                c.dom.removeUIComps('#module-more-news', '.content-foot', '.right-rail')
+                c.dom.removeUIComps('.module-social-sharing', '.module-related')
                 c.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
                 return;
             }
@@ -620,6 +629,9 @@
                         c.ctrlOnly = false
                     }
                 })
+              /*  editor.on('paste', function onPaste(e) {
+                    debugger
+                })*/
                 editor.on('keyup', function (e) {
                     console.debug('Key up event: ' + e.keyCode);
                     var content = tinyMCE.get('mainContent').getContent();
@@ -724,6 +736,15 @@
                     ui.addClass('highlight')
                 });
 
+
+                if (uiUtils.getUrlVal('loadLastSavedArticle') == 'true') {
+                    uiUtils.getUrl('testArticles/lastSavedArticle.txt', function on(data) {
+                        debugger
+                        c.loadPage('testArticles/' + data)
+                    })
+
+                }
+
                 if (uiUtils.getUrlVal('loadRecent') == 'true') {
                     debugger
                     //c.loadPage('testArticles/0.7704380748327821.html')
@@ -799,9 +820,11 @@
             var toDiv = $($('iframe')[1]).contents().find('body')
             window.sentenceHelper.setupSentences(toDiv, toDiv);
 
-            $.each(c.speakSettings, function copyTo(k, v) {
-                window.sentenceHelper.settings[k] = v
-            });
+            if (c.speakSettings) {
+                $.each(c.speakSettings, function copyTo(k, v) {
+                    window.sentenceHelper.settings[k] = v
+                });
+            }
             window.speak('paste command')
             window.speak('paste')
             setTimeout(function call() {
@@ -935,7 +958,11 @@ jQuery(head).append(css);
 |
 <button onclick="window.loadRecent=!window.loadRecent; uiUtils.setUrlVal('loadRecent', window.loadRecent)">loadRecent
 </button>
+
 <button onclick="window.autoSave=!window.autoSave; uiUtils.setUrlVal('save', window.autoSave)">autoSave</button>
+
+<button onclick="window.loadLastSavedArticle=!window.loadLastSavedArticle; uiUtils.setUrlVal('loadLastSavedArticle', window.loadLastSavedArticle)">loadLastSavedArticle</button>
+
 <div id="controlBox"></div>
 
 

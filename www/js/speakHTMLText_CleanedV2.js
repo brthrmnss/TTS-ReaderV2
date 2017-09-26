@@ -1,5 +1,27 @@
 window.fxHtmlSpeaker = function fxHtmlSpeaker() {
     var u = uiUtils;
+    u.isUpperCase = function isUpperCase(char) {
+        if (char == null) {
+            return null
+        }
+        if (char == char.toUpperCase()) {
+            return true
+        }
+        return false;
+    }
+
+    u.isFirstLetterLowercase = function isFirstLetterLowercase(txt) {
+
+        if (txt == null) {
+            return null
+        }
+        var char = txt.slice(0, 1)
+        if (char == char.toLowerCase()) {
+            return true
+        }
+        return false;
+    }
+
     //console.log('hamb');
     function defineUtils() {
         $.async = function asyncHelper(items, fx, fxAllDone, delay, playIndex) {
@@ -313,7 +335,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     'Sort' +
                     '</button>' +
 
-                    '<ul class="list"></ul>' +
+                    '<ul class="list searchList"></ul>' +
 
                     '</div>')
 
@@ -579,8 +601,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             } else {
                                 isHeading = firstSentenceElement.parents('h4,h2,h1,h3').length > 0
                             }
-                            if ( self.settings.doNotDing ) {
-                                isHeading = false; 
+                            if (self.settings.doNotDing) {
+                                isHeading = false;
                             }
 
 
@@ -749,7 +771,9 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
             if (position && position.length != null) {
                 if (position.length !=
                     self.data.currentSentences.sentences.length) {
-                    alert('size changed ...')
+                    console.error('size change ....')
+                    //play a beep
+                    // alert('size changed ...')
                 }
 
                 if (position.currentIndex >
@@ -1165,7 +1189,236 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 //why: when viewing sentence, see image. so it is like tv show
 
                 var h = {};
+
+                function QuoteHelper() {
+                    var self = this;
+                    var p = this;
+                    self.data = {}
+                    //self.showWhenDone = true;
+
+                    self.settings = {}
+
+                    self.settings.showAllNounsWhenDone = true;
+
+                    p.init = function init(par) {
+                        self.data.par = par;
+                        self.data.quotes = []
+                        self.data.speakers = []
+                        self.data.allNouns = {};
+                        self.createNewSpeaker()
+                    }
+                    p.endQuoteForcily = function endQuoteForcily() {
+                        self.data.par.data.quoteMode = false;
+
+                        if (self.data.currentSpeaker.quotes.length == 0) {
+                            self.createNewSpeaker(false)
+                        }
+                        if (self.data.currentSpeaker.items.length > 0) {
+                            if (self.data.currentSpeaker.quotes.length == 0) {
+
+                                self.createNewSpeaker(false)
+                            } else {
+                                self.createNewSpeaker()
+                            }
+
+                        }
+
+
+                    }
+
+                    p.addQuote = function addQuote(dictObj) {
+                        self.lastQ = dictObj;
+                        //self.data.quoteMode = false;
+                        self.data.quotes.push(dictObj)
+
+                        self.addToSpeaker(dictObj)
+                    }
+
+                    p.addNonQuote = function addNonQuote(dictObj) {
+                        if (self.lastQ == dictObj) {
+                            return;
+                        }
+
+                        var txt = dictObj.txt;
+                        if (self.settings.collectAllNouns) {
+                            var y = nlp_compromise.text(txt).nouns()
+                            $.each(y, function addNoun(k, v) {
+                                self.addPerson(v)
+                                self.addPerson(v, true)
+                            })
+                        }
+
+                        self.data.currentSpeaker.nonquotes.push(dictObj.txt)
+
+
+                        //self.data.quoteMode = false;
+
+                        // self.addToSpeaker(dictObj)
+                    }
+                    p.addPerson = function addPerson(nounItem, alt) {
+                        var text = nounItem.text;
+                        if (nounItem.tag == 'Value') {
+                            return;
+                        }
+                        if (nounItem.tag == 'Value') {
+                            return;
+                        }
+                        if (nounItem.text.includes('Moose  Malloy  had  left ')) {
+                            debugger
+                        }
+
+                        //var words = text.split(' ')
+                        var words = text.split(/(\s+)/).filter(function (e) {
+                            return e.trim().length > 0;
+                        });
+                        text = words.join(' ')
+                        //var words = text.split(/(\s+)/);
+                        var secondWord = words[1]
+                        if (u.isFirstLetterLowercase(secondWord)) {
+                            //return; //must be capital
+                            text = words[0]
+                        } else {
+                            if (u.isFirstLetterLowercase(words[2])) {
+                                //return; //must be capital
+                                text = words.slice(0, 2).join(' ')
+                            }
+                        }
+
+
+                        var illegalEndings = ["'s", '.', ',', '?', '"', '!']
+                        $.each(illegalEndings, function stripEnd(k, v) {
+                            if (text.endsWith(v)) {
+                                text = text.slice(0, v.length)
+                            }
+                        })
+
+
+                        if (false == uiUtils.isUpperCase(text.slice(0, 1))) {
+                            var isOk = false;
+                            if (self.settings.presetNouns) {
+                                $.each(self.settings.presetNouns, function checkBe(k, vPotPresetNoun) {
+                                    if (text.startsWith(vPotPresetNoun)) {
+                                        text = vPotPresetNoun
+                                        isOk = true
+                                        return false;
+                                    }
+                                })
+                            }
+                            if (isOk == false) {
+                                return;
+                            }
+                        }
+
+                        if (nounItem.text.includes('Moose  Malloy  had  left ')) {
+                            debugger
+                        }
+
+                        self.addAs(text, nounItem, alt)
+
+                        names = text.split(/(\s+)/).filter(function (e) {
+                            return e.trim().length > 0;
+                        });
+                        if (alt == null && names.length > 1) {
+                            var firstName = names[0]
+                            self.addAs(firstName, nounItem)
+                        }
+                    }
+
+                    p.addAs = function addAs(key, nounItem, alt) {
+                        var dict = self.data.currentSpeaker.nouns
+                        if (alt) {
+                            dict = self.data.allNouns;
+                        }
+                        var item = dict[key];
+                        if (item == null) {
+                            item = nounItem;
+                            item.simple = [nounItem.text, nounItem.tag].join('_')
+                            item.count = 0
+                        }
+                        item.count++
+                        dict[key] = item
+                    }
+                    p.addToSpeaker = function addToSpeaker(dictObj) {
+                        if (self.data.currentSpeaker == null) {
+                            self.createNewSpeaker()
+                        }
+                        self.data.currentSpeaker.items.push(dictObj)
+                        self.data.currentSpeaker.quotes.push(dictObj.txt)
+                    }
+                    p.createNewSpeaker = function createNewSpeaker(isNew) {
+                        if (isNew != false) {
+                            var cs = self.data.currentSpeaker = {}
+                        } else {
+                            var cs = self.data.currentSpeaker
+                        }
+
+                        cs.quotes = [];
+                        cs.items = [];
+                        cs.nonquotes = []
+                        cs.nouns = {}
+                        cs.speaker = 'unknown'
+                        if (isNew != false) {
+                            self.data.speakers.push(cs)
+                        }
+
+                    }
+
+                    p.showPrint = function showPrint() {
+                        console.clear()
+                        console.log('lll', self.data.speakers)
+                        $.each(self.data.speakers, function on(k, v) {
+                            k += 1;
+                            k += '.'
+                            console.log(k, v.speaker, v.quotes.join(''))
+                            v.nouns2 = {};
+                            $.each(v.nouns, function ok(k, v2) {
+                                v.nouns2[k] = v2.count;
+                            })
+                            console.log('\t', v.nouns2)
+                            if (v.nonquotes.length > 0)
+                                console.log('\t', v.nonquotes.join(''))
+                        })
+                    }
+                    p.showNouns = function showNouns() {
+                        //console.clear()
+                        console.log('lll', self.data.allNouns)
+                        var count = 0
+                        var count10 = 0;
+                        var count5 = 0;
+                        var countMoreThan2 = 0;
+                        $.each(self.data.allNouns, function on(k, v) {
+                            if (v.count > 10) {
+                                count10++
+                            }
+                            if (v.count > 5) {
+                                count5++
+                            }
+                            if (v.count < 3) {
+                                countMoreThan2++
+                            }
+                            count++;
+                        })
+                        console.log('lll', count, countMoreThan2, count5, count10)
+                    }
+
+                    //AIzaSyA05kHVmkHmwHVpjr1F68Ijt63IBGY1xhQ
+                    //015565869698212399731:dmvgtg5t-lm
+                    /*
+                     https://developers.google.com/apis-explorer/#s/customsearch/v1/search.cse.list?q=obama&cx=015565869698212399731%253Admvgtg5t-lm&_h=1&
+                     https://developers.google.com/apis-explorer/#s/customsearch/v1/search.cse.list?q=obama&cx=015565869698212399731%253Admvgtg5t-lm&_h=1&
+                     https://www.googleapis.com/customsearch/v1?q=obama&cx=015565869698212399731%3Admvgtg5t-lm&key=AIzaSyA05kHVmkHmwHVpjr1F68Ijt63IBGY1xhQ
+                     https://www.googleapis.com/customsearch/v1?key=YOUR API KEY&cx=YOUR CUSTOM SEARCH ENGINE IDENTIFIER&q=your query&searchType=Image
+                     https://www.googleapis.com/customsearch/v1?key=AIzaSyAXmKONMogHUQ3r8Kn-xnxF62JUQAcFmm0&cx=015565869698212399731:dmvgtg5t-lm&q=your query&searchType=Image
+                     */
+                }
+
+                h.quote = new QuoteHelper();
+                h.quote.init(self);
+                //h.quote.settings.collectAllNouns = true;
+                h.quote.settings.presetNouns = ['barman']
+
                 h.data = {};
+                h.data.timeDate = new Date();
                 h.data.debugSpanWith$ = false;
                 //h.data.debugWithOpacity = true;
                 //h.data.debugWithColor = true;
@@ -1180,6 +1433,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 }
 
                 h.data.debugAddingSentences = true;
+                h.data.debugAddingSentences = false;
                 h.data.debugAddingSentencesHeavy = false
 
                 h.data.debugStopWhenAddingSentence = ' Michelle, 1959-The Executive guide to e-mail correspondence : including model letters for every sit'
@@ -1269,19 +1523,41 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     };
 
 
-                    var qCount = dictObj.txt.split('"').length
+                    var quotesSplit = dictObj.txt.split('"')
+                    var qqCount = quotesSplit.length - 1;
                     //console.debug('dictObj.txt.split(")', qCount)
                     var startedInAQuote = self.data.quoteMode;
-                    if (qCount == 2 /*&&
+
+
+                    var brokenQuote_EndButNot = false;
+                    var startAndEndAQuote = false;
+
+                    if (qqCount == 1 /*&&
                      dictObj.txt.includes('"')*/) {
                         //  debugger
                         self.data.quoteMode = !self.data.quoteMode;
                         if (self.data.quoteMode) {
+                            h.quote.addQuote(dictObj)
                             self.data.quoteModeCounter++;
+                        } else {
+
+                        }
+
+                        //handle te case were xxx What happen?" said mark
+                        var firstSection = quotesSplit[0]
+                        if (startedInAQuote == false &&
+                            qqCount == 1 && firstSection.length > 1
+                            && firstSection.endsWith(' ') == false) {
+                            brokenQuote_EndButNot = true;
+                            // h.quote.addQuote(dictObj)
+                            // debugger
+                            startAndEndAQuote = true
+                            self.data.quoteMode = false;
                         }
                         //TODO, if in quote and see start quoate .. then the quote neve rended
                     }
 
+                    //debugQuotes
 
                     /*if ( dictObj.txt.toLowerCase().indexOf("once you") != -1 ) {
                      debugger;
@@ -1289,13 +1565,17 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                      if ( dictObj.txt.toLowerCase().indexOf("but not a good fit") != -1 ) {
                      debugger;
                      }*/
+                    if (currentSentence.toLowerCase().includes("says?")) {
+                        //  debugger;
+                    }
+
                     h.dictSentences2[h.sentences.length - 1] = dictObj;
                     var span = $('<span >' + str + '</span>');
 
                     if (h.data.debugWithOpacity) {
                         span.css({opacity: '0.2'});
                     }
-                    if (self.data.quoteMode || startedInAQuote) {
+                    if (self.data.quoteMode || startedInAQuote || startAndEndAQuote) {
                         if (h.data.debugQuotes) {
                             span.css({'border-bottom': 'solid orange 2px'});
                         }
@@ -1303,12 +1583,15 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             dictObj.quoteMode = true;
                         }
                     }
-                    if (qCount == 3) {
+                    if (qqCount == 2) {
                         if (h.data.debugQuotes) {
                             span.css({'border-bottom': 'solid orange 4px'});
                         }
+                        h.quote.addQuote(dictObj)
                     }
-
+                    if (h.data.debugQuotes && brokenQuote_EndButNot) {
+                        span.css({'border-right': 'solid red 4px'});
+                    }
 
                     if (h.data.debugWithColor) {
                         span.css({color: 'red'});
@@ -1326,6 +1609,10 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                         }
                     }
+
+                    if (self.data.quoteMode == false)
+                        h.quote.addNonQuote(dictObj)
+
                     // dictObj[str]=span;
 
                     if (str != '') {
@@ -1372,7 +1659,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                         console.error('link', str)
                         str = str.split('/')[0]
-                        
+
 
                         //  debugger
                         if (str.length > 25) {
@@ -1424,7 +1711,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     return str;
                 }
                 h.utils.splitIntoSentencesSafe = function splitIntoSentencesSafe(str, _parent, child) {
-                                    function isUpperCase(char) {
+                    function isUpperCase(char) {
                         if (char == null) {
                             return null
                         }
@@ -1433,8 +1720,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         }
                         return false;
                     }
-                    
-                   debugger
+
+                    // debugger
                     var sentences = [];
                     var currentSentence = ''
                     //currentSentence = h.currentSentence;
@@ -1445,8 +1732,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     for (var i = 0; i < str.length; i++) {
                         strArr.push(str[i]);
                     }
-
-
 
 
                     var validSentenceEndings = ['. ', '! ', '? ', '" ',
@@ -1479,11 +1764,12 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                 function replaceCharAtIndex(str, index, value) {
                                     return str.substr(0, index - 2) + value + str.substr(index - 1);
                                 }
-/*
-                                currentSentence =
-                                    replaceCharAtIndex(currentSentence,
-                                        currentSentence.length - 2, ' ')
-                                        */
+
+                                /*
+                                 currentSentence =
+                                 replaceCharAtIndex(currentSentence,
+                                 currentSentence.length - 2, ' ')
+                                 */
                             }
 
                             // console.log('lastWord', lastWord)
@@ -1577,7 +1863,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                         // $(parent).html(sentences.join('---'))
                     }
-                    debugger
+                    //debugger
                     self.data.currentSentences = h;
                     h.currentIndex = 0;
                     return sentences;
@@ -1728,6 +2014,21 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                     headingLike = true;
                                 }
                             })
+
+                            /*     function hardBreakQuote() {
+                             var breakingLine = false;
+                             var tagsHeading = ['p', 'div', 'br']
+                             $.each(tagsHeading, function on(k, tag) {
+                             if ($(child).is(tag)) {
+                             breakingLine = true;
+                             }
+                             })
+                             if ( breakingLine ) {
+                             self.data.quoteMode_HardBreakQuote = true;
+                             }
+                             }*/
+
+
                             //console.warn('addingX ' +  tab +  child.nodeName,child )
                             // debugger;
                             if ($.isString(child) || child.nodeName == '#text') {
@@ -1784,11 +2085,13 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             }
                             else if ($(child).is('p')) {
                                 //new sentence
-                                h.addSentence2('', null, 'p')
+                                h.addSentence2('', null, 'p');
+                                h.quote.endQuoteForcily('p is breaking')
                             }
                             else if ($(child).is('br') || headingLike) {
                                 //new sentence
                                 h.addSentence2('', null, 'br tag like')
+                                h.quote.endQuoteForcily('n is breaking')
                             }
                             else if ($(child).is('a')) {
                                 h.addSentence2('', null, 'link')
@@ -1825,8 +2128,16 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 // debugger; //what is the last sentence? ...
                 console.log('h', window.h)
 
+                if (h.quote.showWhenDone) {
+                    h.quote.showPrint()
+                }
+                if (h.quote.settings.showAllNounsWhenDone) {
+                    h.quote.showNouns()
+                }
 
-                debugger
+                console.log('took', u.secs(h.data.timeDate))
+
+                // debugger
                 return;
 
             }
@@ -1850,6 +2161,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         v.text.slice(0, 1)) {
                         return;
                     }
+                    /*  v.urlImage =  "https://www.googleapis.com/customsearch/v1?q="+ v.text +
+                     "&cx=015565869698212399731%3Admvgtg5t-lm&key=AIzaSyA05kHVmkHmwHVpjr1F68Ijt63IBGY1xhQ"*/
                     values.push(v);
                 })
 
@@ -1865,19 +2178,22 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     'Sort' +
                     '</button>' +
 
-                    '<ul class="list"></ul>' +
+                    '<ul class="list searchList"></ul>' +
 
                     '</div>')
 
                 var options = {
                     valueNames: ['tag', 'text',
                         {name: 'url', attr: 'href'},
+                        {name: 'urlImage', attr: 'src'},
                     ],
-                    item: '<li>' +
-                    '<span class="tag"></span> ' +
+                    item: '<li style="padding:5px;">' +
+
                     '<span class="text"></span> ' +
-                    '<a href="http://javve.com" class="link url">link</a>' +
-                    '<p class="born"></p>' +
+                    '(<span class="tag"></span>) ' +
+                    '<a href="http://javve.com" target="_blank" class="link url"><span class="glyphicon glyphicon-search"></span></a>' +
+                    // '<p class="born"></p>' +
+                    '<img style="max-height:50px" class="urlImage"></img>' +
                     '</li>'
                 };
 
