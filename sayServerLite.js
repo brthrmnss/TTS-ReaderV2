@@ -15,10 +15,9 @@ var sh = require('shelpers').shelpers;
 var fs = require("fs");
 var encoding = 'utf8';
 var express = require("express");
-var app = express();
-var r
-var port = 4444;
 
+var bodyParser = require('body-parser');
+/*
 
 sh.writeFile = function writeFile(fileName, content, surpressErrors, binary){
 
@@ -43,6 +42,7 @@ sh.qq = function qq(text){
 sh.isWin = function isWin() {
     return process.platform === 'win32'
 };
+*/
 
 function SayServerLite(){
     var p = SayServerLite.prototype;
@@ -54,12 +54,15 @@ function SayServerLite(){
     self.data = {};
     self.data.cache = {};
 
-    var dirTrash = 'c:/trash/'
+    var dirTrash = sh.fs.trash('sayServerLite')
+    sh.fs.mkdirp(dirTrash)
     if ( sh.fileExists(dirTrash)) {
         self.settings.useTrash = true
     }
     self.settings.fastMode = true
     self.settings.returnJSONAudio = false;
+
+    self.settings.socketMode  =true;
 
     /**
      * Setup middleware and routes
@@ -68,13 +71,20 @@ function SayServerLite(){
      */
     p.start = function start(){
         self.setupExpressApp();
-        app.post('/say', self.say);
-        app.get('/list', self.listVoices);
+        self.data.app.post('/say', self.say);
+        self.data.app.get('/list', self.listVoices);
     }
 
     p.setupExpressApp = function setupApp(){
+        var app = express();
+        self.data.app = app;
+        var port = 4444;
+      //  port = 5444;
+        var http = require('http').Server(app);
+        var io = require('socket.io')(http);
+        self.data.io = io
 
-        var bodyParser = require('body-parser');
+
         app.use(bodyParser());
 
         //Add middleware for cross domains
@@ -84,8 +94,71 @@ function SayServerLite(){
             next();
         });
 
-        app.listen(port)
+        self.settings.port = port
+        var baseUrl = 'http://127.0.0.1'+':'+self.settings.port;
+        //app.listen(port)
+        http.listen(self.settings.port, function () {
+            console.log('started')
+            console.log('go to ', baseUrl)
+            console.log('.', 'http://127.0.0.1:4444/testSay?text=Who%20are%20you?&rate=100%')
+        })
+        //G:\Dropbox\projects\delegation\Reader\TTS-Reader\MaryTTS\SpeakServer\public_html
+        var dirStatic = sh.fs.join(__dirname, 'MaryTTS', 'SpeakServer', 'public_html');
+        app.use(express.static(dirStatic));
+        app.use(express.static(dirTrash));
+
+        self.data.dirWWW = sh.fs.join(__dirname, 'www');
+        self.data.dirWWW = sh.fs.slash(self.data.dirWWW)
+        app.use(express.static(self.data.dirWWW));
+
+
+        if ( self.settings.socketMode ) {
+            setTimeout(function onTest() {
+                var open = require("open");
+               // open(baseUrl);
+            },3000)
+
+            self.setupSocketMode()
+        }
         return app;
+    }
+
+    p.setupSocketMode = function setupSocketMode(){
+        self.appSocket = self.data.io
+        self.data.io .sockets.on('connection', function (socket) {
+            console.log('new connnnn')
+            if ( self.data.tested != false ) {
+                self.test()
+                self.data.tested = true;
+            }
+            self.pSocket = socket;
+            socket.emit('news', { hello: 'world' });
+            socket.emit('reload', {why:'grammar', count:self.data.id});
+
+            socket.on('my other event', function (data) {
+                console.log(data);
+            });
+
+            socket.on('audioEnded', function onAudioEndedUI (data) {
+                console.log('ended a sound', data)
+                self.proc('audioEnded', data);
+                sh.callIfDefined(self.data.fxEndAudio)
+                self.data.fxEndAudio = null;
+            });
+            /*socket.on('chat message', function (data) {
+             console.log(data);
+             });*/
+            socket.on('chat message', function(msg){
+                self.data.io.emit('chat message', msg);
+            });
+
+
+            socket.on('window.invoke', function (x) {
+                console.log('window invoke')
+                socket.broadcast.emit('window.invoke', x);
+            })
+
+        });
     }
 
     function defineRoutes(){
@@ -128,7 +201,7 @@ function SayServerLite(){
 
             var json = {}
             json.src="audio/rx-wav;base64,";
-            self.speak(function result(body){
+            self.speak(function onResultOfSpeaking(body){
                 if (self.settings.returnJSONAudio != true) {
                     console.error('done');
                     res.json(json)
@@ -294,7 +367,11 @@ function SayServerLite(){
             if ( sh.isWin() ) {
                 var cp = child_process.exec( ["taskkill", "/IM ",
                     'cscript.exe', "/f",'/t'].join(' '), function (err, stdout, stderr){
-                    console.log('cscript', stderr, stdout);
+                    if ( stderr.includes('ERROR: The process "cscript.exe" not found.') ) {
+
+                    } else {
+                        console.log('cscript', stderr, stdout);
+                    }
                     runThing();
                 });
             } else {
@@ -334,9 +411,6 @@ function SayServerLite(){
                         });
                         return
                     }
-
-
-
 
                     if ( speakOpts.cacheAudio && speakOpts.playAudio ) {
                         self.utils.playSong(filePathFile, fx)
@@ -402,6 +476,20 @@ function SayServerLite(){
         }
         p.utils.playSong = function playSong(fileSong, fx) {
 
+            if ( self.settings.socketMode ) {
+                self.data.fxEndAudio =  fx;
+                dirTrash = sh.fs.slash(dirTrash)
+                fileSong= sh.fs.slash(fileSong)
+                fileSong = fileSong.replace(dirTrash, '')
+
+                fileSong = fileSong.replace(self.data.dirWWW, '')
+
+                self.data.io.sockets.emit('play', { hello: 'world', file: '',
+                    url: fileSong});
+
+                return;
+            }
+
 
             var h = {}
             h.fxCallbackInvoked = false;
@@ -463,6 +551,59 @@ function SayServerLite(){
     }
     defineRoutes();
 
+    p.test =
+        function test(){
+
+            var sentObjs = [
+                { text:'zzz beep zzz' },
+                { text:'Sentence'},
+                { text:'Sentence'},
+                { text:'Sentence',cacheAudio:true,playAudio:false},
+                //{ text:'Sentence2',cacheAudio:true},
+                { text:'Sentence',cacheAudio:true},
+                { text:'Sentence',cacheAudio:true},
+            ]
+
+
+            var h= {}
+            h.d = new Date();
+
+            var ddd = [];
+
+            var index = 0;
+
+            sh.async(sentObjs, function onCall(k,fx) {
+                //e.start();
+                // asdf.g
+                index++;
+                console.log('\t',index, 'pu', k.text)
+                var req = {};
+                req.body = {};
+                // k.text = 'take that dog outside i said, it\'s muddy'
+                req.body.text = k.text;
+                req.body.playAudio = 'true'
+                if ( k.cacheAudio ) {
+                    req.body.cacheAudio = 'true';
+                }
+                if ( k.playAudio == false ) {
+                    req.body.playAudio = 'false';
+                }
+                var res = {};
+                res.json = function onJSon () {
+                    var yy = sh.time.secs( h.d );
+                    console.log('how much time', yy)
+                    h.d  = new Date();
+                    ddd.push(yy)
+                    fx()
+                }
+
+                self.say(req, res)
+            }, function asdf() {
+                console.log(ddd)
+            })
+
+        }
+
     p.proc = function debugLogger(){
         if(self.silent == true){
             return
@@ -511,54 +652,6 @@ if(module.parent == null){
 
      */
 
-    function onX(){
-
-        var sentObjs = [
-            { text:'Sentence'},
-            { text:'Sentence'},
-            { text:'Sentence',cacheAudio:true,playAudio:false},
-            //{ text:'Sentence2',cacheAudio:true},
-            { text:'Sentence',cacheAudio:true},
-            { text:'Sentence',cacheAudio:true},
-        ]
-
-
-        onX.d = new Date();
-
-        var ddd = [];
-
-        sh.async(sentObjs, function onCall(k,fx) {
-            //e.start();
-            // asdf.g
-            var req = {};
-            req.body = {};
-           // k.text = 'take that dog outside i said, it\'s muddy'
-            req.body.text = k.text;
-            req.body.playAudio = 'true'
-            if ( k.cacheAudio ) {
-                req.body.cacheAudio = 'true';
-            }
-            if ( k.playAudio == false ) {
-                req.body.playAudio = 'false';
-            }
-            var res = {};
-            res.json = function onJSon () {
-                var yy = sh.time.secs(onX.d);
-                console.log('how much time', yy)
-                onX.d = new Date();
-                ddd.push(yy)
-                fx()
-            }
-
-
-
-            e.say(req, res)
-        }, function asdf() {
-            console.log(ddd)
-        })
-
-    }
-    onX();
 
 };
 

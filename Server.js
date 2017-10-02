@@ -659,8 +659,9 @@ app.post('/upload', upload.single('file'), function(req, res){
 		console.log(args)
 		args = args.join(' ')
 		console.log(args)
+		var exeZip = sh.fs.join(__dirname, 'bin', 'windows', 'unzip.exe')
 		try {
-			var code = execSync('unzip ' + args);
+			var code = execSync(exeZip + ' '+  args);
 		} catch ( e ) {
 			console.error(e)
 			console.error('prob book existed ... already ')

@@ -17,7 +17,7 @@ var encoding = 'utf8';
 var express = require("express");
 var app = express();
 var r
-var port = 4445;
+var port = 4446;
 
 
 sh.writeFile = function writeFile(fileName, content, surpressErrors, binary) {
@@ -266,7 +266,8 @@ function SayServerLite() {
                 gb += ' -v ' + sh.dv(speakOpts.volume, '100')
                 if (rate != null) {
                     gb += ' -r ' + rate + ' ';
-                };
+                }
+                ;
                 if (playAudio != true) {
                     // gb += ' -w ' + filePathFile;
                 }
@@ -459,9 +460,32 @@ function SayServerLite() {
                     return
                 }
 
-                if (res)
-                    res.send(stdout)
+                //if (res)
+                //   res.send(stdout)
                 console.log('voices', stdout);
+
+                if (isMac) {
+
+                }
+
+                if (sh.isWin()) {
+                    var list = stdout.split('--Voice List--')[1]
+                    list = sh.breakStringIntoLinesSafe(list)
+                    console.log()
+
+                    var list2 = [];
+                    sh.each(list, function procLine(k, line) {
+                        if (line.trim() == '')
+                            return;
+                        list2.push(line)
+                    })
+
+                    console.log('voices', list2)
+                }
+
+
+                if (res, res.json)
+                    res.json(list2)
             });
             return;
         }
@@ -566,9 +590,76 @@ if (module.parent == null) {
 
     }
 
-    onX();
+   // onX();
 
-    e.listVoices()
+    function onTestVoices() {
+
+        var res = {};
+        res.json = function onVoies(voies) {
+            var testSentence = 'this is a sentence'
+            /*var sentObjs = [
+
+                {text: testSentence, cacheAudio: true, playAudio: false},
+                //{ text:'Sentence2',cacheAudio:true},
+                {text: testSentence, cacheAudio: true},
+                {text: testSentence, cacheAudio: true},
+                {text: testSentence},
+                {text: testSentence},
+            ]*/
+
+            var sentObjs = [];
+            sh.each(voies, function ok(k,voice) {
+                if ( voice.includes('Microsoft ')) {
+                    return;
+                }
+                var cfg = {text: testSentence}
+                cfg.voice = voice;
+                sentObjs.push(cfg)
+            })
+
+            onX.d = new Date();
+
+            var ddd = [];
+
+            sh.async(sentObjs, function onCall(k, fx) {
+                //e.start();
+                // asdf.g
+                var req = {};
+                req.body = k;
+                // k.text = 'take that dog outside i said, it\'s muddy'
+                req.body.text = k.text;
+
+                req.body.playAudio = 'true'
+                if (k.cacheAudio) {
+                    req.body.cacheAudio = 'true';
+                }
+                if (k.playAudio == false) {
+                    req.body.playAudio = 'false';
+                }
+                var res = {};
+                res.json = function onJSon() {
+                    var yy = sh.time.secs(onX.d);
+                    console.log('how much time', yy)
+                    onX.d = new Date();
+                    ddd.push(yy)
+                    fx()
+                }
+
+
+                e.say(req, res)
+            }, function asdf() {
+                console.log(ddd)
+            })
+
+        }
+        e.listVoices(null, res)
+
+
+
+    }
+
+    onTestVoices();
+
 
     //sh.async(sentence)
     // e.speak(null,  "test text")

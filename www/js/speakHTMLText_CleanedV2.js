@@ -1158,15 +1158,19 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         }
                     }
 
-                    console.log('scroll to top', scrollTop, target.height(),
-                        scrollBody.scrollTop(), target.offset().top,
-                        target.offset().top, target.parent().offset().top)
+                    if ( window.scrollIntoViewDivs != true ) {
+                        console.log('scroll to top', scrollTop, target.height(),
+                            scrollBody.scrollTop(), target.offset().top,
+                            target.offset().top, target.parent().offset().top)
 
-                    scrollBody.clearQueue();
-                    scrollBody.stop();
-                    scrollBody.animate({
-                        scrollTop: scrollTop
-                    }, 500);
+                        scrollBody.clearQueue();
+                        scrollBody.stop();
+                        scrollBody.animate({
+                            scrollTop: scrollTop
+                        }, 500);
+                    } else {
+                        target[0].scrollIntoView();
+                    }
                     //return false;
                 }
             }

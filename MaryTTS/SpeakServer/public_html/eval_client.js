@@ -75,7 +75,7 @@ $('#audioThing')[0].addEventListener("ended",function() {
     var src =  $('#audioThing').attr('src');
     socket.emit('audioEnded', src);
 });*/
-$('#audioThing')[0].onended = function onEnd() {
+/*$('#audioThing')[0].onended = function onEnd() {
     var src =  $('#audioThing').attr('src');
     socket.emit('audioEnded', src);
 };
@@ -91,8 +91,100 @@ socket.on('play', function(msg){
     $('#audioThing').attr('src', msg.url)
     myAudio.playbackRate = 1.6;
     $('#audioThing')[0].play();
+});*/
+
+
+$('#audioThing')[0].onended = function onEnd() {
+    var src = $('#audioThing').attr('src');
+    socket.emit('audioEnded', src);
+};
+
+$('#audioThing')[0].ondurationchange =
+    function ondurationchange(event, b, c) {
+        if (event.target.duration == 0) {
+            setTimeout(function endLater() {
+                var src = $('#audioThing').attr('src');
+                socket.emit('audioEnded', src)
+                console.log('\t', 'ended b/c 0', src)
+            }, 200)
+        }
+        //debugger;
+        return;
+        var src = $('#audioThing').attr('src');
+        socket.emit('audioEnded', src);
+    };
+
+
+socket.on('play', function playAgain(msg) {
+    console.log('play', msg)
+    $('#messages').append($('<li>').text(msg));
+    h.scrollToBottom();
+
+    var myAudio = $('#audioThing')[0];
+
+    try {
+        myAudio.pause();
+    } catch ( E ) { console.error('pause error')
+        setTimeout(playAgain, 500, msg)
+    }
+    //$('#audioThing')[0].pause();
+    $('#audioThing').attr('src', msg.url)
+
+    myAudio.playbackRate = 1.6;
+    if ( msg.rate && msg.rate.includes('%')) {
+        var rate = msg.rate.replace('%', '');
+        rate = parseFloat(rate)/100
+        myAudio.playbackRate *= rate
+        console.log('rate to', rate,  myAudio.playbackRate)
+
+    }
+
+    $('#audioThing')[0].play();
 });
 
+function createSoundTrackLane() {
+
+    var player =  $('#audioThing2');
+
+    player[0].onended = function onEnd() {
+        var src = player.attr('src');
+        socket.emit('audioEnded2', src);
+    };
+
+    player[0].ondurationchange =
+        function ondurationchange(event, b, c) {
+            if (event.target.duration == 0) {
+                setTimeout(function endLater() {
+                    var src = player.attr('src');
+                    socket.emit('audioEnded2', src)
+                    console.log('\t', '2: ended b/c 0', src)
+                }, 200)
+            }
+        };
+
+    socket.on('play2', function (msg) {
+        console.log('play', msg)
+        $('#messages').append($('<li>').text(msg));
+        h.scrollToBottom();
+
+        var myAudio = player[0];
+        try {
+            player[0].pause();
+        } catch ( E ) { console.error('pause error')}
+        player.attr('src', msg.url)
+
+        myAudio.playbackRate = 1.6;
+        if ( msg.rate && msg.rate.includes('%')) {
+            var rate = msg.rate.replace('%', '');
+            rate = parseFloat(rate)/100
+            myAudio.playbackRate *= rate
+            console.log('rate to', rate,  myAudio.playbackRate)
+        }
+
+        player[0].play();
+    });
+}
+createSoundTrackLane();
 
 
 socket.on('chat message', function(msg){

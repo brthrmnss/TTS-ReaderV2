@@ -66,6 +66,7 @@ function MaryTTSSpeaker() {
         urls.notes = {};
         urls.say = t.utils.createTestingUrl('say')
         urls.process = t.utils.createTestingUrl('process')
+        urls.voices = t.utils.createTestingUrl('voices')
 
 
         cfg.text = self.utils.escapeXML(cfg.text)
@@ -97,6 +98,10 @@ function MaryTTSSpeaker() {
         if (cfg.voice) {
             if (cfg.voice == 'IVONA 2 Brian') {
                 cfg.voice = 'cmu-rms'
+                cfg.voice = 'dfki-obadiah'
+            }
+            if (cfg.voice == 'IVONA 2 Kendra') {
+                cfg.voice = 'cmu-slt'
             }
             req.VOICE = cfg.voice;
         }
@@ -109,6 +114,7 @@ function MaryTTSSpeaker() {
 
                 //console.error('onResult', body, resp, error)
 
+                console.log('onResult of respose', resp.statusCode)
                 if (resp == null) {
                     console.error('response is null');
                     console.error(error);
@@ -121,6 +127,7 @@ function MaryTTSSpeaker() {
                     } else {
                         console.error(body.toString(), resp.code);
                     }
+                    t2.assert(resp.statusCode==200, body.toString() )
                     return
                 }
                 if (body == null) {
@@ -136,26 +143,102 @@ function MaryTTSSpeaker() {
                 console.log('')
                 //console.log(body)
                 self.proc('writing file', file, body.length, body == undefined, body == 'undefined')
-                sh.writeFile(file, body, false, true)
+               try {
+                   sh.writeFile(file, body, false, true)
+               } catch( e ) {
+                    console.log('e')
+                   sh.writeFile(file, body, false, true)
+               }
                 if (cfg.playLocally == true) {
                     sh.runAsync(
                         ['G:/Dropbox/projects/delegation/Reader/TTS-Reader/bin/windows/cmdmp3.exe',
                             sh.qq(file)].join(' ')
                         ,
-                        function commandRaun() {
-                            sh.callIfDefined(cfg.fx, file)
-                        }
+                        commandRaun
                     )
                 } else {
-                    sh.callIfDefined(cfg.fx, file)
+                    commandRaun()
+
                 }
 
+
+                function commandRaun() {
+                    sh.callIfDefined(cfg.fx, file)
+                    sh.callIfDefined(cfg.fxDone, file)
+                }
                 //  if (self.data.killed != true)
 
                 return;
             })
             .fxFail(function onFault(e) {
                 console.error(e)
+            })
+    }
+
+
+    p.test2 = function test2(cfg) {
+        var port = 59125
+        var baseUrl = 'http://127.0.0.1:' + port
+        var t = EasyRemoteTester.create('Test say basics', {showBody: false});
+        var data = {};
+        t.settings.baseUrl = baseUrl
+        var urls = {};
+        urls.notes = {};
+        urls.say = t.utils.createTestingUrl('say')
+        urls.voices = t.utils.createTestingUrl('voices')
+
+        var t2 = t.clone('test a few voices notes');
+        t2.getR(urls.voices, /*null,*/ 'get')
+            .addFx(function onResult(body, resp, error) {
+
+                var voices = sh.breakStringIntoLinesSafe(body);
+                console.log(voices)
+
+
+
+
+                sh.each(voices, function addCmds(k,voice) {
+                    if ( voice == '' ) {
+                        return
+                    }
+                    voice = voice.split(' ')[0]
+                    t2.addNext(function onK() {
+
+                        console.log('aaaa', voice)
+                        var cfg = {};
+                        cfg.text = 'me too ..... im waiting for ur response ...'
+                        cfg.voice = 'dfki-obadiah';
+                        cfg.voice = voice
+                        cfg.playLocally = true;
+                        cfg.trash = true;
+                        cfg.fxDone = function ok(){
+                            console.log('aaaa-done')
+                            t2.cb()
+                        }
+                        self.speak(cfg)
+                    }, k)
+
+                })
+
+                return;
+                t2.addNext(function onK() {
+                    console.log('aaaa')
+                    var cfg = {};
+                    cfg.text = 'me too ..... im waiting for ur response ...'
+                    cfg.voice = 'dfki-obadiah';
+                    cfg.playLocally = true;
+                    cfg.trash = true;
+                    cfg.fxDone = function ok(){
+                        console.log('aaaa-done')
+                        t2.cb()
+                    }
+                    self.speak(cfg)
+                })
+
+
+                t2.addNext(function onK() {
+                    console.log('bbbb')
+                },1)
             })
     }
 

@@ -535,7 +535,9 @@ function defineUtils() {
             lbl.css('width', cfg.width);
             lbl.css('display', 'inline-block');
         }
-        lbl.css('user-select', 'none');
+        if ( cfg.unselectable ) {
+            lbl.css('user-select', 'none');
+        }
         u.addUI(cfg, lbl);
         return cfg;
     }
@@ -694,9 +696,13 @@ function defineUtils() {
         cfg = uiUtils.addDiv(cfg)
         return cfg;
     }
-    uiUtils.changeContainer = function focusOnContainer() {
+    uiUtils.changeContainer = function focusOnContainer(container) {
         uiUtils.flagCfg.lastAddTo = uiUtils.flagCfg.addTo;
-        uiUtils.flagCfg.addTo = uiUtils.lastCfg.ui;
+        var setContainerTo = uiUtils.lastCfg.ui;
+        if (container ) {
+            setContainerTo = container;
+        }
+        uiUtils.flagCfg.addTo = setContainerTo;
         //console.log('adding to', uiUtils.flagCfg.addTo)
     }
     uiUtils.popContainer = function popContainer() {
@@ -1029,6 +1035,10 @@ function defineUtils() {
             }
 
             ui.css('color', color)
+        }
+
+        uiUtils.minWidth = u.minW = function setMindWiht(w) {
+            uiUtils.lastUI.css('min-width', w + 'px')
         }
 
         uiUtils.removeWrap = function removeWrap(ui) {
@@ -1708,6 +1718,29 @@ function defineUtils() {
             ui.css(position)
         }
 
+        uiUtils.pos.getPos = uiUtils.getPos = function getPos(ui) {
+            if ( ui == null ) {
+                throw 'is null'
+            }
+            var position = $(ui).offset();
+            return position;
+        }
+
+        uiUtils.pos.getPosL = function getPos(ui) {
+            if ( ui == null ) {
+                throw 'is null'
+            }
+            var position = $(ui).position();
+            return position;
+        }
+
+        uiUtils.pos.setPos = uiUtils.setPos = function getPos(ui, pos, animate) {
+            if (animate) {
+                $(ui).animate(pos, 1000);
+            } else {
+                $(ui).offset(pos);
+            }
+        }
 
         uiUtils.pos.adjust = function adjust(ui, t, r, b, l) {
             var lefti = ui.css('left');
@@ -1761,6 +1794,67 @@ function defineUtils() {
                     ui.css('bottom', '')
                 }
             }
+        }
+        uiUtils.pos.adjust2 = function adjust2(ui, t, r, b, l, animate) {
+
+            function px(pxVal) {
+                pxVal = pxVal.replace('px');
+                pxVal = parseInt(pxVal);
+                return pxVal;
+            }
+
+
+            var lefti = ui.css('left');
+            lefti = px(lefti)
+
+            var topi = ui.css('top');
+            topi = px(topi)
+
+            var righti = ui.css('right');
+            righti = px(righti)
+
+            var bottomi = ui.css('bottom');
+            bottomi = px(bottomi)
+
+
+            var finalPos = {};
+            function getPxVal(prop, start, add) {
+                var valFinal = null
+                if (add != null) {
+                    valFinal = (start + add) + 'px'
+                } else {
+                    if (add === null) {
+                        valFinal = ''
+                    }
+                }
+                finalPos[prop] = valFinal
+            }
+
+
+
+            getPxVal('left', lefti, l)
+            getPxVal('top', topi, t)
+            getPxVal('bottom', bottomi, b)
+            getPxVal('right', righti, r)
+
+            //console.log(finalPos, t,r, righti)
+
+            if (animate) {
+                if ( $.isNumeric(animate)) {
+                    duration = animate;
+                } else {
+                    duration = 200
+                }
+
+                $(ui).animate(finalPos, duration);
+            } else {
+                $(ui).offset(finalPos);
+            }
+        }
+
+        uiUtils.percentChance = function percentChance(percent, fx) {
+            if ( Math.random() < percent/100 )
+                fx()
         }
     }
 
@@ -2371,6 +2465,9 @@ function defineUtils() {
                 },
                 error: function (a, b, c) {
                     console.error(url, 'request failed', a, b, c)
+                    if ( a.responseText) {
+                        console.error('\t',  a.responseText)
+                    }
                     //gUtils.remoteFailed(a,b,c)
                     callIfDefined(fxError, a, b, c, url)
                 }

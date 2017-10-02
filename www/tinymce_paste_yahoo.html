@@ -64,8 +64,8 @@
 
             var head = $($('iframe')[1]).contents().find("head")
             var css = '<style type="text/css">' +
-                    '.highlight{background-color: #EEF8C8; opacity: 1;}; ' +
-                    '</style>';
+                '.highlight{background-color: #EEF8C8; opacity: 1;}; ' +
+                '</style>';
             $(head).append(css);
         }
         setTimeout(initStyles, 2000)
@@ -159,7 +159,7 @@
 
             var imgYahoo = b.find('#uh-logo');
             if (imgYahoo.length > 0 &&
-                    imgYahoo.attr('href').includes('yahoo.com')) {
+                imgYahoo.attr('href').includes('yahoo.com')) {
                 //$(body).find('#modal-header').css('background', 'red')
 
                 b.find('#mega-uh').remove();
@@ -179,7 +179,7 @@
             function doesHaveImageSrc(id, href) {
                 var imgYahoo = b.find('#' + id);
                 if (imgYahoo.length > 0 &&
-                        imgYahoo.attr('src').includes(href)) {
+                    imgYahoo.attr('src').includes(href)) {
                     return true;
                 }
                 return false
@@ -253,6 +253,7 @@
                 })
             }
 
+            window.scrollIntoViewDivs = true
             c.dom.hasLinkWithText = function hasLinkWithText(searchForTxt) {
 
                 var hasIt = false;
@@ -261,7 +262,7 @@
                     //console.log(k,v)
                     var ui = $(v)
                     var text = ui.text().trim()
-                    if ( text.length < searchForTxt.length ) {
+                    if (text.length < searchForTxt.length) {
                         return;
                     }
 
@@ -276,24 +277,24 @@
 
             c.dom.removeTextThatSays2 = function removeTextThatSays2(removeExactText) {
                 c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
-                            //console.log('content', x2)
-                            if (x.trim() == removeExactText) {
-                                return true;
-                            }
+                        //console.log('content', x2)
+                        if (x.trim() == removeExactText) {
+                            return true;
                         }
+                    }
                 )
             }
 
             c.dom.removeIfTextIncludes =
-                    function removeTextThatSays2(ifIncludes) {
-                        c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
-                                    //console.log('content', x2)
-                                    if (x.trim().includes(ifIncludes)) {
-                                        return true;
-                                    }
-                                }
-                        )
-                    }
+                function removeTextThatSays2(ifIncludes) {
+                    c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+                            //console.log('content', x2)
+                            if (x.trim().includes(ifIncludes)) {
+                                return true;
+                            }
+                        }
+                    )
+                }
 
             $.fn.exists = function doesQueryReturnResults() {
                 return this.length !== 0;
@@ -309,9 +310,24 @@
                 console.debug('clear google')
 
                 removeUIComps('#top_nav', '#sfcnt', '#appbar',
-                        '#searchform', '.sfbgx', '#gac_scont')
+                    '#searchform', '.sfbgx', '#gac_scont')
 
                 c.dom.replaceWith('#center_col')
+                c.dom.doNotRead('#fprs')
+                return;
+            }
+
+            var img = c.dom.b.find('#orb-banner').find('img[alt=BBC]')
+            if (img.exists()) {
+
+                console.clear()
+                console.debug('clear bbc')
+
+                /*
+                 removeUIComps('#top_nav', '#sfcnt', '#appbar',
+                 '#searchform', '.sfbgx', '#gac_scont')
+                 */
+                c.dom.replaceWith('.story-body')
                 c.dom.doNotRead('#fprs')
                 return;
             }
@@ -354,14 +370,14 @@
                 removeUIComps('#articleIconLinksContainer')
 
                 removeUIComps(
-                        '.mol-style-bold',
-                        '.byline-section',
-                        '.related-carousel',
-                        '#most-watched-videos-wrapper',
-                        '.teads-inread sm-screen', '.adHolder', '.teads-inread', '#taboola-below-main-column', '#most-read-news-wrapper')
+                    '.mol-style-bold',
+                    '.byline-section',
+                    '.related-carousel',
+                    '#most-watched-videos-wrapper',
+                    '.teads-inread sm-screen', '.adHolder', '.teads-inread', '#taboola-below-main-column', '#most-read-news-wrapper')
 
                 removeUIComps('#external-source-links', '#wideCommentAdvert', '.rc-header.link-ccow',
-                        '.shareArticles')
+                    '.shareArticles')
 
                 removeUIComps('.mobile-gallery')
 
@@ -369,11 +385,11 @@
                 removeUIComps('.gr5ox', '.reply-buttons')
                 c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
 
-                            console.log('content', x2)
-                            if (x2.includes('hours ago')) {
-                                return true;
-                            }
+                        console.log('content', x2)
+                        if (x2.includes('hours ago')) {
+                            return true;
                         }
+                    }
                 )
                 return;
             }
@@ -465,24 +481,24 @@
                     return this.nodeType === 3;
                 });
                 arr
-                        .each(
-                                function removeByAndBrokenBar(k, v) {
+                    .each(
+                        function removeByAndBrokenBar(k, v) {
 
-                                    if (v.wholeText.includes('|') ||
-                                            v.wholeText.trim() == '|') {
-                                        // debugger;
-                                        v.data = ' ';
-                                        v.text = ' '
-                                        v.nodeValue = ' ';
-                                        // v.remove();
-                                    }
-                                    if (v.wholeText.trim() == 'by') {
-                                        v.remove();
-                                    }
+                            if (v.wholeText.includes('|') ||
+                                v.wholeText.trim() == '|') {
+                                // debugger;
+                                v.data = ' ';
+                                v.text = ' '
+                                v.nodeValue = ' ';
+                                // v.remove();
+                            }
+                            if (v.wholeText.trim() == 'by') {
+                                v.remove();
+                            }
 
-                                    console.log(v)
-                                    //debugger
-                                })
+                            console.log(v)
+                            //debugger
+                        })
 
                 c.dom.removeTextThatSays2('discuss')
                 c.readBrokenBar = false;
@@ -492,7 +508,7 @@
 
             debugger
             if (b.find('img[alt="The New York Times"]').exists()
-                    || b.find('image[alt="The New York Times"]').exists()) {
+                || b.find('image[alt="The New York Times"]').exists()) {
 
                 console.debug('is new york times')
 
@@ -536,24 +552,24 @@
                     return this.nodeType === 3;
                 });
                 arr
-                        .each(
-                                function removeByAndBrokenBar(k, v) {
+                    .each(
+                        function removeByAndBrokenBar(k, v) {
 
-                                    if (v.wholeText.includes('|') ||
-                                            v.wholeText.trim() == '|') {
-                                        // debugger;
-                                        v.data = ' ';
-                                        v.text = ' '
-                                        v.nodeValue = ' ';
-                                        // v.remove();
-                                    }
-                                    if (v.wholeText.trim() == 'by') {
-                                        v.remove();
-                                    }
+                            if (v.wholeText.includes('|') ||
+                                v.wholeText.trim() == '|') {
+                                // debugger;
+                                v.data = ' ';
+                                v.text = ' '
+                                v.nodeValue = ' ';
+                                // v.remove();
+                            }
+                            if (v.wholeText.trim() == 'by') {
+                                v.remove();
+                            }
 
-                                    console.log(v)
-                                    //debugger
-                                })
+                            console.log(v)
+                            //debugger
+                        })
 
 
                 c.readBrokenBar = false;
@@ -629,9 +645,9 @@
                         c.ctrlOnly = false
                     }
                 })
-              /*  editor.on('paste', function onPaste(e) {
-                    debugger
-                })*/
+                /*  editor.on('paste', function onPaste(e) {
+                 debugger
+                 })*/
                 editor.on('keyup', function (e) {
                     console.debug('Key up event: ' + e.keyCode);
                     var content = tinyMCE.get('mainContent').getContent();
@@ -650,9 +666,9 @@
                             data.content = c.bodyHTML();
                             data.path = 'testArticles'
                             uiUtils.postUrl('writeArticle', data,
-                                    function fxDone() {
-                                        console.log('saved')
-                                    })
+                                function fxDone() {
+                                    console.log('saved')
+                                })
                         }
 
                         c.postPasteProcess()
@@ -961,7 +977,9 @@ jQuery(head).append(css);
 
 <button onclick="window.autoSave=!window.autoSave; uiUtils.setUrlVal('save', window.autoSave)">autoSave</button>
 
-<button onclick="window.loadLastSavedArticle=!window.loadLastSavedArticle; uiUtils.setUrlVal('loadLastSavedArticle', window.loadLastSavedArticle)">loadLastSavedArticle</button>
+<button onclick="window.loadLastSavedArticle=!window.loadLastSavedArticle; uiUtils.setUrlVal('loadLastSavedArticle', window.loadLastSavedArticle)">
+    loadLastSavedArticle
+</button>
 
 <div id="controlBox"></div>
 

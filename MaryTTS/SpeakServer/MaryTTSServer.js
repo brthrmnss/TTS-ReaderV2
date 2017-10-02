@@ -25,7 +25,7 @@ app.use(bodyParser());
 
 //var open = require('open')
 
-
+var MaryTTSSpeaker = require('./MaryTTS').MaryTTSSpeaker;
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -303,10 +303,26 @@ function BrowserEvalServer() {
                     return;
                 }
             }
+
+            if ( speakOpts.text.trim()  == '' ) {
+                speakOpts.fx()
+                return;
+            }
+
             self.speaking = Math.random();
+            console.log(sh.n, sh.n, sh.n)
             console.log("speak.text: "+speakOpts.text);
 
-            var MaryTTSSpeaker = require('./MaryTTS').MaryTTSSpeaker;
+            if ( speakOpts.text == 'zzz beep zzz'  ||
+                speakOpts.text == 'zzz  beep  zzz' ) {
+                var url = '/tone.mp3'
+                //url +='?'+ new Date()
+                io.sockets.emit('play2', { hello: 'world', file: '',
+                    url: url});
+                speakOpts.fx()
+                return;
+            }
+
             var m = new MaryTTSSpeaker();
 
             if ( self.data.oldMary ) {
@@ -381,6 +397,7 @@ function BrowserEvalServer() {
     app.get('/testSay', self.testSay);
     app.get('/say', self.say);
     app.get('/list', self.listVoices);
+    app.get('/voice', self.listVoices);
     app.get('/getSound', self.getSound);
 
 
@@ -417,6 +434,15 @@ if (module.parent == null) {
     setTimeout(function(){
         e.say(req, res)
     }, 1000)
+
+
+    setTimeout(function(){
+        req.body.text = 'zzz beep zzz'
+        req.body.playLocally = false;
+        e.say(req, res)
+    }, 2100)
+
+
 
     /*  setTimeout(function(){
      e.say(req, res)
