@@ -1741,7 +1741,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     var validSentenceEndings = ['. ', '! ', '? ', '" ',
                         '",', ' "', '")']; //do not split numbers
 
-                    var invalidSentenceStrs = ['Dr', 'St']
+                    var invalidSentenceStrs = ['Dr', 'St', 'Mr', 'Mrs', 'Ms']
                     var prevStr = '';
                     var lastWord = '';
                     $.each(strArr, function processChar(i, char) {
