@@ -237,11 +237,6 @@
                 return false;
             }
             c.dom.replaceWith = function replaceWith(id) {
-                if ( id.jquery ) {
-                    c.dom.b.html(id);
-                    return;
-                }
-
                 var result = c.dom.b.find(id)
                 result = $(result)
                 c.dom.b.html(result.html())
@@ -249,32 +244,6 @@
                  return true;
                  }
                  return false;*/
-            }
-            c.dom.ifHasThisIsMain = function ifHasThisIsMain(id, fxDone) {
-                var result = c.dom.b.find(id)
-                //debugger
-                if ( result.length == 0 ) {
-                    return;
-                }
-                result = $(result)
-                c.dom.b.html(result.html())
-
-                console.log('ifHasThisIsMain', fxDone)
-                sh.cid(fxDone)
-                /*if ( result.length > 0 ) {
-                 return true;
-                 }
-                 return false;*/
-            }
-            c.dom.ifFoundFx = function ifFoundFx(id, fxDone) {
-                var result = c.dom.b.find(id)
-                //debugger
-                if ( result.length == 0 ) {
-                    return;
-                }
-
-                console.log('ifFoundFx', fxDone)
-                sh.cid(fxDone)
             }
             c.dom.padding0 = function padding0(id) {
                 var result = c.dom.b.find(id)
@@ -368,7 +337,6 @@
              c.dom.hasId('logocont'), c.dom.hasId('center_col')
              ]
              debugger*/
-           // debugger
             if (c.dom.hasId('logocont') && c.dom.hasId('center_col')) {
 
                 console.clear()
@@ -571,7 +539,7 @@
             }
 
 
-           // debugger
+            //debugger
             if (b.find('img[alt="The New York Times"]').exists()
                 || b.find('image[alt="The New York Times"]').exists()) {
 
@@ -612,7 +580,7 @@
                     //debugger;
                 })
 
-
+                //debugger
                 var arr = b.find('*').contents().filter(function () {
                     return this.nodeType === 3;
                 });
@@ -731,43 +699,11 @@
 
             //debugger
             var article = b.find('article')
-            var mainArticle = null;
-            $.each(article, function cp(k,v) {
-                var ar = $(v)
-                if ( ar.text().length > 200 ) {
-                    if ( mainArticle && mainArticle.text().length > ar.text().length ) {
-                        return; //ignore b/c not longer
-                    }
-                    mainArticle = ar;
-                }
-            })
-
-            c.dom.findInnerArticle = function findInnerArticle(start) {
-                var mainArticle = null;
-                $.each(start, function cp(k,v) {
-                    var ar = $(v)
-                    if ( ar.text().length > 200 ) {
-                        if ( mainArticle && mainArticle.text().length > ar.text().length ) {
-                            return; //ignore b/c not longer
-                        }
-                        mainArticle = ar;
-                    }
-                })
-                return mainArticle
-            }
-
-            var innerArticles = mainArticle.find('article')
-            if ( innerArticles.length > 1 ) {
-                mainArticle = c.dom.findInnerArticle(innerArticles)
-                //debugger
-            }
-
-            if (mainArticle) {
-                console.log('generic article')
-                var text = mainArticle.text();
+            if (b.find('article').exists() && article.text() > 200) {
+                var text = b.find('article').text();
                 var comments = b.find('entry_comments')
                 // debugger;
-                c.dom.replaceWith(mainArticle)
+                c.dom.replaceWith('article')
 
                 //rolling stone
                 c.dom.clearWidth('.content-rail').css('width', '');
@@ -776,23 +712,6 @@
                 c.dom.removeUIComps('#module-more-news', '.content-foot', '.right-rail')
                 c.dom.removeUIComps('.module-social-sharing', '.module-related')
                 c.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
-                //npr
-                c.dom.removeUIComps('.story-tools')
-                c.dom.removeUIComps('.tags', '.contributor-byline', '.contributed')
-                c.dom.removeUIComps('.next-story-link')
-                c.dom.removeUIComps('.newsletters-signup')
-                //c.dom.ifHasThisIsMain('.1-main-container', function onTechCrunch()  {
-
-
-
-                //})
-                c.dom.ifFoundFx('.l-main-container', function onTechCrunch() {
-                   // debugger
-                    c.dom.clearWidth('.article-entry').css('width', '')
-                    c.dom.clearWidth('.l-main-container').css('width', '')
-                    c.dom.clearWidth('.article')
-                })
-
                 return;
             }
 
@@ -807,6 +726,7 @@
 
         }
 
+        // debugger
 
         tinymce.init({
             selector: 'textarea',
@@ -951,253 +871,3 @@
 
                 }
 
-                if (uiUtils.getUrlVal('loadRecent') == 'true') {
-                    debugger
-                    //c.loadPage('testArticles/0.7704380748327821.html')
-                    // c.loadPage('testArticles/0.9368877713568509.html')
-                    //c.loadPage('testArticles/0.020375478779897094.html')
-                    //c.loadPage('testArticles/0.6278695156797767.html')
-                    // c.loadPage('testArticles/hn-listing.html')
-                    var url = 'medium.html'
-                    url = 'btctalk.html'
-                    url = 'nyt2.html'
-                    c.loadPage('testArticles/' + url)
-                }
-
-                setTimeout(function setFocus() {
-                    tinyMCE.get('mainContent').focus();
-                }, 100)
-                setTimeout(function setFocus() {
-                    c.inited = true;
-                }, 1500)
-
-
-            }
-        })
-        ;
-
-        function reverse() {
-            var val = Cookies.get('prevContent');
-            console.log('set to ', val)
-            tinyMCE.get('mainContent').setContent(val)
-        }
-
-
-        var tHelper = {};
-        window.tHelper = tHelper;
-
-        tHelper.setupPaste = function setupPaste() {
-            $("body").on("change keyup paste", tHelper.pasteHandle)
-        }
-
-        tHelper.pasteHandle = function pasteHandle(event, txt) {
-
-            console.log('pasted')
-
-            if (txt == null) {
-                var currentVal = $(this).val();
-
-            } else {
-                currentVal = txt;
-            }
-            var txtOrig = currentVal;
-
-            //fix issues with text
-            currentVal = currentVal.replace(//gm, "");
-            currentVal = currentVal.replace(/’/gm, "'");
-
-            if (currentVal == oldVal) {
-                return; //check to prevent multiple simultaneous triggers
-            }
-        };
-
-        tHelper.playAllSentences = function readText() {
-            var tiny = tinyMCE.get('mainContent');
-            var content = tinyMCE.get('mainContent').getContent();
-            var b = $(tinyMCE.get('mainContent').getBody());
-            var b2 = $(b)
-            b2.find('.highlight').removeClass('highlight')
-            var content = b.text();
-            var children = b.children();
-            var foundElement = false;
-            console.debug('dblclick: ', children);
-            var text = '';
-
-            var toDiv = $($('iframe')[1]).contents().find('body')
-            window.sentenceHelper.setupSentences(toDiv, toDiv);
-
-            if (c.speakSettings) {
-                $.each(c.speakSettings, function copyTo(k, v) {
-                    window.sentenceHelper.settings[k] = v
-                });
-            }
-            window.speak('paste command')
-            window.speak('paste')
-            setTimeout(function call() {
-                console.debug('go play all ..')
-                window.sentenceHelper.onPlay2UI()
-                return;
-                setTimeout(function call() {
-                    console.debug('go play all ..')
-                    window.sentenceHelper.onPlay2UI()
-                }, 200)
-            }, 700)
-
-            return;
-            $.each(children, function addEachChild(k, v) {
-                var ui = $(v)
-                var p = $(c.element).parent()[0]
-                console.log(v, ui, p)
-                if (v == c.element)
-                    foundElement = true
-                if (v == p)
-                    foundElement = true
-                if (foundElement)
-                    text += ui.text().trim() + ' ';
-            })
-
-            // var ui = $(c.element)
-            // var text = ui.text()
-            // debugger;
-            // console.debug(text, content.split(text)[1]);
-            // var final = text  + content.split(text)[1];
-            console.debug('txt to speac', text);
-            window.speak(text)
-            // play2()
-        };
-
-
-        //   debugger
-        tHelper.setupPaste()
-
-        tHelper.setupControlBox = function setup() {
-            //utils.addCheckbox('Speak On Paste')
-            //utils.ignoreAddLinkThings('Speak On Paste')
-        }
-        tHelper.setupControlBox();
-
-
-    </script>
-
-    <style>
-        .highlight {
-            background-color: #00b68f;
-            opacity: 0.3;
-
-            background-color: #EEF8C8;
-            opacity: 1;
-
-        }
-
-        .highlight2 {
-            background-color: #C6E746;
-            opacity: 0.3;
-        }
-    </style>
-</head>
-<body>
-
-<!--<div class="highlight highlight2" >sdffffffffff
-dfg
-dfg
-</div>-->
-<!-- initially hidden right-click menu -->
-<div class="hideContextMenu" id="rmenu">
-    <ul>
-        <li>
-            <a onclick="contextMenuHelper.copy()">Copy</a>
-        </li>
-    </ul>
-</div>
-
-<!--
-$($('iframe')[1]).contents().find("head")
-var head = jQuery("#frame1").contents().find("head");
-var css = '<style type="text/css">' +
-'.container{background:blue}; ' +
-'</style>';
-jQuery(head).append(css);
-});
--->
-
-<div class="hideContextMenu" id="contextAddBookmark">
-    <div id="contextAddBookmark_lbl"></div>
-
-    <textarea id="contextAddBookmark_txt"
-              placeholder="important b/c ... inspires me to ..."
-              style="height: 200px; width: 150px; border: solid 1px white;"></textarea>
-
-    <br/>
-    <button id="btnAddNote">Add Notes</button>
-    <button id="btnContextMenuClose">Close</button>
-    <br/>
-    <br/>
-    <div id="btnBar">
-        <button id="btnQuote">Quote</button>
-        <button>Cool</button>
-        <br/>
-        <button id="btnTryThis">TODO</button>
-        <br/>
-        <button id="btnEpiphany">Epi</button>
-        <button id="btnPainful">Pain</button>
-    </div>
-
-    <span id="contextSentiments"></span>
-    <br/>
-    <div id="txtAreaforBookMark" style="max-height: 100px; max-width: 150px; overflow: auto;">sdfsdf</div>
-
-</div>
-
-
-<textarea id="mainContent">
-</textarea>
-
-
-<br/>
-<div id="txtEdit">
-
-</div>
-<span id="speakingBox">speaking</span>
-<div id="txtConsole">sttaus</div>
-<button onclick="reverse()">reverse</button>
-<button onclick="  tHelper.playAllSentences()">playall</button>
-|
-<button onclick="window.loadRecent=!window.loadRecent; uiUtils.setUrlVal('loadRecent', window.loadRecent)">loadRecent
-</button>
-
-<button onclick="window.autoSave=!window.autoSave; uiUtils.setUrlVal('save', window.autoSave)">autoSave</button>
-
-<button onclick="window.loadLastSavedArticle=!window.loadLastSavedArticle; uiUtils.setUrlVal('loadLastSavedArticle', window.loadLastSavedArticle)">
-    loadLastSavedArticle
-</button>
-
-<div id="controlBox"></div>
-
-
-<script type="text/javascript" src="http://127.0.0.1:10110/jquery.js"></script>
-<!--
-<script type="text/javascript" src="http://127.0.0.1:10110/ui_utils.js"></script>
--->
-<script type="text/javascript" src="http://127.0.0.1:10110/g/js/reloaderGH.js"></script>
-
-
-<script>
-    function onReloader() {
-        reloader.reloadWhenSelf();
-        reloader.reloadWhen('ui_utils.js');
-        reloader.filter = '/TTS-Reader/';
-        reloader.reloadWhenFx('drawPB.js', function onTestOneJs(a, b, c) {
-        })
-        reloader.loadFromOrig = true;
-        //C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/test3/testFramework.js
-        reloader.addReloadMapping('C:/Users/user1/Dropbox/projects/ritv2/videoproject/Code/code-yeti/', '')
-        //reloader
-    }
-    window.onReloader = onReloader;
-    window.setupReloader = onReloader
-</script>
-
-</body>
-
-
-</html>

@@ -62,7 +62,7 @@ function SayServerLite(){
     self.settings.fastMode = true
     self.settings.returnJSONAudio = false;
 
-    self.settings.socketMode  =true;
+    //self.settings.socketMode  =true;
 
     /**
      * Setup middleware and routes
@@ -73,6 +73,8 @@ function SayServerLite(){
         self.setupExpressApp();
         self.data.app.post('/say', self.say);
         self.data.app.get('/list', self.listVoices);
+        self.data.app.get('/speakText', self.speakText);
+        self.data.app.post('/speakText2', self.speakText2);
     }
 
     p.setupExpressApp = function setupApp(){
@@ -85,7 +87,9 @@ function SayServerLite(){
         self.data.io = io
 
 
-        app.use(bodyParser());
+        app.use(bodyParser({limit: '50mb'}));
+        //app.use(express.json({limit: '50mb'}));
+       // app.use(express.urlencoded({limit: '50mb'}));
 
         //Add middleware for cross domains
         app.use(function(req, res, next) {
@@ -203,7 +207,7 @@ function SayServerLite(){
             json.src="audio/rx-wav;base64,";
             self.speak(function onResultOfSpeaking(body){
                 if (self.settings.returnJSONAudio != true) {
-                    console.error('done');
+                    console.error('self.settings.returnJSONAudio != true');
                     res.json(json)
                     return;
                 }
@@ -261,7 +265,7 @@ function SayServerLite(){
             //setTimeout(function () {
 
             //},30*1000)
-            console.log("speak.text: "+text);
+            self.proc("speak.text: "+text);
             if (text == 'zzz beep zzz') {
                 var fileSong = __dirname + '/' + 'www/' + 'audio/' + 'tone.mp3'
                 self.utils.playSong(fileSong, fx)
@@ -326,7 +330,8 @@ function SayServerLite(){
                 filePath = filePath.replace(/\\/gi, "/")
                 sh.writeFile(filePath, text);
                 gb = 'cscript "C:\\Program Files\\Jampal\\ptts.vbs" -u '+filePath
-                if ( speakOpts.cacheAudio ) {
+                if ( speakOpts.cacheAudio || self.settings.socketMode ) {
+                    //store file
                     gb += ' ' + '-w ' + filePathFile + ' ';
                 }
                 gb +=  ' -voice ' + sh.qq(sh.dv(speakOpts.voice, 'IVONA 2 Brian'))// sh.qq('IVONA 2 Brian')
@@ -372,14 +377,14 @@ function SayServerLite(){
                     } else {
                         console.log('cscript', stderr, stdout);
                     }
-                    runThing();
+                    playAudioClip();
                 });
             } else {
-                runThing()
+                playAudioClip()
             }
 
 
-            function runThing() {
+            function playAudioClip() {
                 if ( self.lastCp ) {
                     self.lastCp.kill('SIGINT')
                 }
@@ -414,6 +419,10 @@ function SayServerLite(){
 
                     if ( speakOpts.cacheAudio && speakOpts.playAudio ) {
                         self.utils.playSong(filePathFile, fx)
+                    }
+                    if ( self.settings.socketMode ) {
+                        self.utils.playSong(filePathFile, fx)
+                        return;
                     }
 
 
@@ -481,6 +490,7 @@ function SayServerLite(){
                 dirTrash = sh.fs.slash(dirTrash)
                 fileSong= sh.fs.slash(fileSong)
                 fileSong = fileSong.replace(dirTrash, '')
+                fileSong += '?timestamp='+new Date()
 
                 fileSong = fileSong.replace(self.data.dirWWW, '')
 
@@ -547,6 +557,26 @@ function SayServerLite(){
                 //console.log('done speaking', text, stdout);
             });
             return;
+        }
+
+        p.speakText = function speakText(req, res){
+             self.speak(function ok() {
+                 res.send('ok')
+             }, req.query.text, 6 )
+
+        }
+
+
+
+        p.speakText2 = function speakText(req, res){
+           /* self.speak(function ok() {
+                res.send('ok')
+            }, req.query.text, 6 )*/
+
+           var contents = req.body;
+           sh.writeFile('text.html', contents.html)
+           res.send()
+
         }
     }
     defineRoutes();

@@ -135,14 +135,14 @@ function MergeEpub() {
         self.proc('reading toc', fileToc)
         parser.parseString(data, function onReadToc(err, result) {
             // console.dir(result);
-            var x = result.ncx.navMap[0].navPoint;
+            var navPointItems = result.ncx.navMap[0].navPoint;
             var files = []
 
 
             //  if ( result.ncx.navMap.length > 1 ){
             //  sh.each( result.ncx.navMap, function onAddEachFile(k,navMapSlice) {
             //    var x = navMapSlice.navPoint;
-            sh.each(x, function onAddEachFile(k, v) {
+            sh.each(navPointItems, function onAddEachFile(k, v) {
                 var fileSrc = v.content[0].$.src;
 
                 fileSrc = dir2 + fileSrc.split('#')[0];
@@ -200,8 +200,8 @@ function MergeEpub() {
              files.push(fileSrc)
              })*/
 
-            console.dir(x);
-            console.log(files)
+            console.dir('navPointItems', navPointItems);
+            console.log('found', files.length, 'files')
             console.log('Done');
             sh.toJSONString(files, true)
 
@@ -223,20 +223,6 @@ function MergeEpub() {
         if (self.data.dirOEBPS) {
             dirOEBPS = self.data.dirOEBPS;
         }
-
-
-        sh.fs.leaf = sh.getFileName;
-        sh.fs.exists = function fileExists(dir, error) {
-            var fs = require("fs")
-            var fileFound = fs.existsSync(dir)
-
-            if (fileFound == false && error) {
-                console.error('could not find ', dir, fileFound)
-                sh.throw('notfound - ' + error)
-            }
-            return fileFound;
-        }
-
 
         var contents = '';
         var validParts = [];
@@ -348,6 +334,9 @@ function MergeEpub() {
     function defineUtils() {
         p.utils = {}
         p.utils.isHTMLFile = function isHTMLFile(filePart) {
+            if ( filePart.endsWith('.xml')) {
+                return true;
+            }
             if (!sh.includes(filePart, '.html') && !sh.includes(filePart, '.xhtml') && !sh.includes(filePart, '.htm')) {
                 return false;
             }
@@ -439,6 +428,7 @@ if (module.parent == null) {
 
     var dirExtracted = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/';
     var dirLeaf = '150 Best Mini Interior Ideas  Francesc Zamoraepub'
+    dirLeaf = 'Loveem or Loseemepub'
     dir = dirExtracted + '/' + dirLeaf
 
     options.dir = dir;
