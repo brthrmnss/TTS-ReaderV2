@@ -63,15 +63,26 @@ if ( loadEval ) {
             window.socket = socket;
         })
     }
-    loadEvalApp();
+    setTimeout(loadEvalApp, 20)
+    //loadEvalApp();
 }
 
-
+document.addEventListener('visibilitychange', function(){
+    //console.log('is hidden', document.hidden)
+     //   document.title = document.hidden; // change tab text for demo
+})
 
 window.fxInvoke = function (classToUpdate) {
     var classToUpdate = classToUpdate.replace(/\\/gi, '/');
     var str = classToUpdate.split('/').slice(-1)[0]
     console.log('updated file', str, classToUpdate)
+    if ( classToUpdate.includes('noreload')) {
+        console.log('skip no reload')
+        return;
+    }
+    if ( document.hidden ) {
+        console.log('skipping content hidden')
+    }
     if ( classToUpdate.indexOf('Reader/') == -1) {
         return;
     }

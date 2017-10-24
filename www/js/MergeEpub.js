@@ -317,6 +317,10 @@ function MergeEpub() {
             contents = contentsTocBased;
         }
 
+        if ( contents.includes('<title/>')) {
+            contents = sh.replace(contents, '<title/>', '')
+        }
+
         self.data.contents = contents;
         sh.writeFile(fileOutput, contents)
         // self.mergeFiles();
@@ -383,6 +387,13 @@ function MergeEpub() {
                 if (sh.includes(fileTocPotentially, '.ncx')) {
                     fileToc = fileTocPotentially
                 }
+                var dir = fileTocPotentially
+                if ( sh.isDirectory(dir)) {
+                    fileTocPotentially = dir+'/toc.ncx'
+                    if (sh.fs.exists(fileTocPotentially) ) {
+                        fileToc = fileTocPotentially
+                    }
+                }
             });
             if (sh.fileExists(fileToc)) {
                 return fileToc
@@ -429,6 +440,9 @@ if (module.parent == null) {
     var dirExtracted = 'G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/';
     var dirLeaf = '150 Best Mini Interior Ideas  Francesc Zamoraepub'
     dirLeaf = 'Loveem or Loseemepub'
+    dirLeaf = 'Robert_Earl_Fleury_The_small_business_survival_gbook4youorgepub'
+    dirLeaf = 'Antianxiety Food Solution  Trudy Scottepub'
+    dirLeaf = 'The Black Jacobins  C L R Jamesepub'
     dir = dirExtracted + '/' + dirLeaf
 
     options.dir = dir;

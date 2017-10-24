@@ -1,3 +1,8 @@
+if ( typeof exports !== 'undefined') {
+   // debugger
+    var $ = global.$;
+}
+
 function forwardArgsTo(fx, args, delay) {
     if (fx == undefined)
         return;
@@ -1410,7 +1415,6 @@ function defineUtils() {
                 fx(ui)
             }
         }
-
         p.secs = function howManySecodsHavePastSince(a, b, ms) {
             if (b == null) {
                 b = new Date();
@@ -1419,7 +1423,6 @@ function defineUtils() {
             diff = diff / 1000;
             return diff;
         };
-
         p.getTimestamp = function getTimestamp() {
             var d = new Date();
             d = d.toString()
@@ -3379,4 +3382,10 @@ window.restartTest = function restartTest() {
     setTimeout(function onReload() {
         window.location.reload();
     }, 50);
+}
+
+
+if ( typeof exports !== 'undefined') {
+    // debugger
+    exports.uiUtils=uiUtils;
 }

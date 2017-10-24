@@ -145,43 +145,15 @@
             return b.html();
         }
 
-        c.postPasteProcess = function postPasteProcess() {
-
-            var mainContent = tinyMCE.get('mainContent')
-            var body = mainContent.getBody();
-
-            var b = $(body)
-
-
-            $(body).find('iframe').remove();
-            $(body).find('#main-navigation').remove()
-
-
-            var imgYahoo = b.find('#uh-logo');
-            if (imgYahoo.length > 0 &&
-                imgYahoo.attr('href').includes('yahoo.com')) {
-                //$(body).find('#modal-header').css('background', 'red')
-
-                b.find('#mega-uh').remove();
-
-                b.find('.modal-actions').remove();
-
-                var viewer = b.find('#content-col')
-                if (viewer.length > 0) {
-                    b.html(viewer.html())
-                }
-
-
-                // debugger
-                return;
-            }
+        function createCDom(b) {
 
 
             c.dom = {}
-            c.dom.b = b;
+            c.dom.b = c.dom.body = b;
 
 
-            function doesHaveImageSrc(id, href) {
+            c.doesHaveImageSrc = c.dom.doesHaveImageSrc
+                = function doesHaveImageSrc(id, href) {
                 var imgYahoo = b.find('#' + id);
                 if (imgYahoo.length > 0 &&
                     imgYahoo.attr('src').includes(href)) {
@@ -202,13 +174,13 @@
                         return false;
                     }
                 })
-                if ( found ) {
+                if (found) {
                     return found;
                 }
                 return null;
             }
 
-            c.dom.doesHaveLinkToHref = function doesHaveLinkToHref( href) {
+            c.dom.doesHaveLinkToHref = function doesHaveLinkToHref(href) {
                 var y = c.dom.findAnyJQWithPropValeqX('a', 'href', href)
                 return y != null;
             }
@@ -237,7 +209,7 @@
                 return false;
             }
             c.dom.replaceWith = function replaceWith(id) {
-                if ( id.jquery ) {
+                if (id.jquery) {
                     c.dom.b.html(id);
                     return;
                 }
@@ -253,7 +225,7 @@
             c.dom.ifHasThisIsMain = function ifHasThisIsMain(id, fxDone) {
                 var result = c.dom.b.find(id)
                 //debugger
-                if ( result.length == 0 ) {
+                if (result.length == 0) {
                     return;
                 }
                 result = $(result)
@@ -269,7 +241,7 @@
             c.dom.ifFoundFx = function ifFoundFx(id, fxDone) {
                 var result = c.dom.b.find(id)
                 //debugger
-                if ( result.length == 0 ) {
+                if (result.length == 0) {
                     return;
                 }
 
@@ -317,7 +289,7 @@
                 })
             }
 
-            window.scrollIntoViewDivs = true
+
             c.dom.hasLinkWithText = function hasLinkWithText(searchForTxt) {
 
                 var hasIt = false;
@@ -360,29 +332,119 @@
                     )
                 }
 
+
+            c.dom.find = function findAnyComponent(cfg) {
+                if (cfg.type) {
+                    itemsSearch = c.dom.b.find(cfg.type)
+                } else {
+                    itemsSearch = c.dom.b.children()
+                }
+                var foundItem = null;
+                $.each(itemsSearch, function addEachChild(k, v) {
+                    var ui = $(v)
+
+                    if (cfg.textIncludes) {
+                        if (ui.text().includes(cfg.textIncludes) == false) {
+                            //console.debug('reject', cfg.textIncludes, ui)
+                            return;
+                        }
+                    }
+
+                    if (cfg.clazz) {
+                        if (ui.hasClass(cfg.clazz) == false) {
+                            //console.debug('reject', cfg.textIncludes, ui)
+                            return;
+                        }
+                    }
+
+                    if (cfg.hrefIncludes) {
+                        var href = ui.attr('href');
+                        if (href.includes(cfg.hrefIncludes) == false) {
+                            //console.debug('reject', cfg.textIncludes, ui)
+                            return;
+                        }
+                    }
+                    foundItem = ui;
+                    //foundItems.push(ui)
+                })
+
+                return foundItem
+            }
+
+
+            c.dom.findInnerArticle = function findInnerArticle(start) {
+                var mainArticle = null;
+                $.each(start, function cp(k, v) {
+                    var ar = $(v)
+                    if (ar.text().length > 200) {
+                        if (mainArticle && mainArticle.text().length > ar.text().length) {
+                            return; //ignore b/c not longer
+                        }
+                        mainArticle = ar;
+                    }
+                })
+                return mainArticle
+            }
+
+
             $.fn.exists = function doesQueryReturnResults() {
                 return this.length !== 0;
             }
+            return c;
+        }
 
+        c.postPasteProcess = function postPasteProcess() {
+
+            var mainContent = tinyMCE.get('mainContent')
+            var body = mainContent.getBody();
+
+            var b = $(body)
+
+
+            $(body).find('iframe').remove();
+            $(body).find('#main-navigation').remove()
+
+
+            var imgYahoo = b.find('#uh-logo');
+            if (imgYahoo.length > 0 &&
+                imgYahoo.attr('href').includes('yahoo.com')) {
+                //$(body).find('#modal-header').css('background', 'red')
+
+                b.find('#mega-uh').remove();
+
+                b.find('.modal-actions').remove();
+
+                var viewer = b.find('#content-col')
+                if (viewer.length > 0) {
+                    b.html(viewer.html())
+                }
+
+
+                // debugger
+                return;
+            }
+
+            window.scrollIntoViewDivs = true
+            var d = createCDom(b);
             /*var arr = [
-             c.dom.hasId('logocont'), c.dom.hasId('center_col')
+             d.dom.hasId('logocont'), d.dom.hasId('center_col')
              ]
              debugger*/
-           // debugger
-            if (c.dom.hasId('logocont') && c.dom.hasId('center_col')) {
+            // debugger
+            if (d.dom.hasId('logocont') && d.dom.hasId('center_col')) {
 
                 console.clear()
                 console.debug('clear google')
 
-                removeUIComps('#top_nav', '#sfcnt', '#appbar',
+                d.removeUIComps('#top_nav', '#sfcnt', '#appbar',
                     '#searchform', '.sfbgx', '#gac_scont')
 
-                c.dom.replaceWith('#center_col')
-                c.dom.doNotRead('#fprs')
+                d.dom.replaceWith('#center_col')
+                d.dom.doNotRead('#fprs')
                 return;
             }
 
-            var img = c.dom.b.find('#orb-banner').find('img[alt=BBC]')
+            var img = d.dom.b.find('#orb-banner').find('img[alt=BBC]')
             if (img.exists()) {
 
                 console.clear()
@@ -392,12 +454,12 @@
                  removeUIComps('#top_nav', '#sfcnt', '#appbar',
                  '#searchform', '.sfbgx', '#gac_scont')
                  */
-                c.dom.replaceWith('.story-body')
-                c.dom.doNotRead('#fprs')
+                d.dom.replaceWith('.story-body')
+                d.dom.doNotRead('#fprs')
                 return;
             }
 
-            var logoMedium = c.dom.b.find('.siteNav-logo');
+            var logoMedium = d.dom.b.find('.siteNav-logo');
             if (logoMedium.length > 0 && logoMedium.attr('href').includes('medium.com')) {
 
                 console.clear()
@@ -406,25 +468,25 @@
                 /*      removeUIComps('#top_nav', '#sfcnt', '#appbar',
                  '#searchform', '.sfbgx', '#gac_scont')
                  */
-                c.dom.replaceWith('article')
+                d.dom.replaceWith('article')
                 //section-inner sectionLayout--insetColumn
-                var inset = c.dom.padding0('.section-inner.sectionLayout--insetColumn')
+                var inset = d.dom.padding0('.section-inner.sectionLayout--insetColumn')
                 inset.css('max-width', null)
                 inset.css('max-width', '')
                 inset.css('width', '')
-                //  c.dom.doNotRead('#fprs')
-                var div = c.dom.b.find('.col.u-size12of12.js-postMetaLockup')
-                c.dom.clearWidth('.col.u-size12of12.js-postMetaLockup')
-                c.dom.clearWidth('.u-maxWidth740')
-                c.dom.removeUIComps('.js-followState')
-                c.dom.removeIfTextIncludes('Clapping shows you')
-                c.dom.removeIfTextIncludes('Show your support')
-                c.dom.removeUIComps('.postActions', '.postPromotionWrapper')
+                //  d.dom.doNotRead('#fprs')
+                var div = d.dom.b.find('.col.u-size12of12.js-postMetaLockup')
+                d.dom.clearWidth('.col.u-size12of12.js-postMetaLockup')
+                d.dom.clearWidth('.u-maxWidth740')
+                d.dom.removeUIComps('.js-followState')
+                d.dom.removeIfTextIncludes('Clapping shows you')
+                d.dom.removeIfTextIncludes('Show your support')
+                d.dom.removeUIComps('.postActions', '.postPromotionWrapper')
                 return;
             }
 
 
-            if (doesHaveImageSrc('logo', 'dailymail.co.uk')) {
+            if (d.doesHaveImageSrc('logo', 'dailymail.co.uk')) {
                 //  debugger;
 
                 var article = b.find('#js-article-text')
@@ -432,23 +494,23 @@
 
                 b.find('.mol-video').remove()
 
-                removeUIComps('#articleIconLinksContainer')
+                d.removeUIComps('#articleIconLinksContainer')
 
-                removeUIComps(
+                d.removeUIComps(
                     '.mol-style-bold',
                     '.byline-section',
                     '.related-carousel',
                     '#most-watched-videos-wrapper',
                     '.teads-inread sm-screen', '.adHolder', '.teads-inread', '#taboola-below-main-column', '#most-read-news-wrapper')
 
-                removeUIComps('#external-source-links', '#wideCommentAdvert', '.rc-header.link-ccow',
+                d.removeUIComps('#external-source-links', '#wideCommentAdvert', '.rc-header.link-ccow',
                     '.shareArticles')
 
-                removeUIComps('.mobile-gallery')
+                d.removeUIComps('.mobile-gallery')
 
                 //comments
-                removeUIComps('.gr5ox', '.reply-buttons')
-                c.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+                d.removeUIComps('.gr5ox', '.reply-buttons')
+                d.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
 
                         console.log('content', x2)
                         if (x2.includes('hours ago')) {
@@ -536,7 +598,7 @@
                     var ui = $(v)
 
                     ui.text('  from ' + ui.text() + ' .')
-                    c.dom.doNotRead(ui)
+                    d.dom.doNotRead(ui)
                     //debugger;
                 })
 
@@ -565,13 +627,13 @@
                             //debugger
                         })
 
-                c.dom.removeTextThatSays2('discuss')
+                d.dom.removeTextThatSays2('discuss')
                 c.readBrokenBar = false;
                 return;
             }
 
 
-           // debugger
+            // debugger
             if (b.find('img[alt="The New York Times"]').exists()
                 || b.find('image[alt="The New York Times"]').exists()) {
 
@@ -608,7 +670,7 @@
                     var ui = $(v)
 
                     ui.text('. from ' + ui.text() + ' .')
-                    c.dom.doNotRead(ui)
+                    d.dom.doNotRead(ui)
                     //debugger;
                 })
 
@@ -642,165 +704,183 @@
 
             if (b.find('div.content').length > 0 && b.find('.article-text-wrap').length > 0) {
                 //debugger;
-                c.dom.replaceWith('div.content')
-                c.dom.padding0('.article-text-wrap')
+                d.dom.replaceWith('div.content')
+                d.dom.padding0('.article-text-wrap')
             }
 
 
-            var isSMF = c.dom.doesHaveImageSrc2('smflogo.gif')
-                && c.dom.doesHaveLinkToHref('http://www.simplemachines.org/about/copyright.php')
+            var isSMF = d.dom.doesHaveImageSrc2('smflogo.gif')
+                && d.dom.doesHaveLinkToHref('http://www.simplemachines.org/about/copyright.php')
 
-            if (isSMF ) { //c.dom.hasLinkWithText('Powered by SMF')) {
+            if (isSMF) { //d.dom.hasLinkWithText('Powered by SMF')) {
                 // debugger;
-                c.dom.removeUIComps('.tborder', '.signature')
-                c.dom.doNotRead('.poster_info')
-                c.dom.doNotRead('.subject')
-                c.dom.doNotRead('.smalltext')
-                c.dom.removeUIComps('td.smalltext')
-                var td = c.dom.b.find('td.smalltext')
+                d.dom.removeUIComps('.tborder', '.signature')
+                d.dom.doNotRead('.poster_info')
+                d.dom.doNotRead('.subject')
+                d.dom.doNotRead('.smalltext')
+                d.dom.removeUIComps('td.smalltext')
+                var td = d.dom.b.find('td.smalltext')
                 // debugger;
-                c.dom.doNotRead('.quote')
-                c.dom.doNotRead('.quoteheader')
-                //c.dom.b.find('#dgp-ad-wrapper').parents('td').remove()
-                c.dom.b.find('#dgp-ad-wrapper').remove()
-                c.dom.b.find('.maintab_first').parent().parent().remove()
+                d.dom.doNotRead('.quote')
+                d.dom.doNotRead('.quoteheader')
+                //d.dom.b.find('#dgp-ad-wrapper').parents('td').remove()
+                d.dom.b.find('#dgp-ad-wrapper').remove()
+                d.dom.b.find('.maintab_first').parent().parent().remove()
 
-                //c.dom.findByText('previous topic').parents('table').remove();
+                //d.dom.findByText('previous topic').parents('table').remove();
                 return;
             }
 
-            c.dom.find = function findAnyComponent(cfg) {
-                if ( cfg.type ) {
-                    itemsSearch = c.dom.b.find(cfg.type)
-                } else {
-                    itemsSearch = c.dom.b.children()
-                }
-                var foundItem= null;
-                $.each(itemsSearch, function addEachChild(k, v) {
-                    var ui = $(v)
 
-                    if ( cfg.textIncludes ) {
-                        if ( ui.text().includes(cfg.textIncludes)==false) {
-                            //console.debug('reject', cfg.textIncludes, ui)
-                            return;
-                        }
-                    }
-
-                    if ( cfg.clazz ) {
-                        if ( ui.hasClass(cfg.clazz)==false) {
-                            //console.debug('reject', cfg.textIncludes, ui)
-                            return;
-                        }
-                    }
-
-                    if ( cfg.hrefIncludes ) {
-                        var href = ui.attr('href');
-                        if ( href.includes(cfg.hrefIncludes)==false) {
-                            //console.debug('reject', cfg.textIncludes, ui)
-                            return;
-                        }
-                    }
-                    foundItem = ui;
-                    //foundItems.push(ui)
-                })
-
-                return foundItem
-            }
-
-            var isQuora1 = c.dom.find({type:'a', textIncludes:'Home', clazz:'nav_item_link'})
-            var isQuora2 = c.dom.find({type:'a', textIncludes:'Ask Question', clazz:'AskQuestionButton'})
-            var isQuora3 = c.dom.find({type:'zz', textIncludes:'Home', clazz:'nav_item_link'})
-            if ( isQuora1 && isQuora2 ) {
+            var isQuora1 = d.dom.find({type: 'a', textIncludes: 'Home', clazz: 'nav_item_link'})
+            var isQuora2 = d.dom.find({type: 'a', textIncludes: 'Ask Question', clazz: 'AskQuestionButton'})
+            var isQuora3 = d.dom.find({type: 'zz', textIncludes: 'Home', clazz: 'nav_item_link'})
+            if (isQuora1 && isQuora2) {
                 //debugger
-                c.dom.remove('.SiteHeader', '.layout_2col_side')
-                c.dom.remove('.ActionBar','.answer_auto_expanded_comments')
-                c.dom.remove('.upper_content')
-                c.dom.remove('.OriginallyAnsweredBanner')
+                d.dom.remove('.SiteHeader', '.layout_2col_side')
+                d.dom.remove('.ActionBar', '.answer_auto_expanded_comments')
+                d.dom.remove('.upper_content')
+                d.dom.remove('.OriginallyAnsweredBanner')
 
 
-                c.dom.remove('.ContentPageFeed')
+                d.dom.remove('.ContentPageFeed')
 
 
-                // c.dom.doNotRead('AnswerFooter');
-                c.dom.remove('.CredibilityFacts')
-                c.dom.remove('.TopicListItems2')
+                // d.dom.doNotRead('AnswerFooter');
+                d.dom.remove('.CredibilityFacts')
+                d.dom.remove('.TopicListItems2')
 
                 //TopicListItems2 Toggle SimpleToggle QuestionTopicListItems QuestionTopicHorizontalListItems
             }
 
 
             //debugger
-            var article = b.find('article')
-            var mainArticle = null;
-            $.each(article, function cp(k,v) {
-                var ar = $(v)
-                if ( ar.text().length > 200 ) {
-                    if ( mainArticle && mainArticle.text().length > ar.text().length ) {
-                        return; //ignore b/c not longer
-                    }
-                    mainArticle = ar;
-                }
-            })
-
-            c.dom.findInnerArticle = function findInnerArticle(start) {
+            function lookForMainArticle() {
+                var article = b.find('article')
                 var mainArticle = null;
-                $.each(start, function cp(k,v) {
+                $.each(article, function cp(k, v) {
                     var ar = $(v)
-                    if ( ar.text().length > 200 ) {
-                        if ( mainArticle && mainArticle.text().length > ar.text().length ) {
+                    if (ar.text().length > 200) {
+                        if (mainArticle && mainArticle.text().length > ar.text().length) {
                             return; //ignore b/c not longer
                         }
                         mainArticle = ar;
                     }
                 })
-                return mainArticle
+
+                if (mainArticle) {
+                    var innerArticles = mainArticle.find('article')
+                    if (innerArticles.length > 1) {
+                        mainArticle = d.dom.findInnerArticle(innerArticles)
+                        //debugger
+                    }
+                }
+
+                if (mainArticle) {
+                    console.log('generic article')
+                    var text = mainArticle.text();
+                    var comments = b.find('entry_comments')
+                    // debugger;
+                    d.dom.replaceWith(mainArticle)
+
+                    //rolling stone
+                    d.dom.clearWidth('.content-rail').css('width', '');
+                    d.dom.clearWidth('.center-rail').css('width', '');
+                    d.dom.clearWidth('.content-head').css('width', '');
+                    d.dom.removeUIComps('#module-more-news', '.content-foot', '.right-rail')
+                    d.dom.removeUIComps('.module-social-sharing', '.module-related')
+                    d.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
+                    //npr
+                    d.dom.removeUIComps('.story-tools')
+                    d.dom.removeUIComps('.tags', '.contributor-byline', '.contributed')
+                    d.dom.removeUIComps('.next-story-link')
+                    d.dom.removeUIComps('.newsletters-signup')
+                    //d.dom.ifHasThisIsMain('.1-main-container', function onTechCrunch()  {
+
+
+                    //})
+                    d.dom.ifFoundFx('.l-main-container', function onTechCrunch() {
+                        // debugger
+                        d.dom.clearWidth('.article-entry').css('width', '')
+                        d.dom.clearWidth('.l-main-container').css('width', '')
+                        d.dom.clearWidth('.article')
+                    })
+
+                    return;
+                }
             }
+            lookForMainArticle();
 
-            var innerArticles = mainArticle.find('article')
-            if ( innerArticles.length > 1 ) {
-                mainArticle = c.dom.findInnerArticle(innerArticles)
-                //debugger
-            }
+            function amazonArticle() {
+                if ( c.dom.doesHaveLinkToHref('www.amazon.com/ref=nav_logo') == false ) {
+                    return;
+                }
 
-            if (mainArticle) {
-                console.log('generic article')
-                var text = mainArticle.text();
-                var comments = b.find('entry_comments')
-                // debugger;
-                c.dom.replaceWith(mainArticle)
-
-                //rolling stone
-                c.dom.clearWidth('.content-rail').css('width', '');
-                c.dom.clearWidth('.center-rail').css('width', '');
-                c.dom.clearWidth('.content-head').css('width', '');
-                c.dom.removeUIComps('#module-more-news', '.content-foot', '.right-rail')
-                c.dom.removeUIComps('.module-social-sharing', '.module-related')
-                c.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
-                //npr
-                c.dom.removeUIComps('.story-tools')
-                c.dom.removeUIComps('.tags', '.contributor-byline', '.contributed')
-                c.dom.removeUIComps('.next-story-link')
-                c.dom.removeUIComps('.newsletters-signup')
-                //c.dom.ifHasThisIsMain('.1-main-container', function onTechCrunch()  {
-
-
-
-                //})
-                c.dom.ifFoundFx('.l-main-container', function onTechCrunch() {
-                   // debugger
-                    c.dom.clearWidth('.article-entry').css('width', '')
-                    c.dom.clearWidth('.l-main-container').css('width', '')
-                    c.dom.clearWidth('.article')
+                d.dom.removeUIComps('#nav-upnav', 'header')
+                d.dom.removeUIComps('#navFooter', 'center')
+                d.dom.removeUIComps('#sendSampleBox', 'center')
+                return
+                //asdf.g
+                var article = b.find('article')
+                var mainArticle = null;
+                $.each(article, function cp(k, v) {
+                    var ar = $(v)
+                    if (ar.text().length > 200) {
+                        if (mainArticle && mainArticle.text().length > ar.text().length) {
+                            return; //ignore b/c not longer
+                        }
+                        mainArticle = ar;
+                    }
                 })
 
-                return;
+                if (mainArticle) {
+                    var innerArticles = mainArticle.find('article')
+                    if (innerArticles.length > 1) {
+                        mainArticle = d.dom.findInnerArticle(innerArticles)
+                        //debugger
+                    }
+                }
+
+                if (mainArticle) {
+                    console.log('generic article')
+                    var text = mainArticle.text();
+                    var comments = b.find('entry_comments')
+                    // debugger;
+                    d.dom.replaceWith(mainArticle)
+
+                    //rolling stone
+                    d.dom.clearWidth('.content-rail').css('width', '');
+                    d.dom.clearWidth('.center-rail').css('width', '');
+                    d.dom.clearWidth('.content-head').css('width', '');
+                    d.dom.removeUIComps('#module-more-news', '.content-foot', '.right-rail')
+                    d.dom.removeUIComps('.module-social-sharing', '.module-related')
+                    d.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
+                    //npr
+                    d.dom.removeUIComps('.story-tools')
+                    d.dom.removeUIComps('.tags', '.contributor-byline', '.contributed')
+                    d.dom.removeUIComps('.next-story-link')
+                    d.dom.removeUIComps('.newsletters-signup')
+                    //d.dom.ifHasThisIsMain('.1-main-container', function onTechCrunch()  {
+
+
+                    //})
+                    d.dom.ifFoundFx('.l-main-container', function onTechCrunch() {
+                        // debugger
+                        d.dom.clearWidth('.article-entry').css('width', '')
+                        d.dom.clearWidth('.l-main-container').css('width', '')
+                        d.dom.clearWidth('.article')
+                    })
+
+                    return;
+                }
             }
+            amazonArticle();
 
             if (b.find('#content').exists()) {
                 var comments = b.find('entry_comments')
-                c.dom.replaceWith('#content')
-                c.dom.removeUIComps('div.sidebar')
-                //c.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
+                d.dom.replaceWith('#content')
+                d.dom.removeUIComps('div.sidebar')
+                //d.dom.removeUIComps('.related_post_title', '.related_post', '.ssba', '.ssba-wrapper')
                 return;
             }
 
@@ -946,6 +1026,10 @@
                 if (uiUtils.getUrlVal('loadLastSavedArticle') == 'true') {
                     uiUtils.getUrl('testArticles/lastSavedArticle.txt', function on(data) {
                         // debugger
+                        if( c.windowLoadedArticle == true ) {
+                            return;
+                        }
+                        c.windowLoadedArticle = true
                         c.loadPage('testArticles/' + data)
                     })
 

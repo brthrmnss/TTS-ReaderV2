@@ -68,6 +68,18 @@ app.get("/epub.html",function(req,res){
 	res.sendFile(__dirname +'/www/epub.html');
 });
 
+function onProcessBookInWorld(req,res) {
+	var txt = sh.readFile('www/epub_reload_viewer.html');
+	var fileContent = '';
+
+    var dirStore = sh.fs.trash('bookCvert')
+    var fileOutput = sh.fs.join(dirStore, 'test.html')
+    fileContent = sh.readFile(fileOutput )
+
+    txt = txt.replace('---yyy---', fileContent)
+	res.send(txt)
+}
+app.get("/process_book_in_node",onProcessBookInWorld);
 function onGetRecentBooks(req,res) {
 	var json = sh.readJSONFile('recent_files.json', [], true)
 	var recents = {};
@@ -76,6 +88,7 @@ function onGetRecentBooks(req,res) {
 	json.unshift(recents)
 	json.unshift({})
 	var str = ''
+	str += '<title>e-Recents</title>'
 	sh.each(json, function addLink(k, v) {
 		str += sh.join(['<a href=', sh.qq(v.originalUrl), '>', v.name, '</a>', sh.br]);
 	})
