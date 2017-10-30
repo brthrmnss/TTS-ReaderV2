@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="https://unpkg.com/compromise@latest/builds/compromise.min.js"></script>
+<script>
+    var doc = nlp('dinosaur')
+
+    var str = doc.nouns().toPlural().out('text')
+    console.log(str)
+
+    var doc = nlp('She worked there at Florian\'s or whatever place was there when it was still a white joint.')
+
+    var str = doc.nouns().toPlural().out('text')
+    console.log(doc.nouns().out('array'))
+    console.log(doc.topics().out('array'))
+    // 'dinosaurs'
+
+   /* var y = nlp('The giraffe ate the apples.').terms()/!*..out('array')*!/.filter((t) = > {
+            return t.list[0].terms[0].tags.Noun;
+    })
+    ;*/
+  //  y = y.out('array')
+    console.log(y)
+
+    var y = doc.terms()/*..out('array')*/.filter( function (t) {
+            var isNoun = t.list[0].terms[0].tags.Noun
+            var isTitleCase = t.list[0].terms[0].tags.isTitleCase
+            if (isNoun && isTitleCase){
+                console.log(t.list[0].terms[0].text, t.list[0].terms[0].tags)
+            }
+           /* if (isTitleCase){
+                console.log(t.list[0].terms[0].text, t.list[0].terms[0].tags)
+            }*/
+            return isNoun;
+    })
+    ;
+    y = y.out('array')
+    console.log('sent', y)
+
+</script>
+</body>
+</html>

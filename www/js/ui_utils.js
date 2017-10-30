@@ -385,6 +385,22 @@ function defineUtils() {
 
     }
 
+    u.styleDialog = function styleDialog(ui) {
+        ui = dv(ui, u.lastUI)
+        ui.css('position', 'absolute');
+        ui.css('z-index', '1001');
+        ui.css('background-color', '#f2f2f2');
+        ui.css('padding', '10px');
+        ui.css('border', '1px #666666 solid');
+    }
+    u.padding = function padding(padding, ui) {
+        ui = dv(ui, u.lastUI)
+        /*if ($.isNumeric(padding) ) {
+            padding+='px'
+        }*/
+        ui.css('padding',padding);
+    }
+
     uiUtils.ifFound = function ifFound(id) {
         if (id.includes('#') == false) {
             id = '#' + id;
@@ -1073,6 +1089,33 @@ function defineUtils() {
             var ui = uiUtils.lastUI;
             ui.css('background-color', l)
         }
+        uiUtils.why = function setBgColor(l, ui) {
+            var ui = uiUtils.lastUI;
+            ui.attr('why', l)
+        }
+
+        uiUtils.class = function addClass(l, ui) {
+            var ui = uiUtils.lastUI;
+            ui.addClass( l)
+        }
+        uiUtils.text = function addText(l, ui) {
+            var ui = uiUtils.lastUI;
+            ui.text( l)
+        }
+
+        uiUtils.width = function set_width(width, ui) {
+            var ui = uiUtils.lastUI;
+            ui.css('width', width)
+        }
+        uiUtils.blockSpan = function blockSpan(width, ui) {
+            var ui = uiUtils.lastUI;
+            ui.css('display', 'inline-block')
+        }
+
+        uiUtils.height = function set_height(height, ui) {
+            var ui = uiUtils.lastUI;
+            ui.css('height', height)
+        }
 
         uiUtils.opacity = function setOpacity(opacity, _ui) {
             var ui = uiUtils.lastUI;
@@ -1380,7 +1423,9 @@ function defineUtils() {
         u.lastUI = ui;
     }
     p.tag = function createTag(type) {
-        return $('<' + type + '/>');
+        var ui  = $('<' + type + '/>');
+        u.lastUI = ui
+        return ui
     }
 
 

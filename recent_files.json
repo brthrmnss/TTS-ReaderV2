@@ -1,5 +1,137 @@
 [
 	{
+		"originalUrl": "/epubV2.html/The%20Art%20of%20Community%20-%20Jono%20Bacon.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Art of Community  Jono Baconepub/epub.html",
+		"name": "The Art of Community  Jono Bacon"
+	},
+	{
+		"originalUrl": "/epubV2.html/Buzzing%20Communities%20-%20Millington,%20Richard.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Buzzing Communities  Millington Richardepub/epub.html",
+		"name": "Buzzing Communities  Millington Richard"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20A-List%20Playbook_%20How%20to%20Sur%20-%20Gornstein,%20Leslie.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The AList Playbook_ How to Sur  Gornstein Leslieepub/epub.html",
+		"name": "The AList Playbook_ How to Sur  Gornstein Leslie"
+	},
+	{
+		"originalUrl": "/epubV2.html/Headaches,%20Asthma,%20Fries%20and%20a%20-%20Rick%20Williams.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Headaches Asthma Fries and a  Rick Williamsepub/epub.html",
+		"name": "Headaches Asthma Fries and a  Rick Williams"
+	},
+	{
+		"originalUrl": "/epubV2.html/beyond%20the%20babble%20leadership%20c%20-%20Unknown.txt.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/beyond the babble leadership c  Unknowntxtepub/epub.html",
+		"name": "beyond the babble leadership c  Unknowntxt"
+	},
+	{
+		"originalUrl": "/epubV2.html/Fast%20Food%20Nation_%20The%20Dark%20Side%20-%20Eric%20Schlosser.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Fast Food Nation_ The Dark Side  Eric Schlosserepub/epub.html",
+		"name": "Fast Food Nation_ The Dark Side  Eric Schlosser"
+	},
+	{
+		"originalUrl": "/epubV2.html/test%20proj1%20text%20to%20html%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/test proj1 text to html  Unknownepub/epub.html",
+		"name": "test proj1 text to html  Unknown"
+	},
+	{
+		"originalUrl": "/epubV2.html/Skyscraper%20Dreams%20The%20Great%20Rea%20-%20Unknown2.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Skyscraper Dreams The Great Rea  Unknown2epub/epub.html",
+		"name": "Skyscraper Dreams The Great Rea  Unknown2"
+	},
+	{
+		"originalUrl": "/epubV2.html/Essential%20Manners%20for%20Men%20-%20Peter%20Post.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Essential Manners for Men  Peter Postepub/epub.html",
+		"name": "Essential Manners for Men  Peter Post"
+	},
+	{
+		"originalUrl": "/epubV2.html/Skyscraper%20The%20Making%20of%20a%20Buil%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Skyscraper The Making of a Buil  Unknownepub/epub.html",
+		"name": "Skyscraper The Making of a Buil  Unknown"
+	},
+	{
+		"originalUrl": "/epubV2.html/sex%20and%20civil%20war.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/sex and civil warepub/epub.html",
+		"name": "sex and civil war"
+	},
+	{
+		"originalUrl": "/epubV2.html/Consciousness%20and%20the%20Social%20Br%20-%20Michael%20S.%20A.%20Graziano.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Consciousness and the Social Br  Michael S A Grazianoepub/epub.html",
+		"name": "Consciousness and the Social Br  Michael S A Graziano"
+	},
+	{
+		"originalUrl": "/epubV2.html/Humans%20Are%20Underrated_%20What%20Hig%20-%20Geoff%20Colvin.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Humans Are Underrated_ What Hig  Geoff Colvinepub/epub.html",
+		"name": "Humans Are Underrated_ What Hig  Geoff Colvin"
+	},
+	{
+		"originalUrl": "/epubV2.html/Show%20Sold%20Separately_%20Promos,%20S%20-%20Jonathan%20Gray.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Show Sold Separately_ Promos S  Jonathan Grayepub/epub.html",
+		"name": "Show Sold Separately_ Promos S  Jonathan Gray"
+	},
+	{
+		"originalUrl": "/epubV2.html/Kill%20Chain_%20The%20Rise%20of%20the%20Hig%20-%20Andrew%20Cockburn.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Kill Chain_ The Rise of the Hig  Andrew Cockburnepub/epub.html",
+		"name": "Kill Chain_ The Rise of the Hig  Andrew Cockburn"
+	},
+	{
+		"originalUrl": "/epubV2.html/Live%20Like%20a%20Millionaire%20(Withou%20-%20Vicky%20Oliver.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Live Like a Millionaire Withou  Vicky Oliverepub/epub.html",
+		"name": "Live Like a Millionaire Withou  Vicky Oliver"
+	},
+	{
+		"originalUrl": "/epubV2.html/War%20and%20Peace%20and%20War_%20The%20Rise%20-%20Peter%20Turchin.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/War and Peace and War_ The Rise  Peter Turchinepub/epub.html",
+		"name": "War and Peace and War_ The Rise  Peter Turchin"
+	},
+	{
+		"originalUrl": "/epubV2.html/How%20to%20Talk%20About%20Videogames%20-%20Ian%20Bogost.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/How to Talk About Videogames  Ian Bogostepub/epub.html",
+		"name": "How to Talk About Videogames  Ian Bogost"
+	},
+	{
+		"originalUrl": "/epubV2.html/testquotes.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/testquotesepub/epub.html",
+		"name": "testquotes"
+	},
+	{
+		"originalUrl": "/epubV2.html/EB0022%20-%20BURGESS%20PRE.indd%20-%20AndysiMac.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/EB0022  BURGESS PREindd  AndysiMacepub/epub.html",
+		"name": "EB0022  BURGESS PREindd  AndysiMac"
+	},
+	{
+		"originalUrl": "/epubV2.html/Cocky%20Bastard%20-%20Penelope%20Ward.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Cocky Bastard  Penelope Wardepub/epub.html",
+		"name": "Cocky Bastard  Penelope Ward"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20High%20Window%20-%20Raymond%20Chandler.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The High Window  Raymond Chandlerepub/epub.html",
+		"name": "The High Window  Raymond Chandler"
+	},
+	{
 		"originalUrl": "/epubV2.html/The%20Power%20of%20Full%20Engagement%20-%20Tony%20Schwartz%20Jim%20Loehr.epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Power of Full Engagement  Tony Schwartz Jim Loehrepub/epub.html",
@@ -34,12 +166,6 @@
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Local Economy Solution_ How  Michael Shumanepub/epub.html",
 		"name": "The Local Economy Solution_ How  Michael Shuman"
-	},
-	{
-		"originalUrl": "/epubV2.html/testquotes.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/testquotesepub/epub.html",
-		"name": "testquotes"
 	},
 	{
 		"originalUrl": "/epubV2.html/The%20Growth%20Hacker's%20Guide%20to%20th%20-%20Mark%20Hayes.epub",
@@ -186,12 +312,6 @@
 		"name": "Designing for Behavior Change  Stephen Wendel"
 	},
 	{
-		"originalUrl": "/epubV2.html/Live%20Like%20a%20Millionaire%20(Withou%20-%20Vicky%20Oliver.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Live Like a Millionaire Withou  Vicky Oliverepub/epub.html",
-		"name": "Live Like a Millionaire Withou  Vicky Oliver"
-	},
-	{
 		"originalUrl": "/epubV2.html/The%20Challenger%20Sale%20-%20Dixon,%20Matthew.epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Challenger Sale  Dixon Matthewepub/epub.html",
@@ -202,12 +322,6 @@
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/HBR Guide to Leading Teams HBR  Mary Shapiroepub/epub.html",
 		"name": "HBR Guide to Leading Teams HBR  Mary Shapiro"
-	},
-	{
-		"originalUrl": "/epubV2.html/The%20A-List%20Playbook_%20How%20to%20Sur%20-%20Gornstein,%20Leslie.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The AList Playbook_ How to Sur  Gornstein Leslieepub/epub.html",
-		"name": "The AList Playbook_ How to Sur  Gornstein Leslie"
 	},
 	{
 		"originalUrl": "/epubV2.html/The%20Psychology%20of%20Selling%20-%20Brian%20Tracy.epub",
@@ -526,12 +640,6 @@
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/HandsOn Machine Learning with  Aurelien Geronepub/epub.html",
 		"name": "HandsOn Machine Learning with  Aurelien Geron"
-	},
-	{
-		"originalUrl": "/epubV2.html/The%20High%20Window%20-%20Raymond%20Chandler.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The High Window  Raymond Chandlerepub/epub.html",
-		"name": "The High Window  Raymond Chandler"
 	},
 	{
 		"originalUrl": "/epubV2.html/The%20New%20York%20Trilogy%20-%20Paul%20Auster.epub",

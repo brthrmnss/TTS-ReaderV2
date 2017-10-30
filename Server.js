@@ -76,10 +76,27 @@ function onProcessBookInWorld(req,res) {
     var fileOutput = sh.fs.join(dirStore, 'test.html')
     fileContent = sh.readFile(fileOutput )
 
+	console.log('size of file', fileContent.length)
     txt = txt.replace('---yyy---', fileContent)
 	res.send(txt)
 }
 app.get("/process_book_in_node",onProcessBookInWorld);
+
+
+function onProj1TextToHTML(req,res) {
+    var txt = sh.readFile('www/proj1_text_to_html.html');
+    var fileContent = '';
+
+    var dirStore = sh.fs.trash('bookCvert2')
+    var fileOutput = sh.fs.join(dirStore, 'test_proj1_text_to_html.html')
+    fileContent = sh.readFile(fileOutput )
+
+    console.log('size of file', fileContent.length)
+    txt = txt.replace('---yyy---', fileContent)
+    res.send(txt)
+}
+app.get("/process_proj1_text_to_html",onProj1TextToHTML);
+
 function onGetRecentBooks(req,res) {
 	var json = sh.readJSONFile('recent_files.json', [], true)
 	var recents = {};

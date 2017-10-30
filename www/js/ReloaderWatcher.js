@@ -3,7 +3,6 @@
  */
 
 
-
 var sh = require('shelpers').shelpers;
 var shelpers = require('shelpers');
 
@@ -18,7 +17,7 @@ function ReloadWatcher() {
     }
 
     p.watchFileOnSOcket = function watchFileOnSOcket(config) {
-hjkl.j
+        hjkl.j
         //var art = process.argv.slice(2);;
         art = 'lklsdf'
         var art = process.argv.slice(2)[0]
@@ -47,17 +46,17 @@ hjkl.j
         });
         socket.on('event', function (data) {
         });
-       /* socket.on('window.invoke', function (data) {
-            console.log('what is data', data)
-            if (data.endsWith(fileMatch) || data.endsWith(fileMatch2)) {
-                console.log('ok...')
-                runFile()
-            }
-            if (data.includes('V2Z') ) {
-                console.log('ok...')
-                runFile()
-            }
-        });*/
+        /* socket.on('window.invoke', function (data) {
+         console.log('what is data', data)
+         if (data.endsWith(fileMatch) || data.endsWith(fileMatch2)) {
+         console.log('ok...')
+         runFile()
+         }
+         if (data.includes('V2Z') ) {
+         console.log('ok...')
+         runFile()
+         }
+         });*/
         socket.on('disconnect', function () {
         });
 
@@ -92,6 +91,7 @@ hjkl.j
             });
 
         }
+
         runFile();
     }
 
@@ -101,7 +101,7 @@ hjkl.j
 
         console.log(file)
 
-        if ( self.socket == null ) {
+        if (self.socket == null) {
             var useSecureServer = false;
             if (useSecureServer) {
                 //var socket = require('socket.io-client')('https://local.helloworld3000.com:8043/');
@@ -128,8 +128,65 @@ hjkl.j
 
     }
 
+    p.watchFileAndRunner = function watchFileAndRunner(file) {
+        console.log('not now', new Date(), file)
+
+        console.log(file)
+
+        if (self.socket == null) {
+            var useSecureServer = false;
+            if (useSecureServer) {
+                //var socket = require('socket.io-client')('https://local.helloworld3000.com:8043/');
+            } else {
+                var socket = require('socket.io-client')('http://127.0.0.1:14002/');
+            }
+            self.socket = socket;
+        } else {
+            socket = self.socket;
+        }
+
+        socket.on('connect', function () {
+            console.log('connected...')
+            //socket.emit('window.invoke', file)
+        });
+        socket.on('event', function (data) {
+        });
+        socket.on('window.invoke', function (data) {
+
+            if (data.includes(file)) {
+                console.log('connected...', data)
+                self.runFile(data)
+            }
+            // socket.emit('window.invoke', data)
+        });
+        socket.on('disconnect', function () {
+        });
+
+    }
+
+
+    p.runFile = function runFile(fileToRun) {
+        console.log(sh.n, sh.n)
+        self.data.count++;
+        var cmdNode = 'node';
+        if (sh.isWin() == false) {
+            cmdNode = '/home/user/.nvm/versions/node/v6.9.5/bin/node'
+        }
+        cmdNode = sh.dv(self.settings.cmdNode, cmdNode)
+        var y = sh.runAsync(cmdNode + ' ' + fileToRun)
+
+// var  y = sh.runAsync('node '+ fileToRun)
+//spit stdout to screen
+        y.stdout.on('data', function (data) {
+            process.stdout.write(data.toString());
+        });
+//spit stderr to screen
+        y.stderr.on('data', function (data) {
+            process.stderr.write(data.toString());
+        });
+    }
     p.proc = function debugLogger() {
-        if ( self.silent == true) {
+        if (self.silent == true) {
             return;
         }
         sh.sLog(arguments);

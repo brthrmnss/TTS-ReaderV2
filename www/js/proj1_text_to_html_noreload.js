@@ -3,28 +3,465 @@ var cheerio = require('cheerio');
 
 var sh = require('shelpers').shelpers;
 var shelpers = require('shelpers');
-var nlp = require('compromise')
 
-var doc = nlp('London is calling')
 
 var file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Farewell My Lovely  Raymond Chandlerepub/epub.html"
-//file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub.html"
-//file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub_text.html"
-var contents = sh.readFile(file);
-if (contents.length > 50 * 1000) {
-    contents = contents.slice(0, contents.length * .1)
-}
+file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub.html"
+file = "G:/dropbox/books2/Unknown/Skyscraper The Making of a Building (4718)/Skyscraper The Making of a Buil - Unknown.txt"
+file = "G:/Dropbox/Books2/Unknown/Skyscraper Dreams The Great Real Es (4719)/Skyscraper Dreams The Great Rea - Unknown.txt"
+file = "G:/dropbox/books2/Unknown/Colin C. Williams-The Hidden Enterp (4742)/Colin C. Williams-The Hidden En - Unknown.txt"
+file = "G:/dropbox/books2/Unknown/beyond the babble leadership c (4744)/beyond the babble leadership c - Unknown.txt"
 
-var contentsHTML = '<div id="txtWrapper">' + contents + '</div>'
-let $ = cheerio.load(contentsHTML);
+
+/*
+ var contents = sh.readFile(file);
+ if ( contents.length > 50*1000 ) {
+ contents = contents.slice(0, contents.length * .1)
+ }
+
+
+ var contentsHTML = '<div id="txtWrapper">' + contents + '</div>'
+ let $ = cheerio.load(contentsHTML);
+ global.$ = $;
+ $.each = sh.each;
+ console.debug = function debug() {
+ var args = sh.args(arguments)
+ console.log.apply(console, args)
+ }
+ */
+
+//var contentsHTML = '<div id="txtWrapper">' + contents + '</div>'
+let $ = cheerio.load('');
 global.$ = $;
 $.each = sh.each;
-console.debug = function debug() {
-    var args = sh.args(arguments)
-    console.log.apply(console, args)
-}
+
 var uiUtils = require('./ui_utils.js').uiUtils;
 var u = uiUtils;
+
+//console.log('dddd')
+
+
+function ConvertTextToHTML() {
+    var p = ConvertTextToHTML.prototype;
+    p = this;
+    var self = this;
+    self.data = {};
+    p.init = function init(config) {
+        self.settings = sh.dv(config, {});
+    }
+
+    p.method = function method(config) {
+        var contents = sh.readFile(file);
+        self.proc('length', contents.length)
+        var maxSize = null
+        maxSize = 50 * 1000
+        maxSize = null
+        if (maxSize && contents.length > maxSize) {
+            contents = contents.slice(0, contents.length * .01)
+        }
+        self.proc('length', contents.length)
+        contents = sh.remove_win_newlines(contents)
+        self.data.contents = contents;
+    }
+
+    p.method2 = function method2(config) {
+
+        function isWhitespace(char) {
+            if (char == null) {
+                return
+            }
+            if (sh.isString(char) == false) {
+                return false
+            }
+            if (char.trim() == "") {
+                return true
+            }
+            /* isStr = sh.isAlphaNumeric(char)
+             if ( isStr == false ) {
+             return false;
+             }*/
+            return false;
+        }
+
+        var endingPunctuation = ['.', '!', '?']
+        var arr = self.data.contents.split('');
+        var arr2 = [];
+        var skipNext = 0
+
+
+        function blueBox(sn, bgColor) {
+            bgColor = sh.dv(bgColor, 'blue')
+            var div = u.tag('div')
+            u.lastUI = div;
+            u.class('blueDiv')
+            u.why(sn)
+            u.bg(bgColor)
+            u.height('20px')
+            u.width('100px')
+            return ( $.html((div)) )
+        }
+
+        function spanBlock(sn, bgColor) {
+
+            bgColor = sh.dv(bgColor, 'purple')
+            var div = u.tag('span')
+            u.lastUI = div;
+            u.class('blueDiv')
+            u.why(sn)
+            u.bg(bgColor)
+            u.height('15px')
+            u.width('5px')
+            u.blockSpan('5px')
+            return ( $.html((div)) )
+        }
+
+        function addComp(ui) {
+            var ui2 = $.html((ui))
+            arr2.push(ui2)
+        }
+
+
+        sh.each(arr, function onK(k, char) {
+            if (skipNext > 0) {
+                skipNext--
+                return
+            }
+
+
+
+
+
+            var nextChar = arr[k + 1]
+            var prevChar = arr[k - 1]
+            var nextNextChar = arr[k + 2]
+            var nextChar3 = arr[k + 3]
+            //console.log(char)
+            char = char.toString();
+            if (nextChar) {
+                isNextCharStr = sh.isAlphaNumeric(nextChar)
+                nextChar = nextChar.toString()
+            }
+            isStr = sh.isAlphaNumeric(char)
+            var isNewline = "\n" == char
+
+            function isNewLine(char) {
+                return char == "\n"
+            }
+
+            if (char == "\n" && isNextCharStr && sh.str.isLowerCase(nextChar)) {
+                // dgf.h
+                return;
+            }
+
+            if (char == "\n" && isWhitespace(prevChar) && isWhitespace(nextNextChar)) {
+                // dgf.h
+                return;
+            }
+
+            var prevSlice = self.data.contents.slice(k - 100, k)
+            if (k < 100) {
+                prevSlice = self.data.contents.slice(0, k)
+            }
+            var forwardSlice = self.data.contents.slice(k, k + 100)
+            var dbg2 = [prevSlice,
+                forwardSlice]
+
+            var dbg = [prevChar, '|', char, nextChar, nextNextChar, nextChar3]
+
+            /*if ( prevSlice.endsWith('to them.')) {
+                debugger
+            }*/
+            /*if ( forwardSlice.startsWith('----------------------- Page 10----------------')) {
+                debugger
+            }*/
+            if ( char == '-') {
+                var markerPage = '-----------------------'
+                if ( forwardSlice.startsWith(markerPage)) {
+                    var x = forwardSlice.replace(markerPage+' ', '')
+                    skipNext = markerPage.length+1
+                    if ( x.startsWith('Page ') ) {
+                        x = x.replace('Page ', '')
+                        var splitPageNumber = x.split('-')
+                        var page = splitPageNumber[0]
+                        //skipNext += '-'+splitPageNumber[1].length
+                        skipNext += page.length+markerPage.length
+                        skipNext += 5
+                        var nextSlice = forwardSlice.slice(skipNext)
+                        arr2.push("\n")
+
+                        //addDiv('chompspace')
+                        u.tag('div')
+                        u.text('Page ' + page)
+                        u.class('doNotRead')
+                        u.color('darkgrey')
+
+                        addComp(u.lastUI)
+
+                        arr2.push("\n")
+                        //-----------------------
+                        return
+                    }
+                    //debugger
+                }
+            }
+
+
+
+            if (isNewLine(char) && isNewLine(nextChar)
+                && isNewLine(nextNextChar)) {
+                skipNext = 2
+                var div = u.tag('div')
+                u.lastUI = div;
+                u.class('3xRswitch')
+                u.why('3xr')
+                u.bg('red')
+                u.height('20px')
+                u.width('100px')
+                arr2.push($.html((div)))
+                //debugger
+                return;
+            }
+
+            if (isNewLine(char) && isNewLine(nextChar)
+                && nextNextChar == " "
+                && nextChar3 == " "
+                && isWhitespace(nextNextChar)) {
+                // skipNext = 1
+                //debugger
+                //arr2.push('\n\t__2__')
+                var div = u.tag('div')
+                u.lastUI = div;
+                u.class('3xRswitch')
+                u.why('3xr')
+                u.bg('orange')
+                u.height('20px')
+                u.width('100px')
+                arr2.push($.html((div)))
+                return;
+            }
+
+            if (isNewLine(char) &&
+                isNewLine(nextChar) &&
+                sh.isAlphaNumeric(nextNextChar)
+            ) {
+                //debugger
+                arr2.push('<br/>') //condense
+                skipNext = 1
+                return;
+            }
+
+            if (isNewLine(char)
+                &&
+                isNewLine(nextChar) /*
+             sh.isAlphaNumeric(nextChar)*/
+            ) {
+                //debugger
+                arr2.push('<br/>') //condense
+                skipNext = 1
+                return;
+            }
+
+            function untilNextLink(str) {
+                var charUntilNewLine = [];
+                var lastChar = null;
+                var strArr = str.split('')
+                sh.each(strArr, function proc(k, char) {
+                    if (isNewLine(char)) {
+                        charUntilNewLine.push(char)
+                        return
+                    }
+                    if (char.trim() == '') {
+                        charUntilNewLine.push(char)
+                        return;
+                    }
+                    lastChar = char;
+                    return false;
+                })
+                var output = {}
+                output.charUntilNewLine = charUntilNewLine
+                output.lastChar = lastChar;
+                return output
+            }
+
+            /* if (prevSlice.endsWith('cooperation  pos')) {
+             debugger
+             }*/
+            //hypebs
+            if (char == '-') {
+                var output = untilNextLink(forwardSlice.slice(1))
+                if (output.charUntilNewLine.length > 1) {
+                    /*if ( output.charUntilNewLine.includes('\n') == false ) {
+                     skipNext = output.charUntilNewLine.length
+                     return;
+                     }*/
+                    if ( output.lastChar == null ) {
+                        //debugger
+                        output.lastChar= ''
+                       // return false;
+                    }
+                    if (sh.isAlphaNumeric(output.lastChar) && sh.str.isLowerCase(output.lastChar)) {
+                        //debugger
+                        /* if ( prevChar == '.') {
+                         debugger;
+                         }*/
+                        skipNext = output.charUntilNewLine.length+0
+                        arr2.push(spanBlock('chompspace'))
+                        //arr2.push("\n")
+                        return;
+                    } else {
+
+                    }
+
+                    /*if ( output.charUntilNewLine.includes('\n') == false ) {
+                     skipNext = output.charUntilNewLine.length
+                     return;
+                     }*/
+
+                }
+            }
+           /* if (prevSlice.endsWith('their jobs.')) {
+                debugger
+            }*/
+
+            if (char == ' ') {
+                var output = untilNextLink(forwardSlice)
+                if (output.charUntilNewLine.length > 1) {
+                    if ( output.lastChar == null ) {
+                        //debugger
+                        output.lastChar= ''
+                        // return false;
+                    }
+                    skipNext = output.charUntilNewLine.length - 1
+                    var parts = output.charUntilNewLine.join('')
+                    var length = parts.split('\n').length
+                    var newLineSplit = parts.split('\n')
+                    if (endingPunctuation.includes(prevChar) && length > 1) {
+                        //skipNext = output.charUntilNewLine.length -1
+                       // debugger
+                        arr2.push("\n")
+                        arr2.push(blueBox( 'new line b/c sentence ended', 'green'))
+                        arr2.push("\n")
+                        if (newLineSplit.slice(-1).length > 1) {
+                            //do something .... add a tab
+                        }
+                        return;
+
+                    }
+
+                    if (length > 3) {
+                        if (sh.isAlphaNumeric(output.lastChar) && sh.str.isLowerCase(output.lastChar)) {
+                            //debugger
+
+                        } else {
+                            arr2.push("\n")
+                            arr2.push(blueBox('chompspace'))
+                            arr2.push("\n")
+                        }
+                    }
+
+                    arr2.push(' ')
+                    return;
+                }
+            }
+
+            /*if (prevSlice.endsWith('know')) {
+             debugger
+             }
+             if (prevSlice.endsWith('cour-')) {
+             debugger
+             }*/
+            /*if (prevSlice.endsWith('construction')) {
+             debugger
+             }*/
+            if (forwardSlice.startsWith('manager.')) {
+                // debugger
+            }
+
+            if ('<>&'.includes(char)) {
+                char = char.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+            }
+
+
+            arr2.push(char)
+        })
+        console.log('...', arr2.length)
+
+        self.data.output = arr2.join('')
+        if ( self.settings.showOutput ) {
+            console.log(self.data.output)
+        }
+        // self.data.output = '<span>'+self.data.output+'</span>'
+        var ui = u.tag('div')
+        u.lastUI = ui;
+        ui.html(self.data.output)
+        self.data.output = $.html((ui))
+
+
+        self.saveFile()
+    }
+
+    p.saveFile = function saveFile() {
+        var dirStore = sh.fs.trash('bookCvert2')
+        sh.fs.mkdirp(dirStore)
+        var fileOutput = sh.fs.join(dirStore, 'test_proj1_text_to_html.html')
+        sh.writeFile(fileOutput, self.data.output); //.join(''))
+        //  console.log('took', u.secs(h.data.timeDate))
+
+        sh.writeFile(file+'.html', self.data.output)
+        var ReloadWatcher = require('./ReloaderWatcher.js').ReloadWatcher;
+        ReloadWatcher.reloadFile('bookCvert2')
+    }
+
+    p.proc = function debugLogger() {
+        if (self.silent == true) {
+            return;
+        }
+        sh.sLog(arguments);
+    };
+}
+
+exports.ConvertTextToHTML = ConvertTextToHTML;
+
+if (module.parent == null) {
+    var instance = new ConvertTextToHTML();
+    var config = {};
+    instance.init(config)
+    instance.method();
+    instance.method2();
+}
+
+
+var sh = require('shelpers').shelpers;
+var shelpers = require('shelpers');
+
+function ConvertTextToBook() {
+    var p = ConvertTextToBook.prototype;
+    p = this;
+    var self = this;
+    p.init = function init(config) {
+        self.settings = sh.dv(config, {});
+    }
+
+    p.method = function method(config) {
+    }
+
+    p.proc = function debugLogger() {
+        if (self.silent == true) {
+            return;
+        }
+        sh.sLog(arguments);
+    };
+}
+
+exports.ConvertTextToBook = ConvertTextToBook;
+
+if (module.parent == null) {
+    var instance = new ConvertTextToBook();
+    var config = {};
+    config.file = "G:/dropbox/books2/Unknown/Skyscraper The Making of a Building (4718)/Skyscraper The Making of a Buil - Unknown.txt"
+    instance.init(config)
+}
+
 
 window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
@@ -1020,51 +1457,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     p.endQuoteForcily = function endQuoteForcily() {
                         self.data.par.data.quoteMode = false;
 
-                        /* if (self.data.lastSpeaker)
-                         var yyy = self.data.lastSpeaker.speaker
-                         var prevLastSpeaker = self.data.lastSpeaker;*/
-
-                        self.data.lastSpeaker = self.data.currentSpeaker;
-                        if (self.data.currentSpeaker.speaker == 'unknown' /*&& prevLastSpeaker*/) {
-                            var prevLastSpeaker2 = self.data.speakers.slice(-3)[0]
-                            if (prevLastSpeaker2 && prevLastSpeaker2.speaker != 'unknown') {
-                                self.data.currentSpeaker.speaker = prevLastSpeaker2.speaker;
-                                self.data.currentSpeaker.speaker.questionable = true;
-
-                                /*     if ( self.data.currentSpeaker.items.length > 0 ) {
-                                 var spans = self.data.currentSpeaker.items[0].spans;
-                                 var last = null;
-                                 sh.each(spans, function ok(k,v) {
-                                 last = v
-                                 })
-
-                                 if ( last ) {
-                                 last.append('77777777777777777777')
-                                 debugger
-                                 }
-                                 }*/
-                            }
-                            // debugger;
-                        } else {
-
-                        }
-
-                        if (self.data.currentSpeaker.items.length > 0) {
-                            var spans = self.data.currentSpeaker.items.slice(-1)[0];
-                            spans = spans.spans; //.spans;
-                            var last = null;
-                            sh.each(spans, function ok(k, v) {
-                                last = v
-                            })
-
-                            if (last) {
-                                last.append(' ' + sh.paren('spk:' + self.data.currentSpeaker.speaker))
-                                //debugger
-                            } else {
-                                debugger
-                            }
-                        }
-
                         if (self.data.currentSpeaker.quotes.length == 0) {
                             self.createNewSpeaker(false)
                         }
@@ -1084,83 +1476,9 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     p.addQuote = function addQuote(dictObj) {
                         self.lastQ = dictObj;
                         //self.data.quoteMode = false;
-                        self.data.quotes.push(dictObj);
+                        self.data.quotes.push(dictObj)
 
-                        dictObj.isQuote = true;
                         self.addToSpeaker(dictObj)
-                    }
-
-                    p.addSpeakerName = function addSpeakerName(currentSentence) {
-                        var proc_currentSentence = currentSentence.replace(',', '')
-                        var y = nlp(proc_currentSentence)
-                        var nouns = y.nouns().out('array')
-                        debugger
-                        //self.lastObj.speaker
-                        if (self.data.currentSpeaker) {
-                            if (self.data.currentSpeaker.speaker == 'unknown') {
-                                self.data.currentSpeaker.speaker = nouns[0]
-                                if (nouns.length == 0) {
-                                    self.data.currentSpeaker.speaker = proc_currentSentence.split(' ')[0]
-                                }
-                            }
-                        }
-                    }
-                    p.getNouns = function getNouns(dictObj) {
-                        var currentSentence = dictObj.txt;
-                        var proc_currentSentence = currentSentence.replace(',', '')
-                        var y = nlp(proc_currentSentence)
-                        var nouns = y.nouns().out('array')
-                        var nouns = y.topics().out('array')
-                        dictObj.nouns = nouns;
-                        self.data.nouns = sh.dv(self.data.nouns, [])
-                        self.data.nouns = self.data.nouns.concat(nouns)//;)
-
-
-                        sh.spltiIntoWords = function splitINtowords(str) {
-                            return str.split(' ')
-                        }
-                        var words = sh.spltiIntoWords(proc_currentSentence)
-
-                        var properNouns = [];
-                        sh.each(words, function findREalWrods(k, v) {
-                            if (sh.str.isFirstLetterCapitalized(v)) {
-                                properNouns.push(v)
-                            }
-                        })
-
-                        nouns = nouns.concat(properNouns);
-
-                        var last = null
-                        $.each(dictObj.spans, function k(k, v) {
-                            last = v;
-                        });
-
-                        var holder = u.tag('div')
-                        holder.css('position', 'relative')
-                        holder.css('display', 'inline-block')
-                        var div = u.tag('div')
-                        holder.append(div)
-                        div.css('right', '0px')
-                        div.text(nouns.join(', '))
-                        //div.css('background-color', 'gray')
-                        u.styleDialog();
-                        u.padding(5)
-                        if (nouns.length > 0) {
-                            last.append(holder) //.
-                        }
-
-
-                        //debugger
-                        return;
-                        //self.lastObj.speaker
-                        if (self.data.currentSpeaker) {
-                            if (self.data.currentSpeaker.speaker == 'unknown') {
-                                self.data.currentSpeaker.speaker = nouns[0]
-                                if (nouns.length == 0) {
-                                    self.data.currentSpeaker.speaker = proc_currentSentence.split(' ')[0]
-                                }
-                            }
-                        }
                     }
 
                     p.addNonQuote = function addNonQuote(dictObj) {
@@ -1271,16 +1589,12 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         if (self.data.currentSpeaker == null) {
                             self.createNewSpeaker()
                         }
-                        dictObj.speaker = self.data.currentSpeaker
                         self.data.currentSpeaker.items.push(dictObj)
                         self.data.currentSpeaker.quotes.push(dictObj.txt)
                     }
                     p.createNewSpeaker = function createNewSpeaker(isNew) {
-
                         if (isNew != false) {
-                            self.data.lastSpeaker = self.data.currentSpeaker
                             var cs = self.data.currentSpeaker = {}
-                            //self.data.lastSpeaker = self.data.currentSpeaker;
                         } else {
                             var cs = self.data.currentSpeaker
                         }
@@ -1354,7 +1668,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 h.data.timeDate = new Date();
                 h.debug = {};
                 h.debug.displayQuotes = false;
-                h.debug.displayQuotes2 = true;
                 h.data.debugSpanWith$ = false;
                 //h.data.debugWithOpacity = true;
                 //h.data.debugWithColor = true;
@@ -1401,8 +1714,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     //debugger;
                     var currentSentence = h.currentSentence + str;
 
-                    //h.utils.getQuotes2(currentSentence)
-
                     currentSentence = currentSentence.trim()
                     if (currentSentence.trim() == '') {
                         return; //skip empty sentence
@@ -1415,13 +1726,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                      }*/
                     if (currentSentence.includes('jeromeeti')) {
                         //   debugger
-                    }
-                    //console.log('--->', sh.qq(str))
-                    if (str.trim() == 'R.') {
-                        debugger;
-                    }
-                    if (str.trim() == '"where  are  you?"') {
-                        debugger;
                     }
 
                     //there are two modes. post hoc, and a-pro-pro
@@ -1481,11 +1785,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     if (qqCount == 1 /*&&
                      dictObj.txt.includes('"')*/) {
                         //  debugger
-                        if (self.data.quoteMode == true) {
-                            if (currentSentence.endsWith('"')) {
-                                //leave the quote and ignore the rest
-                            }
-                        }
                         self.data.quoteMode = !self.data.quoteMode;
                         if (self.data.quoteMode) {
                             h.quote.addQuote(dictObj)
@@ -1496,7 +1795,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                         //handle te case were xxx What happen?" said mark
                         var firstSection = quotesSplit[0]
-                        //console.log(sh.t, 'q', quotesSplit)
                         if (startedInAQuote == false &&
                             qqCount == 1 && firstSection.length > 1
                             && firstSection.endsWith(' ') == false) {
@@ -1519,43 +1817,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                      }*/
                     if (currentSentence.toLowerCase().includes("says?")) {
                         //  debugger;
-                    }
-
-                    if (currentSentence.startsWith(',') == true && self.lastObj &&
-                        self.lastObj.isQuote) {
-                        var proc_currentSentence = currentSentence.replace(',', '')
-                        var y = nlp(proc_currentSentence)
-                        var nouns = y.nouns().out('array')
-                        self.lastObj.speaker
-
-                        if (h.quote.data.currentSpeaker) {
-                            if (h.quote.data.currentSpeaker.speaker == 'unknown') {
-                                h.quote.data.currentSpeaker.speaker = nouns[0]
-                            }
-                        }
-
-                        h.quote.addSpeakerName(proc_currentSentence)
-                        //   debugger
-                    }
-
-                    if (currentSentence.trim().endsWith(',') == true && self.lastObj &&
-                        self.lastObj.isQuote) {
-                        var proc_currentSentence = currentSentence.replace(',', '')
-                        var y = nlp(proc_currentSentence)
-                        var nouns = y.nouns().out('array')
-                        self.lastObj.speaker
-                        if (h.quote.data.currentSpeaker) {
-                            if (h.quote.data.currentSpeaker.speaker == 'unknown') {
-                                h.quote.data.currentSpeaker.speaker = nouns[0]
-
-                                if (nouns.length == 0) {
-                                    h.quote.data.currentSpeaker.speaker = proc_currentSentence.split(' ')[0]
-                                }
-                            }
-                        }
-
-                        h.quote.addSpeakerName(proc_currentSentence)
-                        //debugger
                     }
 
                     h.dictSentences2[h.sentences.length - 1] = dictObj;
@@ -1609,7 +1870,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         _parent.append(span); //add to div
                     }
 
-                    h.quote.getNouns(dictObj)
                     h.currentSentence = ''; //refresh
                     h.currentSpans = {};
                     h.images = [];
@@ -1755,7 +2015,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         var nextChar2 = str[i + 2]
 
                         var last2Chars = prevStr.slice(-2)
-                        var last3Chars = prevStr.slice(-3)
                         prevStr += char;
 
                         if (char == ' ') {
@@ -1793,9 +2052,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         var nextChar2IsUppercase = u.isUpperCase(nextChar2)
                         var join = char + nextChar;
 
-                        if (currentSentence.trim() == 'R') {
-                            //debugger;
-                        }
+
                         // console.log(last2Chars, prevStr )
                         //bookmark.where are special cases handled
                         $.each(validSentenceEndings, function compareForEndSent(k, v) {
@@ -1807,12 +2064,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                 }
                                 if (invalidSentenceStrs.includes(last2Chars)) {
                                     return; //skip Dr. Morton , and Syncamore St. Cerryaldn Va
-                                }
-                                if (invalidSentenceStrs.includes(last3Chars)) {
-                                    return; //skip Dr. Morton , and Syncamore St. Cerryaldn Va
-                                }
-                                if (currentSentence.trim().length == 1) {
-                                    return; //R. L. Stient
                                 }
                                 endAt = v;
                                 return false;
@@ -1836,18 +2087,12 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                 //debugger;
                                 if (validEndingStrs.charAt(0) == char) {
                                     //  debugger;
-                                    if (currentSentence.trim() == 'R.') {
-                                        debugger;
-                                    }
                                     endAt = char; //this is a valid sentence
                                     return false;
                                 }
                             })
                         }
                         if (endAt) {
-                            if (currentSentence.trim() == 'R.') {
-                                debugger;
-                            }
                             sentences.push(currentSentence);
                             if (h.lastParent == null) {
                                 h.lastParent = [];
@@ -1862,9 +2107,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             endAt = null;
                         }
                     });
-                    if (currentSentence == 'R. ') {
-                        debugger;
-                    }
                     if (currentSentence != '') {
                         sentences.push(currentSentence)
                         h.addSentence2Fragment(currentSentence,
@@ -1872,7 +2114,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         )
 
                     }
-                    //console.log('.dsfs.', h)
                     var addSpanAgain = false;
                     if (h && addSpanAgain) {
                         //every sentence
@@ -1912,9 +2153,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     } catch (e) {
                         console.error('no clear console')
                     }
-
-                    asdf.g
-
                     var currentQuote = '';
                     var inQuote = false;
                     //TODO: Get context around quote ...
@@ -1935,9 +2173,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             if (currentQuote != '') {
                                 quotes.push(currentQuote);
                                 currentQuote = ''
-                                /* if (h.debug.displayQuotes2) {
-                                 console.debug('currentQuote', currentQuote, str)
-                                 }*/
                             }
                         }
                         //debugger;
@@ -1948,53 +2183,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     return;
                 }
 
-                h.utils.getQuotes2 = function getQuotes(sentence) {
-                    var quotes = [];
-                    var strArr = [];
-
-                    var strArr = sentence.split('')
-
-
-                    try {
-                        //console.clear();
-                    } catch (e) {
-                        console.error('no clear console')
-                    }
-
-                    asdf.g
-
-                    var currentQuote = '';
-                    var inQuote = false;
-                    //TODO: Get context around quote ...
-                    $.each(strArr, function processChar(i, char) {
-                        var nextChar = str[i + 1]
-                        if (char == '"') {
-                            inQuote = !inQuote;
-                        }
-                        if (char == '“') {
-                            inQuote = true
-                        }
-                        if (char == '”') {
-                            inQuote = false
-                        }
-                        if (inQuote) {
-                            currentQuote += char;
-                        } else {
-                            if (currentQuote != '') {
-                                quotes.push(currentQuote);
-                                currentQuote = ''
-                                /* if (h.debug.displayQuotes2) {
-                                 console.debug('currentQuote', currentQuote, str)
-                                 }*/
-                            }
-                        }
-                        //debugger;
-                    });
-                    if (h.debug.displayQuotes) {
-                        console.debug('quotes', quotes.length, quotes)
-                    }
-                    return;
-                }
 
                 function getChild(parent_, tab) {
 
@@ -2237,7 +2425,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
 
                 h.colorizeSentences();
-                //asdf.quotes h.utils.getQuotes(h.sentences)
+                h.utils.getQuotes(h.sentences)
                 window.h = h;
 
 
@@ -2245,8 +2433,6 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     h.addSentence2('', null, 'last piece of sentence')
                 }
 
-
-                h.quote.endQuoteForcily()
 
                 // debugger; //what is the last sentence? ...
                 /*
@@ -2263,11 +2449,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 sh.fs.mkdirp(dirStore)
                 var fileOutput = sh.fs.join(dirStore, 'test.html')
                 sh.writeFile(fileOutput, $.html())
-
-                var q = h.quote
                 console.log('took', u.secs(h.data.timeDate))
 
-                console.log('q', q.data.nouns)
                 var ReloadWatcher = require('./ReloaderWatcher.js').ReloadWatcher;
                 ReloadWatcher.reloadFile('bookCvert')
                 // debugger
@@ -2536,5 +2719,5 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 console.log('loaded file speakHTMLTest_Cleaned.js')
 
 
-window.fxHtmlSpeaker();
+//window.fxHtmlSpeaker();
 
