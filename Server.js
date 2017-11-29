@@ -141,6 +141,37 @@ app.get("/articles",function onGetListOfArticles(req,res){
 });
 
 
+app.data = sh.dv(app.data, {})
+app.get("/postText",function onGetListOfArticles(req,res){
+    //why: show list of all articles
+	var dirLogs = sh.fs.join(__dirname, 'logs')
+	sh.fs.mkdirp(dirLogs)
+	fileTodaysLog = sh.getDatestamp()+'.txt'
+	//fileTodaysLog = sh.getSh(fileTodaysLog)
+	var fileTodaysLog = sh.fs.join(dirLogs, fileTodaysLog)
+
+	var userTxt = req.query.body
+	if ( app.data.lastText == userTxt ) {
+        app.data.lastText = null
+        res.send('dupe')
+		return;
+	}
+    app.data.lastText = userTxt
+	//console.log(dirLogs)
+  //  console.log(fileTodaysLog)
+	sh.log.file(fileTodaysLog)
+	sh.fs.touch(fileTodaysLog)
+    var fs = require('fs');
+	var txt = sh.timestamp()+':'+' '+userTxt+sh.n
+   // fs.appendFileSync(fileTodaysLog, txt);
+	var contents = sh.readFile(fileTodaysLog)
+	contents += txt;
+	sh.writeFile(fileTodaysLog, contents)
+    res.send(txt)
+});
+
+
+
 
 
 function defineShelpers() {
@@ -697,6 +728,31 @@ app.post('/upload', upload.single('file'), function(req, res){
 			console.error('prob book existed ... already ')
 		}
 	}
+
+    if ( req.file.filename.endsWith('.txt')  ) {
+        var filePath = req.file.destination+req.file.filename
+        var execSync = require('child_process').execSync;
+        var dirExtraction = req.file.destination+'extracted/'
+       // filePath = '"'+filePath+'"'
+        var dirBook = filename.replace(/[^\w\s]/gi, '')
+        dirExtraction += dirBook   +'/'
+        //dirExtraction = '"'+dirExtraction+'"'
+        dirExtraction = sh.fs.slash(dirExtraction)
+		sh.fs.mkdirp(dirExtraction)
+		var fileOutput = sh.fs.join(dirExtraction, req.file.filename)
+		sh.fs.copy(filePath, fileOutput)
+        /*var args = ['-o',filePath, '-d', dirExtraction];
+        console.log(args)
+        args = args.join(' ')
+        console.log(args)
+        var exeZip = sh.fs.join(__dirname, 'bin', 'windows', 'unzip.exe')
+        try {
+            var code = execSync(exeZip + ' '+  args);
+        } catch ( e ) {
+            console.error(e)
+            console.error('prob book existed ... already ')
+        }*/
+    }
 	res.status(204).end(); req.filename;
 });
 app.post('/writeArticle', function onWriteArticle(req, res){

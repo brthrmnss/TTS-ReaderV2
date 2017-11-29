@@ -2789,9 +2789,12 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
             var speakOnce = false
             var date = new Date();
 
+
             // debugger
             cfg.text = cfg.text.replace('->', ' refers to ');
-
+            if ( window.addCommaAfterEachSentence ) {
+                cfg.text += ' , '
+            }
             $.ajax({
                 url: "http://localhost:4444/say",
                 data: {

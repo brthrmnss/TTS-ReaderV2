@@ -7,18 +7,22 @@ var nlp = require('compromise')
 
 var doc = nlp('London is calling')
 
-var file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Farewell My Lovely  Raymond Chandlerepub/epub.html"
+let file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Farewell My Lovely  Raymond Chandlerepub/epub.html"
+file = sh.deos(file)
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub.html"
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub_text.html"
 var contents = sh.readFile(file);
+console.log('orig', contents.length )
 if (contents.length > 50 * 1000) {
-    contents = contents.slice(0, contents.length * .1)
+    //contents = contents.slice(0, contents.length * .1)
+    contents = contents.slice(0, contents.length * .03)
 }
 
 var contentsHTML = '<div id="txtWrapper">' + contents + '</div>'
-let $ = cheerio.load(contentsHTML);
+var $ = cheerio.load(contentsHTML);
 global.$ = $;
 $.each = sh.each;
+$.isNumeric = sh.isNumber;
 console.debug = function debug() {
     var args = sh.args(arguments)
     console.log.apply(console, args)
@@ -1050,15 +1054,73 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         }
 
                         if (self.data.currentSpeaker.items.length > 0) {
-                            var spans = self.data.currentSpeaker.items.slice(-1)[0];
-                            spans = spans.spans; //.spans;
+                            /*var spans = self.data.currentSpeaker.items.slice(-1)[0];
+                             spans = spans.spans; //.spans;
+                             var last = null;
+                             sh.each(spans, function ok(k, v) {
+                             last = v
+                             // return false;
+                             })
+                             */
+                            var spans = self.data.currentSpeaker.items;
                             var last = null;
                             sh.each(spans, function ok(k, v) {
                                 last = v
                             })
-
                             if (last) {
-                                last.append(' ' + sh.paren('spk:' + self.data.currentSpeaker.speaker))
+
+                               /* if ( last.children.length  > 0 ) {
+                                   last =  last.last()
+                                }*/
+                           /*     uiUtils.addFloatingDiv = function addFl(holder2, txt) {
+                                    var holder = u.tag('span')
+                                    holder.css('background-color', 'brown')
+                                    holder.text(txt)
+                                    holder.css('position', 'relative')
+                                    holder.css('display', 'inline-block')
+
+
+                                    var div = u.tag('div')
+                                    holder.append(div)
+                                    div.css('right', '0px')
+                                    div.text(txt)
+
+                                    //div.css('background-color', 'gray')
+                                    u.styleDialog();
+                                    u.padding(5)
+                                   // if (nouns.length > 0) {
+                                    holder2.append(holder) //.
+                                   // }
+
+                                    return div;
+                                }
+*/
+
+                                uiUtils.addFloatingDivLeft = function addFl(holder2, txt) {
+                                    var div = u.tag('div')
+                                   // holder.append(div)
+                                    div.css('right', '0px')
+                                    div.text(txt)
+
+                                    div.css('margin-left', '70%')
+                                    div.css('margin-top', '-20px')
+                                   // div.css('background-color', 'gray')
+                                   // u.styleDialog();
+                                    u.padding(5)
+                                    // if (nouns.length > 0) {
+                                    holder2.ui.append(div) //.
+                                    uiUtils.bg( '#1E90FF', d, 0.3)
+                                    return div;
+                                }
+
+                                var txtToAdd = sh.paren('spk:' + self.data.currentSpeaker.speaker);
+                                var d = uiUtils.addFloatingDivLeft(last, txtToAdd)
+                              //  uiUtils.bg( '#1E90FF', d, 0.3)
+
+
+
+
+                               // last.append(' ' + sh.paren('spk:' + self.data.currentSpeaker.speaker))
                                 //debugger
                             } else {
                                 debugger
@@ -1133,6 +1195,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         var last = null
                         $.each(dictObj.spans, function k(k, v) {
                             last = v;
+                            return false;
                         });
 
                         var holder = u.tag('div')
@@ -1145,7 +1208,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         //div.css('background-color', 'gray')
                         u.styleDialog();
                         u.padding(5)
-                        if (nouns.length > 0) {
+                        var showStuff = false
+                        if (showStuff && nouns.length > 0) {
                             last.append(holder) //.
                         }
 

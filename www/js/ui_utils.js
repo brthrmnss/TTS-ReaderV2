@@ -1,5 +1,5 @@
-if ( typeof exports !== 'undefined') {
-   // debugger
+if (typeof exports !== 'undefined') {
+    // debugger
     var $ = global.$;
 }
 
@@ -9,8 +9,8 @@ function forwardArgsTo(fx, args, delay) {
     if (args != null && args.length == null) {
         var args = convertArgumentsToArray(args)
     }
-    if ( delay != null ) {
-        setTimeout(function onDelayedForwardArgs()  {
+    if (delay != null) {
+        setTimeout(function onDelayedForwardArgs() {
             //debugger
             fx.apply(null, args)
         }, delay)
@@ -42,11 +42,11 @@ function callIfDefined(fx) {
     if (fx == undefined)
         return args[0];
 
-    if ( fx == null ) {
+    if (fx == null) {
         return;
     }
 
-    if ( $.isFunction(fx) == false ) {
+    if ($.isFunction(fx) == false) {
         return;
     }
 
@@ -395,10 +395,10 @@ function defineUtils() {
     }
     u.padding = function padding(padding, ui) {
         ui = dv(ui, u.lastUI)
-        /*if ($.isNumeric(padding) ) {
-            padding+='px'
-        }*/
-        ui.css('padding',padding);
+        if ($.isNumeric(padding)) {
+            padding += 'px'
+        }
+        ui.css('padding', padding);
     }
 
     uiUtils.ifFound = function ifFound(id) {
@@ -556,7 +556,7 @@ function defineUtils() {
             lbl.css('width', cfg.width);
             lbl.css('display', 'inline-block');
         }
-        if ( cfg.unselectable ) {
+        if (cfg.unselectable) {
             lbl.css('user-select', 'none');
         }
         u.addUI(cfg, lbl);
@@ -581,7 +581,7 @@ function defineUtils() {
         ui.attr('value', cfg.value)
 
         ui.css('min-height', '0px')
-        ui.css( 'cursor', 'pointer' );
+        ui.css('cursor', 'pointer');
 
         //$('<span/>')
         /*  if (cfg.width) {
@@ -594,16 +594,16 @@ function defineUtils() {
          lbl.css('user-select', 'none');*/
         u.addUI(cfg, ui);
 
-        if ( cfg.selected ) {
+        if (cfg.selected) {
             // debugger
-            $(":radio[name='"+cfg.name+"']").attr('checked', true);
+            $(":radio[name='" + cfg.name + "']").attr('checked', true);
         }
 
         return cfg;
     }
 
-    u.setRadioVal = function setRadioVal(k,v,val) {
-        $('input:radio[name="'+k+'"]').filter('[value="'+v+'"]').attr('checked', val);
+    u.setRadioVal = function setRadioVal(k, v, val) {
+        $('input:radio[name="' + k + '"]').filter('[value="' + v + '"]').attr('checked', val);
     }
 
     uiUtils.addHeadingLabel = function addLabel(cfg) {
@@ -720,7 +720,7 @@ function defineUtils() {
     uiUtils.changeContainer = function focusOnContainer(container) {
         uiUtils.flagCfg.lastAddTo = uiUtils.flagCfg.addTo;
         var setContainerTo = uiUtils.lastCfg.ui;
-        if (container ) {
+        if (container) {
             setContainerTo = container;
         }
         uiUtils.flagCfg.addTo = setContainerTo;
@@ -732,14 +732,14 @@ function defineUtils() {
     uiUtils.addRow = function addRow(id, fx, asSpan) {
 
         var tagName = 'div'
-        if ( asSpan === true  ) {
+        if (asSpan === true) {
             tagName = 'span'
         }
 
         uiUtils.addDiv(
             {
                 id: id,
-                tag:tagName
+                tag: tagName
                 //width:170
             })
         //uiUtils.addBorder();
@@ -939,16 +939,15 @@ function defineUtils() {
     }
 
     uiUtils.select = {};
-    uiUtils.select.addOption = function addOption(ui, k,v) {
+    uiUtils.select.addOption = function addOption(ui, k, v) {
         var opt = {};
-        opt[k]=v;
+        opt[k] = v;
         uiUtils.updateSelect(ui, opt, false);
     }
 
 
-
-    u.getUI = function getUI (idOrItem) {
-        if ( $.isString(idOrItem) &&
+    u.getUI = function getUI(idOrItem) {
+        if ($.isString(idOrItem) &&
             idOrItem.startsWith('#') == false) {
             idOrItem = '#' + idOrItem;
         }
@@ -960,22 +959,22 @@ function defineUtils() {
     u.addChange = function addChange(ui, fx, waitOnit) {
 
 
-        if ( $.isFunction(ui) && fx == null ) {
+        if ($.isFunction(ui) && fx == null) {
             fx = ui;
             ui = null
             ui = u.getLast();
         }
         ui = u.getUI(ui)
 
-        if (waitOnit  ) {
+        if (waitOnit) {
             //arguments[2] = false
             u.forwardArgsTo(u.addChange, [ui, fx], 1500);
             return;
         }
 
 //debugger;
-        if ( ui.attr('type') == 'radio' ) {
-            var jq = 'input[name='+ui.attr('name')+']'
+        if (ui.attr('type') == 'radio') {
+            var jq = 'input[name=' + ui.attr('name') + ']'
             ui = $(jq)//.val();
             // debugger;
         }
@@ -983,20 +982,20 @@ function defineUtils() {
 
         console.log(ui, 'ok', 'change')
 
-        if ( ui.is('input')) {
-            if ( ui.attr('type') == null ) {
+        if (ui.is('input')) {
+            if (ui.attr('type') == null) {
                 u.onChangeDebounced(ui, onChange)
                 return;
             }
 
         }
 
-        function onChange(a,b,c) {
+        function onChange(a, b, c) {
             console.debug('selected from list', this.value);
-            if ( this.value) {
+            if (this.value) {
                 a = this.value
             }
-            u.cid(fx, a,b,c)
+            u.cid(fx, a, b, c)
         }
 
         ui.on('change', onChange)
@@ -1085,8 +1084,23 @@ function defineUtils() {
             }
             uiUtils.lastUI.css(css)
         }
-        uiUtils.bg = function setBgColor(l, ui) {
+        uiUtils.bg = function setBgColor(l, ui, alpha) {
             var ui = uiUtils.lastUI;
+            if ( alpha ) {
+                function hexToRgb(hex) {
+                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    } : null;
+                }
+
+                var o = hexToRgb(l)
+                var p = [o.r, o.g, o.b, alpha].join(', ')
+                randomColor = 'rgba' + sh.paren(p)
+                l = randomColor;
+            }
             ui.css('background-color', l)
         }
         uiUtils.why = function setBgColor(l, ui) {
@@ -1096,11 +1110,11 @@ function defineUtils() {
 
         uiUtils.class = function addClass(l, ui) {
             var ui = uiUtils.lastUI;
-            ui.addClass( l)
+            ui.addClass(l)
         }
         uiUtils.text = function addText(l, ui) {
             var ui = uiUtils.lastUI;
-            ui.text( l)
+            ui.text(l)
         }
 
         uiUtils.width = function set_width(width, ui) {
@@ -1204,23 +1218,21 @@ function defineUtils() {
         div = u.cfg.getDiv(cfg.id);
 
         div.show()
-        u.ifProp(cfg.text, function onSetText(textVal){
+        u.ifProp(cfg.text, function onSetText(textVal) {
             div.text(textVal)
         })
 
-        setTimeout(function onHide(){
+        setTimeout(function onHide() {
             div.hide();
-        },2000)
+        }, 2000)
     }
 
 
     p.ifProp = function ifProp(val, fx) {
-        if ( val != null ) {
+        if (val != null) {
             fx(val)
         }
     }
-
-
 
 
     uiUtils.addWhitespace = function addWhitespace(cfg, fxD) {
@@ -1247,8 +1259,8 @@ function defineUtils() {
         uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
         var btn = u.tag('div')
         btn.css('width', '10px')
-        if ( cfg.width ) {
-            btn.css('width', cfg.width+'px')
+        if (cfg.width) {
+            btn.css('width', cfg.width + 'px')
         }
         btn.css('display', 'inline-block');
         u.addUI(cfg, btn)
@@ -1378,7 +1390,7 @@ function defineUtils() {
             }
         }
 
-        if ( u.collector && u.collector.storeUIs === true ) {
+        if (u.collector && u.collector.storeUIs === true) {
             u.collector.list.push(ui)
         }
 
@@ -1423,7 +1435,7 @@ function defineUtils() {
         u.lastUI = ui;
     }
     p.tag = function createTag(type) {
-        var ui  = $('<' + type + '/>');
+        var ui = $('<' + type + '/>');
         u.lastUI = ui
         return ui
     }
@@ -1482,7 +1494,7 @@ function defineUtils() {
             var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
                 'Oct', 'Nov', 'Dec'];
             var dx = [
-                '_'+months[d.getMonth()],
+                '_' + months[d.getMonth()],
                 d.getDay(),
                 d.getFullYear(),
                 'at',
@@ -1525,14 +1537,13 @@ function defineUtils() {
             if (ui.is('span') || ui.is('div')) {
                 return ui.html(val);
             }
-            if ( ui.attr('type')=='radio') {
-                $('input[name='+ui.attr('name')+']:checked').val(val);
+            if (ui.attr('type') == 'radio') {
+                $('input[name=' + ui.attr('name') + ']:checked').val(val);
                 debugger;
                 return val;
             }
             return ui.val(val)
         }
-
 
 
         p.clearText = function clearText(delay, jq) {
@@ -1599,7 +1610,7 @@ function defineUtils() {
                 var ui = $(id)
             }
 
-            if ( empty != false ) {
+            if (empty != false) {
                 ui.empty(); // remove old options
             }
             $.each(newOptions, function (key, value) {
@@ -1767,7 +1778,7 @@ function defineUtils() {
         }
 
         uiUtils.pos.getPos = uiUtils.getPos = function getPos(ui) {
-            if ( ui == null ) {
+            if (ui == null) {
                 throw 'is null'
             }
             var position = $(ui).offset();
@@ -1775,7 +1786,7 @@ function defineUtils() {
         }
 
         uiUtils.pos.getPosL = function getPos(ui) {
-            if ( ui == null ) {
+            if (ui == null) {
                 throw 'is null'
             }
             var position = $(ui).position();
@@ -1866,6 +1877,7 @@ function defineUtils() {
 
 
             var finalPos = {};
+
             function getPxVal(prop, start, add) {
                 var valFinal = null
                 if (add != null) {
@@ -1879,7 +1891,6 @@ function defineUtils() {
             }
 
 
-
             getPxVal('left', lefti, l)
             getPxVal('top', topi, t)
             getPxVal('bottom', bottomi, b)
@@ -1888,7 +1899,7 @@ function defineUtils() {
             //console.log(finalPos, t,r, righti)
 
             if (animate) {
-                if ( $.isNumeric(animate)) {
+                if ($.isNumeric(animate)) {
                     duration = animate;
                 } else {
                     duration = 200
@@ -1901,7 +1912,7 @@ function defineUtils() {
         }
 
         uiUtils.percentChance = function percentChance(percent, fx) {
-            if ( Math.random() < percent/100 )
+            if (Math.random() < percent / 100)
                 fx()
         }
     }
@@ -2273,7 +2284,7 @@ function defineUtils() {
     function defineUI() {
         p.utils.loadPage = function loadPage(cfg) {
             var div = $(cfg.div)
-            if ( cfg.noGet != true ) {
+            if (cfg.noGet != true) {
                 if (div && div.empty() && cfg.id) {
                     //var id = cfg.id;
                     if (cfg.id.startsWith('#') == false) {
@@ -2295,10 +2306,10 @@ function defineUtils() {
                     var output = p.utils.parseBodyHTML(data);
 
 
-                    if ( cfg.noGet != true ) {
-                         
-                    //debugger;
-                    div.html(output.body.html());
+                    if (cfg.noGet != true) {
+
+                        //debugger;
+                        div.html(output.body.html());
                     }
                     output.addStyles();
 
@@ -2448,7 +2459,7 @@ function defineUtils() {
 
     function defineUrl() {
         p.getContentAfter = function getContentAfter(url, findStr) {
-            if ( url.includes(findStr)) {
+            if (url.includes(findStr)) {
                 var output = url.split(findStr)[1]
                 return output;
             }
@@ -2456,7 +2467,7 @@ function defineUtils() {
         }
 
         p.getContentBefore = function getContentBefore(url, findStr) {
-            if ( url.includes(findStr)) {
+            if (url.includes(findStr)) {
                 var output = url.split(findStr)[0]
                 return output;
             }
@@ -2513,8 +2524,8 @@ function defineUtils() {
                 },
                 error: function (a, b, c) {
                     console.error(url, 'request failed', a, b, c)
-                    if ( a.responseText) {
-                        console.error('\t',  a.responseText)
+                    if (a.responseText) {
+                        console.error('\t', a.responseText)
                     }
                     //gUtils.remoteFailed(a,b,c)
                     callIfDefined(fxError, a, b, c, url)
@@ -2677,9 +2688,9 @@ function defineUtils() {
         uiUtils.debounceOld =
             function debounce(func, wait, immediate) {
                 var timeout;
-                return function() {
+                return function () {
                     var context = this, args = arguments;
-                    var later = function() {
+                    var later = function () {
                         timeout = null;
                         if (!immediate) func.apply(context, args);
                     };
@@ -3000,14 +3011,14 @@ function defineUtils() {
 
             }
 
-        if ( typeof sh === 'undefined') {
+        if (typeof sh === 'undefined') {
             sh = u;
         }
         uiUtils.socket.emitOne = function emitOne(msgType, data, fxDone) {
             /*
              create one time lsiter, clear when done if dual exists show an error and remove
              */
-            sh.throwIfNull(fxDone,'need a callback')
+            sh.throwIfNull(fxDone, 'need a callback')
             sh.throwIfNull(data.cmd, 'need a cmd for result')
             uiUtils.socket.dictEmitOne = sh.dv(uiUtils.socket.dictEmitOne, {})
             self.data.socket.emit(msgType, data);
@@ -3015,14 +3026,14 @@ function defineUtils() {
             var lastOne = uiUtils.socket.dictEmitOne[typeResult]
 
 
-            var fxName = '\t'+'emitOne'
+            var fxName = '\t' + 'emitOne'
 
-            if ( lastOne ) {
+            if (lastOne) {
                 console.warn(fxName, 'failed on last one removing')
                 uiUtils.socket.off(typeResult)
                 uiUtils.socket.dictEmitOne[typeResult] = null;
             }
-            console.info(fxName, 'send', msgType, sh.paren(typeResult) )
+            console.info(fxName, 'send', msgType, sh.paren(typeResult))
             self.data.socket.on(typeResult, function _onResults(result) {
                 console.info(fxName, 'result', result);
                 fxDone(result)
@@ -3030,7 +3041,6 @@ function defineUtils() {
                 self.data.socket.removeListener(typeResult)
                 uiUtils.socket.dictEmitOne[typeResult] = null;
             })
-
 
 
             return;
@@ -3212,8 +3222,6 @@ function defineUtils() {
     }
 
 
-
-
     function defineCC() {
         function BasicClass() {
             var p = BasicClass.prototype;
@@ -3223,7 +3231,7 @@ function defineUtils() {
             }
 
             p.proc = function debugLogger() {
-                if ( self.silent == true) {
+                if (self.silent == true) {
                     return
                 }
                 sh.sLog(arguments)
@@ -3245,27 +3253,28 @@ function defineUtils() {
             return u.collector.list
         }
     }
+
     defineCC();
 
     uiUtils.debug =
-        uiUtils.dbg = function  bg(txt, obj) {
+        uiUtils.dbg = function bg(txt, obj) {
             console.debug('dbg', txt)
-            $.each(obj, function onX(k,v) {
-                console.debug('\t', k,v)
+            $.each(obj, function onX(k, v) {
+                console.debug('\t', k, v)
             });
 
         }
 
-    uiUtils.ripProps = function ripProps(ui){
+    uiUtils.ripProps = function ripProps(ui) {
 
         var dbg = false;
-        if ( dbg ) {
+        if (dbg) {
 
         }
         var children = $(ui).find('*')
         //debugger
         var props = {};
-        $.each(children, function on(k,v){
+        $.each(children, function on(k, v) {
             var ui = $(v)
             var val = ui.val();
             var valText = val;
@@ -3274,26 +3283,25 @@ function defineUtils() {
                 val = text;
             }
             var id = ui.attr('id');
-            if ( ui.is('button')) {
+            if (ui.is('button')) {
                 return;
             }
             //console.debug('...dbg', ui, text, valText)
-            if ( id == null ) {
-                if ( dbg )
+            if (id == null) {
+                if (dbg)
                     console.debug('no id', id)
                 return;
             }
-            if ( val == null ) {
-                if ( dbg )
+            if (val == null) {
+                if (dbg)
                     console.debug('val', ui.attr('id'), val)
                 return;
             }
             //debugger
-            if ( dbg )
+            if (dbg)
                 console.debug('val', ui.attr('id'), val)
             props[id] = val;
         })
-
 
 
         // uiUtils.dbg(props)
@@ -3304,14 +3312,14 @@ function defineUtils() {
     }
 
 
-    uiUtils.ripPropsSet = function ripPropsSet(rippedProps){
+    uiUtils.ripPropsSet = function ripPropsSet(rippedProps) {
         var dbg = false;
-        if ( dbg ) {
+        if (dbg) {
 
         }
         var props = {};
-        $.each(rippedProps, function on(id,v){
-            var ui = $('#'+id)
+        $.each(rippedProps, function on(id, v) {
+            var ui = $('#' + id)
             ui.val(v);
             //ui.text(v);
             return;
@@ -3320,11 +3328,11 @@ function defineUtils() {
 
 
     uiUtils.setTextSD = function setSelDestructingMessage(txt, msg) {
-        uiUtils.setText(txt , msg);
+        uiUtils.setText(txt, msg);
         //self.data.lastLogText = msg;
         setTimeout(function onClearStatusText() {
-            var  val = uiUtils.getText(txt);
-            if ( val == msg ) {
+            var val = uiUtils.getText(txt);
+            if (val == msg) {
                 uiUtils.setText(txt, '');
             }
         }, 5000)
@@ -3333,11 +3341,11 @@ function defineUtils() {
     uiUtils.getText = function getText(jq) {
         var ui = $(jq)
         //console.log('what is ', jq, ui, val)
-        if ( ui.length == 0 ) {
+        if (ui.length == 0) {
             console.warn('cannot set', jq, 'to', val, 'empty query set')
         }
-        var val=ui.val()
-        if ( ui.is('span')) {
+        var val = ui.val()
+        if (ui.is('span')) {
             var val = ui.text()
         }
         return val;
@@ -3347,7 +3355,6 @@ function defineUtils() {
         var ui = $(id)
         ui.change()
     }
-
 
 
     function defineKeyboard() {
@@ -3398,7 +3405,7 @@ function defineUtils() {
         uiUtils.setScrollPosition = function setScrollPosition(ui, pos, animate) {
             ui = $(ui)
             //debugger
-            if ( animate != false  ) {
+            if (animate != false) {
                 ui.clearQueue();
                 ui.stop(true, true);
                 ui.animate({scrollTop: pos}, 10);
@@ -3408,7 +3415,6 @@ function defineUtils() {
             }
 
 
-
             return;
             var position = $(ui).offset();
 
@@ -3416,8 +3422,9 @@ function defineUtils() {
         }
 
     }
+
     defineScrollable()
-    
+
 }
 defineUtils();
 
@@ -3430,7 +3437,7 @@ window.restartTest = function restartTest() {
 }
 
 
-if ( typeof exports !== 'undefined') {
+if (typeof exports !== 'undefined') {
     // debugger
-    exports.uiUtils=uiUtils;
+    exports.uiUtils = uiUtils;
 }

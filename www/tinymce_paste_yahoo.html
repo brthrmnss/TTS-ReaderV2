@@ -53,7 +53,9 @@
 
     <script src="js/tinymce/tinymce.min.js"></script>
     <script>
-
+        if (uiUtils.getUrlVal('addComma') == 'true') {
+            window.addCommaAfterEachSentence = true
+        }
 
         function initStyles() {
 
@@ -251,7 +253,13 @@
             c.dom.padding0 = function padding0(id) {
                 var result = c.dom.b.find(id)
                 result = $(result)
-                result.css('padding', '0px')
+                result.css('padding', '0px 0px 0px 0px')
+                return result
+            }
+            c.dom.margin0 = function margin0(id) {
+                var result = c.dom.b.find(id)
+                result = $(result)
+                result.css('margin', '0px 0px 0px 0px')
                 return result
             }
             c.dom.clearWidth = function clearWidth(id) {
@@ -809,10 +817,11 @@
                     return;
                 }
             }
+
             lookForMainArticle();
 
             function amazonArticle() {
-                if ( c.dom.doesHaveLinkToHref('www.amazon.com/ref=nav_logo') == false ) {
+                if (c.dom.doesHaveLinkToHref('www.amazon.com/ref=nav_logo') == false) {
                     return;
                 }
 
@@ -874,6 +883,7 @@
                     return;
                 }
             }
+
             amazonArticle();
 
             if (b.find('#content').exists()) {
@@ -884,6 +894,23 @@
                 return;
             }
 
+            function roboDK() {
+                if (false == d.dom.doesHaveImageSrc2('https://robodk.com/doc/en/style2/weblogo.svg')) {
+                    return
+                }
+                b.find('#top').remove();
+                b.find('#side-nav').remove();
+                d.dom.replaceWith('#doc-content')
+                d.dom.padding0('.header')
+                d.dom.margin0('.header')
+                d.dom.clearWidth('.header')
+                d.dom.padding0('.contents')
+                d.dom.margin0('.contents')
+                d.dom.clearWidth('.contents')
+
+            }
+
+            roboDK()
 
         }
 
@@ -1026,7 +1053,7 @@
                 if (uiUtils.getUrlVal('loadLastSavedArticle') == 'true') {
                     uiUtils.getUrl('testArticles/lastSavedArticle.txt', function on(data) {
                         // debugger
-                        if( c.windowLoadedArticle == true ) {
+                        if (c.windowLoadedArticle == true) {
                             return;
                         }
                         c.windowLoadedArticle = true
@@ -1036,7 +1063,7 @@
                 }
 
                 if (uiUtils.getUrlVal('loadRecent') == 'true') {
-                    debugger
+                    // debugger
                     //c.loadPage('testArticles/0.7704380748327821.html')
                     // c.loadPage('testArticles/0.9368877713568509.html')
                     //c.loadPage('testArticles/0.020375478779897094.html')
@@ -1059,6 +1086,7 @@
             }
         })
         ;
+
 
         function reverse() {
             var val = Cookies.get('prevContent');

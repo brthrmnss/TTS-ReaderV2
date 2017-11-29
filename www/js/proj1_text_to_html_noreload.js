@@ -11,6 +11,15 @@ file = "G:/dropbox/books2/Unknown/Skyscraper The Making of a Building (4718)/Sky
 file = "G:/Dropbox/Books2/Unknown/Skyscraper Dreams The Great Real Es (4719)/Skyscraper Dreams The Great Rea - Unknown.txt"
 file = "G:/dropbox/books2/Unknown/Colin C. Williams-The Hidden Enterp (4742)/Colin C. Williams-The Hidden En - Unknown.txt"
 file = "G:/dropbox/books2/Unknown/beyond the babble leadership c (4744)/beyond the babble leadership c - Unknown.txt"
+file = "G:/dropbox/books2/Unknown/[Pam Fox Rollin] 42 Rules for Your (4754)/[Pam Fox Rollin] 42 Rules for Y - Unknown.txt"
+
+//var fileInput = "G:\\dropbox\\books2\\Kevan Hall\\Speed Lead (4792)\\Speed Lead - Kevan Hall.pdf"
+
+file = "G:\\dropbox\\books2\\areidersf\\Fujishin_final.indb (4794)\\Fujishin_final.indb - areidersf.pdf"
+file = "C:/Users/user1/Downloads/Documents/High Rise  How 1,000 Men and Women Worked Around the Clock for Five Years and Lost $200 Million Building a Skyscraper Jerry Adler 374p_0060167017"
+//fileInput = "F:\\Users\\user1\\Downloads\\Documents\\[Ravindra_S._Goonetilleke]_The_Science_of_Footwear(book4you.org).pdf"
+file = "G:/dropbox/books2/Admin/The science of footwear (4795)/The science of footwear - Admin"
+file += '.txt'
 
 
 /*
@@ -409,6 +418,7 @@ function ConvertTextToHTML() {
 
         sh.writeFile(file+'.html', self.data.output)
         var ReloadWatcher = require('./ReloaderWatcher.js').ReloadWatcher;
+        console.log('wrote', fileOutput)
         ReloadWatcher.reloadFile('bookCvert2')
     }
 
