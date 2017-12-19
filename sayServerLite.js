@@ -172,8 +172,11 @@ function SayServerLite(){
             var voice = req.body.voice;
             var playAudio = req.body.playAudio=='true';
             var speakOpts = {};
+            speakOpts = sh.clone(req.body);
             speakOpts.playAudio = playAudio;
             speakOpts.cacheAudio = req.body.cacheAudio=='true';
+            speakOpts.playAudioAfter = req.body.playAudioAfter; //=='true';
+
             var volume = req.body.volume;
             speakOpts.volume = volume;
             speakOpts.voice = voice;
@@ -303,15 +306,20 @@ function SayServerLite(){
             //  rate = 7
             if(sh.isWin()){ //windows
                 var path = require('path');
+                var rand = ''
+                if ( speakOpts.randomFile) {
+                    rand = Math.random()*1000
+                    rand = rand.toString().slice(0,2)
+                }
                 var filePath = path.resolve(__dirname+'/www/cache/txt.txt')
-                var filePathFile = path.resolve(__dirname+'/www/cache/sound.wav')
+                var filePathFile = path.resolve(__dirname+'/www/cache/sound'+rand+'.wav')
 
 
                 var fileNext = nextX.getCurrent();
 
                 if ( self.settings.useTrash ) {
                     var filePath = path.resolve(dirTrash+'/txt.txt')
-                    var filePathFile = path.resolve(dirTrash+'/sound.wav')
+                    var filePathFile = path.resolve(dirTrash+'/sound'+rand+'.wav')
                     var fileCached = path.resolve(dirTrash+'/'+fileNext)
                 }
 
@@ -330,12 +338,12 @@ function SayServerLite(){
                 filePath = filePath.replace(/\\/gi, "/")
                 sh.writeFile(filePath, text);
                 gb = 'cscript "C:\\Program Files\\Jampal\\ptts.vbs" -u '+filePath
-                if ( speakOpts.cacheAudio || self.settings.socketMode ) {
+                if ( speakOpts.playAudioAfter || speakOpts.cacheAudio || self.settings.socketMode ) {
                     //store file
                     gb += ' ' + '-w ' + filePathFile + ' ';
                 }
                 gb +=  ' -voice ' + sh.qq(sh.dv(speakOpts.voice, 'IVONA 2 Brian'))// sh.qq('IVONA 2 Brian')
-                gb +=  ' -v ' + sh.dv(speakOpts.volume, '100')
+                gb +=  ' -v ' + sh.dv(speakOpts.volume, '70')
                 if(rate != null){
                     gb += ' -r ' + rate + ' ';
                 };
@@ -369,7 +377,7 @@ function SayServerLite(){
 
             }
 
-            if ( sh.isWin() ) {
+            if ( sh.isWin() && speakOpts.endOld != false  ) {
                 var cp = child_process.exec( ["taskkill", "/IM ",
                     'cscript.exe', "/f",'/t'].join(' '), function (err, stdout, stderr){
                     if ( stderr.includes('ERROR: The process "cscript.exe" not found.') ) {
@@ -419,6 +427,10 @@ function SayServerLite(){
 
                     if ( speakOpts.cacheAudio && speakOpts.playAudio ) {
                         self.utils.playSong(filePathFile, fx)
+                    }
+                    if ( speakOpts.playAudioAfter ) {
+                        self.utils.playSong(filePathFile, fx)
+                        return;
                     }
                     if ( self.settings.socketMode ) {
                         self.utils.playSong(filePathFile, fx)

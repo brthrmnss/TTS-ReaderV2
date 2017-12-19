@@ -28,9 +28,10 @@ function PdfRipServer() {
         app.use(function addCrossDomainMiddlware(req, res, next) {
             //asdf.g
             res.header("Access-Control-Allow-Origin", "*");
-            if ( req.headers.origin != null ) {
+            if (req.headers.origin != null) {
                 res.header("Access-Control-Allow-Origin", req.headers.origin);
-            };
+            }
+            ;
             res.header("Access-Control-Allow-Headers", "X-Requested-With");
             res.header("Access-Control-Allow-Headers", "Content-Type");
             res.header("Access-Control-Allow-Credentials", "true");
@@ -38,7 +39,7 @@ function PdfRipServer() {
             next();
         });
 
-        var bodyParser  = require("body-parser");
+        var bodyParser = require("body-parser");
         var multer = require('multer');
 
         app.use(bodyParser.json({limit: '50mb'}));
@@ -49,9 +50,8 @@ function PdfRipServer() {
         }));
 
         //app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
-       // app.use(bodyParser.json());                                     // parse application/json
-        app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
-
+        // app.use(bodyParser.json());                                     // parse application/json
+        app.use(bodyParser.json({type: 'application/vnd.api+json'})); // parse application/vnd.api+json as json
 
 
         /*app.use(express.bodyParser());
@@ -63,7 +63,7 @@ function PdfRipServer() {
             res.send('Hello World!');
         });
 
-        app.post('/upBook', function uploadRip (req, res) {
+        app.post('/upBook', function uploadRip(req, res) {
             var body = req.body;
             var bookName = body.book_name;
             var page = body.page
@@ -71,28 +71,28 @@ function PdfRipServer() {
             var fileHTML = page + '.html'
             console.log(req.body)
             var contents = req.body.contents;
-            if ( sh.isArray(contents) ) {
+            if (sh.isArray(contents)) {
                 contents = contents.join('\n')
             }
             var htmlContents = req.body.htmlContents;
 
-            
-            var dirBook = __dirname+'/'+'rips/'+bookName;
-            sh.mkdirp(__dirname+'/'+'rips')
+
+            var dirBook = __dirname + '/' + 'rips/' + bookName;
+            sh.mkdirp(__dirname + '/' + 'rips')
             sh.mkdirp(dirBook)
-            sh.writeFile(dirBook+'/'+file,  contents);
+            sh.writeFile(dirBook + '/' + file, contents);
 
             htmlContents = sh.html.wrapInHTMLTag(htmlContents, 'html');
-            sh.writeFile(dirBook+'/'+fileHTML,  htmlContents);
+            sh.writeFile(dirBook + '/' + fileHTML, htmlContents);
 
             htmlContents = sh.replace(htmlContents, 'color: rgba(0, 0, 0, 0);', '')
             htmlContents = sh.html.wrapInHTMLTag(htmlContents, 'html');
-            sh.writeFile(dirBook+'/'+fileHTML,  htmlContents);
+            sh.writeFile(dirBook + '/' + fileHTML, htmlContents);
 
             res.send('Hello World!');
         });
 
-        app.get('/upBookCombine', function onCombineUploadedBook (req, res) {
+        app.get('/upBookCombine', function onCombineUploadedBook(req, res) {
 
             var body = req.query;
             var bookName = body.book_name;
@@ -104,13 +104,13 @@ function PdfRipServer() {
             /* options.startAt = 318;
              options.maxPages = 10*/
             console.log('building teh book', bookName)
-            options.dirBook =  '/uploads/Artificial Intelligence for Games, Second Edition.pdf'
+            options.dirBook = '/uploads/Artificial Intelligence for Games, Second Edition.pdf'
 
             options.dirBook = '/uploads/the_responsive_city_engaging_c.pdf'
             options.dirBook = bookName //'/uploads/[Donald_A._Norman]_Living_with_Complexity(BookZZ.org).pdf'
-          //  options.maxPages = 10
+            //  options.maxPages = 10
             options.oddName = 'asdftest'
-            options.fxDone = function (){
+            options.fxDone = function () {
                 console.log('..')
                 res.send('Hello World! finisehd ');
             }
@@ -119,12 +119,7 @@ function PdfRipServer() {
         });
 
 
-
-
-        
-        
-
-        var storage =   multer.diskStorage({
+        var storage = multer.diskStorage({
             destination: function (req, file, callback) {
                 console.error('what...', 66)
                 callback(null, __dirname + '/uploads');
@@ -133,24 +128,24 @@ function PdfRipServer() {
                 callback(null, file.fieldname + '-' + Date.now());
             }
         });
-        var upload = multer({ storage : storage}).single('img_val');
+        var upload = multer({storage: storage}).single('img_val');
 
 
-        app.post('/doUp2',function(req,res){
-            upload(req,res,function(err) {
+        app.post('/doUp2', function (req, res) {
+            upload(req, res, function (err) {
                 console.error('what...', 5, req.headers)
-                if(err) {
+                if (err) {
                     return res.end("Error uploading file.");
                 }
-                if ( req.body.img_val ) {
+                if (req.body.img_val) {
                     var base64Data = req.body.img_val.replace(/^data:image\/png;base64,/, "");
                     var base = 'x'
-                    if ( req.body.name != null ) {
+                    if (req.body.name != null) {
                         base = req.body.name;
                     }
                     var filename = base + '.png'
                     var fileName = __dirname + '/' + 'uploads/' + filename
-                    require("fs").writeFileSync(fileName, base64Data, 'base64' );
+                    require("fs").writeFileSync(fileName, base64Data, 'base64');
 
                     //sh.writeFile(fileName, req.body.img_val, true, true)
                 }
@@ -158,8 +153,69 @@ function PdfRipServer() {
             });
         });
 
+        app.post('/uploadPageOfBook', function (req, res) {
+            var p = req.body;
+            //console.log(imageBuffer, p);
+            var data = p.data;
+            //  var imageBuffer = decodeBase64Image(data);
+            console.log('bpp', p.name)
+            var name = p.name;
 
-        app.post('/doUp3',function(req,res){
+            var html = p.rawContents;
+            var dirTestPages = sh.fs.join(__dirname, 'rips', 'testPages')
+            sh.fs.mkdirp(dirTestPages)
+            var dirFile = sh.fs.join(dirTestPages, p.page_name + '.html')
+
+
+            var style =
+                `
+.page {
+    position: relative;
+    display: block;
+    margin: 10px auto;
+    box-shadow: 0px 0px 10px #666666;
+    background-color: #ffffff;
+}
+.text-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    height: 1000px;
+}
+ .text-layer > span {
+    /*color: transparent;*/
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+}
+ #XLayer > span {
+   /* color: transparent;*/
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+}
+`
+            var header = sh.html.wrapInHTMLTag(style, 'style')
+            html = sh.html.wrapInHTMLTag(html, 'body')
+            html = header + sh.n + html
+            html = sh.html.wrapInHTMLTag(html, 'html')
+            //tag html
+            //tab body
+
+            /*     sh.log.file(dirFile, 'output to')*/
+            console.log(dirFile, 'output to')
+            console.log('file:///'+sh.slash(dirFile), 'output to')
+            sh.writeFile(dirFile, html)
+
+            res.send('done')
+        });
+
+
+        app.post('/doUp3', function (req, res) {
 
 
             function decodeBase64Image(dataString) {
@@ -177,8 +233,6 @@ function PdfRipServer() {
             }
 
 
-
-
             var p = req.body;
             //console.log(imageBuffer, p);
             var data = p.data;
@@ -188,20 +242,20 @@ function PdfRipServer() {
             sh.writeFile(__dirname + '/' + 'rips/image/' + name, imageBuffer.data, 'base64')
             res.send('done')
             return;
-            upload(req,res,function(err) {
+            upload(req, res, function (err) {
                 console.error('what...', 5, req.headers)
-                if(err) {
+                if (err) {
                     return res.end("Error uploading file.");
                 }
-                if ( req.body.img_val ) {
+                if (req.body.img_val) {
                     var base64Data = req.body.img_val.replace(/^data:image\/png;base64,/, "");
                     var base = 'x'
-                    if ( req.body.name != null ) {
+                    if (req.body.name != null) {
                         base = req.body.name;
                     }
                     var filename = base + '.png'
                     var fileName = __dirname + '/' + 'uploads/' + filename
-                    require("fs").writeFileSync(fileName, base64Data, 'base64' );
+                    require("fs").writeFileSync(fileName, base64Data, 'base64');
 
                     //sh.writeFile(fileName, req.body.img_val, true, true)
                 }

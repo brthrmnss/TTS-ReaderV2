@@ -18,7 +18,7 @@ function SpeakerMaryTTS() {
         var data = {};
         t.settings.baseUrl = baseUrl
         var urls = {};
-        urls.notes = {};
+        urls.notes = {};n
         urls.say = t.utils.createTestingUrl('say')
         urls.process = t.utils.createTestingUrl('process')
 

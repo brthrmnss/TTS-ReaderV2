@@ -59,6 +59,7 @@
 
         function initStyles() {
 
+           // return;
             /*
              background-color: #EEF8C8;
              opacity: 1;
@@ -157,8 +158,10 @@
             c.doesHaveImageSrc = c.dom.doesHaveImageSrc
                 = function doesHaveImageSrc(id, href) {
                 var imgYahoo = b.find('#' + id);
-                if (imgYahoo.length > 0 &&
-                    imgYahoo.attr('src').includes(href)) {
+                var href = imgYahoo.attr('src');
+
+                if (imgYahoo.length > 0 && href &&
+                   href.includes(href)) {
                     return true;
                 }
                 return false
@@ -411,6 +414,8 @@
 
             $(body).find('iframe').remove();
             $(body).find('#main-navigation').remove()
+            window.scrollIntoViewDivs = true
+            var d = createCDom(b);
 
 
             var imgYahoo = b.find('#uh-logo');
@@ -426,14 +431,21 @@
                 if (viewer.length > 0) {
                     b.html(viewer.html())
                 }
+                d.dom.removeUIComps('#kicker')
+                d.dom.removeUIComps('.modal-closebtn')
+                d.dom.removeUIComps('.canvas-share-buttons')
 
+                console.log('yahoo')
 
-                // debugger
+                d.dom.replaceWith('#story-meta')
+                d.dom.replaceWith('.YDC-UniCol1')
+                d.dom.replaceWith('.YDC-Col1-1-Stack')
+
+                d.dom.removeUIComps('.modalRight')
                 return;
             }
 
-            window.scrollIntoViewDivs = true
-            var d = createCDom(b);
+
             /*var arr = [
              d.dom.hasId('logocont'), d.dom.hasId('center_col')
              ]
@@ -761,6 +773,20 @@
                 //TopicListItems2 Toggle SimpleToggle QuestionTopicListItems QuestionTopicHorizontalListItems
             }
 
+            var isGuardian = c.dom.find('.inline-guardian-logo-160');
+            if ( isGuardian ) {
+                //debugger
+                d.dom.remove('.content__secondary-column')
+                d.dom.remove('aside')
+                d.dom.remove('.submeta__share')
+                d.dom.remove('.contributions__epic')
+                d.dom.remove('.social.social--top.js-social--top')
+                d.dom.clearWidth('.content__main-column');
+                d.dom.margin0('.content__main-column');
+                d.dom.clearWidth('.content__meta-container');
+                d.dom.margin0('.content__meta-container');
+                d.dom.b.find('.content__meta-container').css('position', 'relative');
+            }
 
             //debugger
             function lookForMainArticle() {
@@ -1192,6 +1218,7 @@
     </script>
 
     <style>
+
         .highlight {
             background-color: #00b68f;
             opacity: 0.3;
@@ -1205,6 +1232,7 @@
             background-color: #C6E746;
             opacity: 0.3;
         }
+
     </style>
 </head>
 <body>

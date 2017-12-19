@@ -8,13 +8,15 @@ var nlp = require('compromise')
 var doc = nlp('London is calling')
 
 let file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Farewell My Lovely  Raymond Chandlerepub/epub.html"
+//file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/The Mind Illuminated_ A Complet  John Yatesepub/epub.html"
+console.log(file)
 file = sh.deos(file)
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub.html"
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub_text.html"
 var contents = sh.readFile(file);
-console.log('orig', contents.length )
+console.log('orig', contents.length)
 if (contents.length > 50 * 1000) {
-    //contents = contents.slice(0, contents.length * .1)
+    //contents = contents.slice(0, contents.length *
     contents = contents.slice(0, contents.length * .03)
 }
 
@@ -32,27 +34,31 @@ var u = uiUtils;
 
 window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
-    u.isUpperCase = function isUpperCase(char) {
-        if (char == null) {
-            return null
+    function extendUIUtils() {
+        u.isUpperCase = function isUpperCase(char) {
+            if (char == null) {
+                return null
+            }
+            if (char == char.toUpperCase()) {
+                return true
+            }
+            return false;
         }
-        if (char == char.toUpperCase()) {
-            return true
+
+        u.isFirstLetterLowercase = function isFirstLetterLowercase(txt) {
+
+            if (txt == null) {
+                return null
+            }
+            var char = txt.slice(0, 1)
+            if (char == char.toLowerCase()) {
+                return true
+            }
+            return false;
         }
-        return false;
     }
 
-    u.isFirstLetterLowercase = function isFirstLetterLowercase(txt) {
-
-        if (txt == null) {
-            return null
-        }
-        var char = txt.slice(0, 1)
-        if (char == char.toLowerCase()) {
-            return true
-        }
-        return false;
-    }
+    extendUIUtils()
 
     //console.log('hamb');
     function defineUtils() {
@@ -584,11 +590,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 // debugger;
                 // asdfl.g
                 // debugger;
-
-
                 self.utils.findSentencesInHtml(container);
             } else {
-
 
                 if (toDiv == null)
                     toDiv = fromDiv;
@@ -1054,6 +1057,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         }
 
                         if (self.data.currentSpeaker.items.length > 0) {
+                            return;
                             /*var spans = self.data.currentSpeaker.items.slice(-1)[0];
                              spans = spans.spans; //.spans;
                              var last = null;
@@ -1069,58 +1073,56 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             })
                             if (last) {
 
-                               /* if ( last.children.length  > 0 ) {
-                                   last =  last.last()
-                                }*/
-                           /*     uiUtils.addFloatingDiv = function addFl(holder2, txt) {
-                                    var holder = u.tag('span')
-                                    holder.css('background-color', 'brown')
-                                    holder.text(txt)
-                                    holder.css('position', 'relative')
-                                    holder.css('display', 'inline-block')
+                                /* if ( last.children.length  > 0 ) {
+                                 last =  last.last()
+                                 }*/
+                                /*     uiUtils.addFloatingDiv = function addFl(holder2, txt) {
+                                 var holder = u.tag('span')
+                                 holder.css('background-color', 'brown')
+                                 holder.text(txt)
+                                 holder.css('position', 'relative')
+                                 holder.css('display', 'inline-block')
 
 
-                                    var div = u.tag('div')
-                                    holder.append(div)
-                                    div.css('right', '0px')
-                                    div.text(txt)
+                                 var div = u.tag('div')
+                                 holder.append(div)
+                                 div.css('right', '0px')
+                                 div.text(txt)
 
-                                    //div.css('background-color', 'gray')
-                                    u.styleDialog();
-                                    u.padding(5)
-                                   // if (nouns.length > 0) {
-                                    holder2.append(holder) //.
-                                   // }
+                                 //div.css('background-color', 'gray')
+                                 u.styleDialog();
+                                 u.padding(5)
+                                 // if (nouns.length > 0) {
+                                 holder2.append(holder) //.
+                                 // }
 
-                                    return div;
-                                }
-*/
+                                 return div;
+                                 }
+                                 */
 
                                 uiUtils.addFloatingDivLeft = function addFl(holder2, txt) {
                                     var div = u.tag('div')
-                                   // holder.append(div)
+                                    // holder.append(div)
                                     div.css('right', '0px')
                                     div.text(txt)
 
                                     div.css('margin-left', '70%')
                                     div.css('margin-top', '-20px')
-                                   // div.css('background-color', 'gray')
-                                   // u.styleDialog();
+                                    // div.css('background-color', 'gray')
+                                    // u.styleDialog();
                                     u.padding(5)
                                     // if (nouns.length > 0) {
                                     holder2.ui.append(div) //.
-                                    uiUtils.bg( '#1E90FF', d, 0.3)
+                                    uiUtils.bg('#1E90FF', d, 0.3)
                                     return div;
                                 }
 
                                 var txtToAdd = sh.paren('spk:' + self.data.currentSpeaker.speaker);
                                 var d = uiUtils.addFloatingDivLeft(last, txtToAdd)
-                              //  uiUtils.bg( '#1E90FF', d, 0.3)
+                                //  uiUtils.bg( '#1E90FF', d, 0.3)
 
 
-
-
-                               // last.append(' ' + sh.paren('spk:' + self.data.currentSpeaker.speaker))
+                                // last.append(' ' + sh.paren('spk:' + self.data.currentSpeaker.speaker))
                                 //debugger
                             } else {
                                 debugger
@@ -1156,7 +1158,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         var proc_currentSentence = currentSentence.replace(',', '')
                         var y = nlp(proc_currentSentence)
                         var nouns = y.nouns().out('array')
-                        debugger
+                        //debugger
                         //self.lastObj.speaker
                         if (self.data.currentSpeaker) {
                             if (self.data.currentSpeaker.speaker == 'unknown') {
@@ -1774,6 +1776,288 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                 }
 
+                h.findQuoteSpeakers = function findQuoteSpeakers() {
+
+
+                    var panel = uiUtils.addDialog({})
+                    u.pos.tl()
+                    u.table.makeTable()
+                    time = 56
+                    //u.table.addRow('x', 'y')
+                    // u.table.addRow('time', time)
+
+                    panel.append(uiUtils.lastTable)
+                    panel.css('position', 'fixed')
+                    panel.css('overflow-y', 'auto')
+                    panel.css('height', '150px')
+                    panel.css('z-index', '1001')
+                    $('body').prepend(panel)
+
+                    function getIndex(i) {
+                        var dictObj = h.dictSentences2[i]
+                        if (dictObj) {
+                            if (dictObj.stats == null) {
+                                var s = {}
+                                var nlp = require('compromise')
+                                var y = nlp(dictObj.txt)//.nouns()
+                                s.verbs = y.verbs().out('array')
+                                var speakingWords = ['said']
+                                var y = sh.isAnyInAny2(speakingWords, s.verbs, false)
+                                if (y.length > 0) {
+                                   // debugger
+                                }
+                                s.speakingVerbs = y;
+                                dictObj.stats = s;
+                            }
+                        }
+
+                        return dictObj;
+                    }
+
+                    function searchForward(i) {
+                        var o = h.dictSentences2[i]
+                        var d = {};
+                        d.sents = {};
+                        d.sents.dictObjs = []
+                        d.sents.txt = [];
+                        //for ( var id = i; i < i+5; i++)
+                        var times = '12345'.split('')
+                        $.each(times, function onK(k, v) {
+                            var dictObj = h.dictSentences2[i + k + 0]
+                            // console.log('ok', k,v)
+                            if (dictObj == null) {
+                                return false;
+                            }
+                            d.sents.dictObjs.push(dictObj)
+                            d.sents.txt.push(dictObj.txt);
+                            dictObj.processedQuotes = true
+
+                            if (k == 0) {
+                                var split = dictObj.txt.slice(1).split('"')
+
+                                if (dictObj.txt.slice(1).includes('"')) {
+                                    d.sents.firstOne
+                                    d.sents.firstOneQuote = split[0]
+                                    d.sents.firstOnceEnding = split[1]
+                                    endQuote = true;
+                                    d.next = h.dictSentences2[i + k + 1  ]
+                                   ///d.next = null
+                                   // d.sents.nextText =  d.sents.firstOnceEnding
+                                    return false;
+                                }
+                            } else{
+                                if (dictObj.txt.includes('"')) {
+
+                                    endQuote = true;
+                                    d.next = h.dictSentences2[i + k + 1 ]
+                                    return false;
+                                }
+                            }
+
+
+
+                        })
+
+                        d.prev = h.dictSentences2[i - 1]
+                        if (d.prev) {
+                            d.sents.prevText = (d.prev.txt);
+                        }
+                        if (d.next) {
+                            d.sents.nextText = (d.next.txt);
+                            var nextSpan = getFirstSpan(d.next)
+
+                        }
+
+                        function getFirstSpan(o) {
+                            var firstSpan = null;
+
+                            $.each(o.spans, function getF(k,v) {
+                                v = $(v)
+                                firstSpan = v;
+                                return false;
+                            })
+                            return firstSpan
+                        }
+                        var firstSpan = getFirstSpan(o)
+                        var yy  = $(firstSpan).css('top')
+                        d.sents.txt = d.sents.txt.join(' ')
+
+                        /*$.each(times, function searchBackwards(k,v) {
+                         var dictObj = h.dictSentences2[i+k+1]
+                         console.log('ok', k,v)
+                         if (dictObj == null) {
+                         return false;
+                         }
+                         d.sents.push(dictObj)
+                         if ( dictObj.txt.includes('"')) {
+                         endQuote = true;
+                         d.next = h.dictSentences2[i+k+1+1]
+                         return false;
+                         }
+
+                         })*/
+                        return d;
+
+                    }
+
+                    wroteHeader = false;
+                    var ic = 0
+                    $.each(h.dictSentences2, function processChar(i, dictObj) {
+                        // console.log('di
+                        // ctObj', dictObj)
+                        i = parseInt(i)
+                        var allow = false;
+                        if (dictObj.txt.includes('Smokes')) {
+                            //asdf.g
+                        }
+
+                        if (dictObj.txt.includes('"')) {
+                            allow = true;
+                        }
+
+
+                        if (dictObj.isQuote) {
+                            allow = true;
+                        }
+
+                        if (allow == false) {
+                            return;
+                        }
+                        if (allow == false && i > 30) {
+                            return;
+                        }
+
+                        if (dictObj.processedQuotes) {
+                            return;
+                        }
+                        if (dictObj.txt.startsWith('"')) {
+                            var d = searchForward(i)
+                        } else {
+                            d = {}
+                            d.sents = {}
+                        }
+
+                        var prev2 = getIndex(i - 2)
+                        var prev = getIndex(i - 1)
+                        var next = getIndex(i + 1)
+                        var next2 = getIndex(i + 2)
+
+
+                        var spkdbug = ''
+                        if (prev.stats.speakingVerbs.length > 0) {
+                            spkdbug += '-1' + 'p ' + prev.stats.speakingVerbs
+                        }
+                        var dictObjStr = ''
+                        //  dictObjStr += dictObj.txt
+                        //sh.toJSONString(dictObj)
+                        if (wroteHeader != true) {
+                            wroteHeader = true
+                            u.table.addHRow('i', 'txt', '#', 'prev', 'for')
+                            u.table.rowWidth(null, '150px')
+                        }
+                        u.table.addRow(i, d.sents.txt + '<br/>' + sh.paren(dictObj.txt), dictObj.spans.length, d.sents.prevText, d.sents.nextText)
+
+                        u.lastRow.css('border-bottom', 'black 1px solid')
+                        return;
+                        //var color =
+                        var randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                        var colors = ['FFC619', '14CCA0', 'a94442']
+                        ic++;
+                        if (ic > colors.length - 1) {
+                            ic = 0;
+                        }
+                        randomColor = colors[ic]
+
+                        randomColor = '#' + randomColor
+                        var o = uiUtils.hexToRgb(randomColor)
+                        var p = [o.r, o.g, o.b, 0.3].join(', ')
+                        //  alert( hexToRgb("#0033ff").g );
+
+                        randomColor = 'rgba' + sh.paren(p)
+                        //rgba(54, 25, 25, .5);
+                        // debugger
+                        $.each(dictObj.spans, function processChar(y, span) {
+                            //span.css({'color': randomColor})
+                            //debugger
+                            $(span).css('background-color', randomColor)
+                            //  $(span).text('asdf')
+                        });
+                        //debugger
+                        //console.log(2,'colorize', i, dictObj)
+                    });
+
+
+                    return;
+                    $.each(h.dictSentences2, function processChar(i, dictObj) {
+                        // console.log('di
+                        // ctObj', dictObj)
+                        var allow = false;
+                        if (dictObj.txt.includes('Smokes')) {
+                            //asdf.g
+                        }
+
+                        if (dictObj.inQuote) {
+                            allow = true;
+                        }
+
+                        if (dictObj.isQuote) {
+                            allow = true;
+                        }
+
+                        if (allow == false) {
+                            return;
+                        }
+                        if (allow == false && i > 30) {
+                            return;
+                        }
+
+
+                        var prev2 = getIndex(i - 2)
+                        var prev = getIndex(i - 1)
+                        var next = getIndex(i + 1)
+                        var next2 = getIndex(i + 2)
+
+
+                        var spkdbug = ''
+                        if (prev.stats.speakingVerbs.length > 0) {
+                            spkdbug += '-1' + 'p ' + prev.stats.speakingVerbs
+                        }
+                        var dictObjStr = ''
+                        //  dictObjStr += dictObj.txt
+                        //sh.toJSONString(dictObj)
+                        u.table.addRow(i, dictObj.txt, dictObj.spans.length, spkdbug)
+
+                        return;
+                        //var color =
+                        var randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                        var colors = ['FFC619', '14CCA0', 'a94442']
+                        ic++;
+                        if (ic > colors.length - 1) {
+                            ic = 0;
+                        }
+                        randomColor = colors[ic]
+
+                        randomColor = '#' + randomColor
+                        var o = uiUtils.hexToRgb(randomColor)
+                        var p = [o.r, o.g, o.b, 0.3].join(', ')
+                        //  alert( hexToRgb("#0033ff").g );
+
+                        randomColor = 'rgba' + sh.paren(p)
+                        //rgba(54, 25, 25, .5);
+                        // debugger
+                        $.each(dictObj.spans, function processChar(y, span) {
+                            //span.css({'color': randomColor})
+                            //debugger
+                            $(span).css('background-color', randomColor)
+                            //  $(span).text('asdf')
+                        });
+                        //debugger
+                        //console.log(2,'colorize', i, dictObj)
+                    });
+
+                }
+
+
                 h.utils = {};
                 h.utils.removeOddChars = function removeOddChars(str, b, c) {
                     str = str.replace(/”/gi, "\"");
@@ -2311,6 +2595,9 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
 
                 h.quote.endQuoteForcily()
+
+                h.findQuoteSpeakers();
+
 
                 // debugger; //what is the last sentence? ...
                 /*

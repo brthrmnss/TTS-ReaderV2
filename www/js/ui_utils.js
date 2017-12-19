@@ -34,6 +34,19 @@ function defaultValue(input, ifNullUse) {
 }
 var dv = defaultValue;
 
+dv.ifBlank = function defaultValue(input, prop, altProp) {
+    if (input[prop] == null || input[prop] == '') {
+        input[prop] = input[altProp]
+    }
+    return input;
+}
+dv.cid = function cid(input, prop, fxIfDef, ext) {
+    if (fxIfDef == null) {
+        return;
+    }
+    input[prop] = sh.cid(fxIfDef, ext)
+}
+
 
 function callIfDefined(fx) {
     var args = convertArgumentsToArray(arguments)
@@ -135,6 +148,15 @@ defineUtils2();
 var uiUtils = {};
 window.uiUtils = uiUtils;
 
+
+uiUtils.addToDict = function addKeyToArrayDict(dict, key, val) {
+    var keyVals = dict[key];
+    if (keyVals == null) {
+        keyVals = [];
+    }
+    keyVals.push(val)
+    dict[key] = keyVals;
+}
 function defineUtils() {
     var self = uiUtils;
     var p = uiUtils;
@@ -145,6 +167,92 @@ function defineUtils() {
     uiUtils.dictCfg = {};
 
     uiUtils.cid = uiUtils.callIfDefined = callIfDefined
+    function defineExtras() {
+        u.require = function require(ifNull, err) {
+            if (ifNull == null)
+                throw new Error(err)
+        }
+
+        u.joinArgs = function joinArgsIfPossible(args) {
+            var args = sh.convertArgumentsToArray(args)
+            if (args.length > 1) {
+                var result = args.join(' ');
+                return result;
+            }
+            // if ( args.length == 1 ) {
+            return args[0]
+            //  }
+            //  return args;
+        }
+
+        u.throwIf = function throwIf(val, err) {
+            if (val != true)
+                return
+            var err2 = sh.joinArgs(arguments)
+            throw new Error(err2)
+        }
+
+        u.throwIfNull = function throwIfNull(val, err) {
+            if (val != null)
+                return
+            var err2 = sh.joinArgs(arguments)
+            throw new Error(err2)
+        }
+        u.retryFx = function retryFx(cond, fx, cfg) {
+            if (cond == false) {
+                setTimeout(fx, 200)
+                return true;
+            }
+        }
+
+        u.join2 = function join2() {
+            var args = sh.convertArgumentsToArray(arguments)
+
+            return args.join('_');
+        };
+
+        u.makeId = u.join2;
+        dv.id = function ensureIsValidId(id) {
+            if (id.startsWith('#')) {
+            } else {
+                id = '#' + id
+            }
+            return id
+        }
+        u.getUIById = function getUIById(id, par) {
+            if (id.startsWith('#')) {
+            } else {
+                id = '#' + id
+            }
+            //var ui = $(id);
+            var ui = $(id);
+            if (par) {
+                ui = par.find(id)
+            }
+            return ui;
+        };
+
+
+        u.findJquery = function findJquery(jq) {
+            function findX() {
+                var exists = $(jq).length > 0
+                return exists
+            }
+
+            return findX
+        }
+
+        u.requireJquery = function requireJquery(jq, fxOnComplete, maxTimes, message) {
+            //u.findJquery(jq)
+            if ($(jq).length == 0) {
+                throw new Error('did not find ' + jq)
+                return;
+            }
+        }
+
+    }
+
+    defineExtras();
 
     u.dv = dv;
     uiUtils.qq = function qq(txt) {
@@ -374,6 +482,12 @@ function defineUtils() {
         r = dv(r, 10)
         u.position(ui, null, null, b, r)
     }
+    u.pos.tl = function moveToTopLeft(ui, t, l) {
+        ui = dv(ui, u.lastUI)
+        t = dv(t, 10)
+        l = dv(l, 10)
+        u.position(ui, t, l )
+    }
 
     uiUtils.makeAbs = function makeAbs(jquery, highPosition) {
         jquery.css('position', 'absolute');
@@ -399,6 +513,16 @@ function defineUtils() {
             padding += 'px'
         }
         ui.css('padding', padding);
+    }
+    
+    uiUtils.center = function center(jquery, highPosition) {
+        if (jquery == null) {
+            jquery = uiUtils.lastUI;
+        }
+        jquery.css('position', 'absolute');
+        jquery.css('left', '50%');
+        jquery.css('top', '50%');
+
     }
 
     uiUtils.ifFound = function ifFound(id) {
@@ -634,6 +758,59 @@ function defineUtils() {
         }
         return cfg;
     }
+
+    uiUtils.table = {};
+    uiUtils.table.makeTable = function makeTable(){
+        var table = u.tag('table')
+        table.css('background', 'transparent')
+        u.lastTable = table;
+        return table
+    }
+    uiUtils.table.addHRow = function addRow(){
+        var args = uiUtils.args(arguments)
+
+
+        var tr = u.tag('tr')
+
+        $.each(args, function (k,v) {
+            var td = u.tag('th')
+            td.html(v)
+            tr.append(td)
+        })
+        u.lastRow = (tr)
+        u.lastTable.append(tr)
+        return tr
+    }
+    uiUtils.table.rowWidth = function rowWidth(){
+        var widths = uiUtils.args(arguments)
+        var tr = u.tag('tr')
+
+        var tds = u.lastRow.find('td,th')
+        $.each(widths, function (k,v) {
+            var td = $(tds[k])
+            if ( v != null) {
+                td.css('width', v)
+            }
+        })
+        u.lastTable.append(tr)
+        return tr
+    }
+    uiUtils.table.addRow = function addRow(){
+        var args = uiUtils.args(arguments)
+
+
+        var tr = u.tag('tr')
+        u.lastRow = (tr)
+        $.each(args, function (k,v) {
+            var td = u.tag('td')
+            td.html(v)
+            tr.append(td)
+        })
+        u.lastTable.append(tr)
+        return tr
+    }
+
+
     uiUtils.create =
         uiUtils.make = uiUtils.addDiv;
 
@@ -1048,6 +1225,11 @@ function defineUtils() {
                 uiUtils.lastUI.css('height', h + 'px')
             }
         }
+        uiUtils.wH100 = function setWidthAndHeight(w, h) {
+            uiUtils.lastUI.css('width', '100%')
+            uiUtils.lastUI.css('height', '100%')
+        }
+
         uiUtils.color = function color(ui, color) {
             if (color == null) {
                 color = ui
@@ -1084,17 +1266,19 @@ function defineUtils() {
             }
             uiUtils.lastUI.css(css)
         }
+
+        uiUtils.hexToRgb = function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
         uiUtils.bg = function setBgColor(l, ui, alpha) {
             var ui = uiUtils.lastUI;
             if ( alpha ) {
-                function hexToRgb(hex) {
-                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                    return result ? {
-                        r: parseInt(result[1], 16),
-                        g: parseInt(result[2], 16),
-                        b: parseInt(result[3], 16)
-                    } : null;
-                }
+
 
                 var o = hexToRgb(l)
                 var p = [o.r, o.g, o.b, alpha].join(', ')
