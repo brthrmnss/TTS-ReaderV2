@@ -17,34 +17,36 @@ var encoding = 'utf8';
 var express = require("express");
 
 var bodyParser = require('body-parser');
+
+FileCountLimiter = require('.//www/js/FileCountLimiter.js').FileCountLimiter
 /*
 
-sh.writeFile = function writeFile(fileName, content, surpressErrors, binary){
+ sh.writeFile = function writeFile(fileName, content, surpressErrors, binary){
 
-    fs.writeFile(fileName, content, encoding, function(err){
-        if(err){
-            return console.log(err);
-        }
-    });
-}
+ fs.writeFile(fileName, content, encoding, function(err){
+ if(err){
+ return console.log(err);
+ }
+ });
+ }
 
-sh.dv = function defaultValue(input, ifNullUse){
-    if(input == null){
-        return ifNullUse;
-    }
-    return input;
-}
+ sh.dv = function defaultValue(input, ifNullUse){
+ if(input == null){
+ return ifNullUse;
+ }
+ return input;
+ }
 
-sh.qq = function qq(text){
-    return "\"" + text + "\"";
-};
+ sh.qq = function qq(text){
+ return "\"" + text + "\"";
+ };
 
-sh.isWin = function isWin() {
-    return process.platform === 'win32'
-};
-*/
+ sh.isWin = function isWin() {
+ return process.platform === 'win32'
+ };
+ */
 
-function SayServerLite(){
+function SayServerLite() {
     var p = SayServerLite.prototype;
     p = this;
     var self = this;
@@ -53,13 +55,16 @@ function SayServerLite(){
 
     self.data = {};
     self.data.cache = {};
+    self.data.cachedFiles = [];
+
 
     var dirTrash = sh.fs.trash('sayServerLite')
     sh.fs.mkdirp(dirTrash)
-    if ( sh.fileExists(dirTrash)) {
+    if (sh.fileExists(dirTrash)) {
         self.settings.useTrash = true
     }
     self.settings.fastMode = true
+    self.settings.fastMode = false
     self.settings.returnJSONAudio = false;
 
     //self.settings.socketMode  =true;
@@ -69,7 +74,7 @@ function SayServerLite(){
      * @param urlf
      * @param appCode
      */
-    p.start = function start(){
+    p.start = function start() {
         self.setupExpressApp();
         self.data.app.post('/say', self.say);
         self.data.app.get('/list', self.listVoices);
@@ -77,11 +82,11 @@ function SayServerLite(){
         self.data.app.post('/speakText2', self.speakText2);
     }
 
-    p.setupExpressApp = function setupApp(){
+    p.setupExpressApp = function setupApp() {
         var app = express();
         self.data.app = app;
         var port = 4444;
-      //  port = 5444;
+        //  port = 5444;
         var http = require('http').Server(app);
         var io = require('socket.io')(http);
         self.data.io = io
@@ -89,17 +94,17 @@ function SayServerLite(){
 
         app.use(bodyParser({limit: '50mb'}));
         //app.use(express.json({limit: '50mb'}));
-       // app.use(express.urlencoded({limit: '50mb'}));
+        // app.use(express.urlencoded({limit: '50mb'}));
 
         //Add middleware for cross domains
-        app.use(function(req, res, next) {
+        app.use(function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
             next();
         });
 
         self.settings.port = port
-        var baseUrl = 'http://127.0.0.1'+':'+self.settings.port;
+        var baseUrl = 'http://127.0.0.1' + ':' + self.settings.port;
         //app.listen(port)
         http.listen(self.settings.port, function () {
             console.log('started')
@@ -116,34 +121,34 @@ function SayServerLite(){
         app.use(express.static(self.data.dirWWW));
 
 
-        if ( self.settings.socketMode ) {
+        if (self.settings.socketMode) {
             setTimeout(function onTest() {
                 var open = require("open");
-               // open(baseUrl);
-            },3000)
+                // open(baseUrl);
+            }, 3000)
 
             self.setupSocketMode()
         }
         return app;
     }
 
-    p.setupSocketMode = function setupSocketMode(){
+    p.setupSocketMode = function setupSocketMode() {
         self.appSocket = self.data.io
-        self.data.io .sockets.on('connection', function (socket) {
+        self.data.io.sockets.on('connection', function (socket) {
             console.log('new connnnn')
-            if ( self.data.tested != false ) {
+            if (self.data.tested != false) {
                 self.test()
                 self.data.tested = true;
             }
             self.pSocket = socket;
-            socket.emit('news', { hello: 'world' });
-            socket.emit('reload', {why:'grammar', count:self.data.id});
+            socket.emit('news', {hello: 'world'});
+            socket.emit('reload', {why: 'grammar', count: self.data.id});
 
             socket.on('my other event', function (data) {
                 console.log(data);
             });
 
-            socket.on('audioEnded', function onAudioEndedUI (data) {
+            socket.on('audioEnded', function onAudioEndedUI(data) {
                 console.log('ended a sound', data)
                 self.proc('audioEnded', data);
                 sh.callIfDefined(self.data.fxEndAudio)
@@ -152,7 +157,7 @@ function SayServerLite(){
             /*socket.on('chat message', function (data) {
              console.log(data);
              });*/
-            socket.on('chat message', function(msg){
+            socket.on('chat message', function (msg) {
                 self.data.io.emit('chat message', msg);
             });
 
@@ -165,68 +170,79 @@ function SayServerLite(){
         });
     }
 
-    function defineRoutes(){
-        self.say = function sayRoute(req, res){
+    function defineRoutes() {
+        self.say = function sayRoute(req, res) {
             var text = req.body.text;
             var rate = req.body.rate;
             var voice = req.body.voice;
-            var playAudio = req.body.playAudio=='true';
+            /*   var playAudio = req.body.playAudio=='true';*/
             var speakOpts = {};
             speakOpts = sh.clone(req.body);
-            speakOpts.playAudio = playAudio;
-            speakOpts.cacheAudio = req.body.cacheAudio=='true';
-            speakOpts.playAudioAfter = req.body.playAudioAfter; //=='true';
+            /* speakOpts.playAudio = playAudio;
+             speakOpts.cacheAudio = req.body.cacheAudio=='true';
+             speakOpts.playAudioAfter = req.body.playAudioAfter; //=='true';
+             */
+            sh.each(speakOpts, function convertAllARgs(k, v) {
+                if (v === 'true' || v === true) {
+                    speakOpts[k] = true
+                } else {
+                    if (v === false || v === 'false') {
+                        speakOpts[k] = false
+                    }
+                }
+            })
 
             var volume = req.body.volume;
             speakOpts.volume = volume;
             speakOpts.voice = voice;
             speakOpts.speakOnce = req.body.speakOnce == 'true';
 
-
             text = text.replace(/"/g, "'");
             text = text.replace(/“/g, "'");
-            if (sh.isWin()==false) {
+            if (sh.isWin() == false) {
                 var json = {};
-                var file = __dirname+'/www/cache/sound' //nof file ext necessary
-                json.src="audio/mpeg3;base64,";
-                json.src="audio/x-wav;base64,";
-                self.speak(function result(body){
-                    console.log('file', file +'.mp3')
-                    fs.readFile(file +'.wav', function(err, original_data){
+                var file = __dirname + '/www/cache/sound' //nof file ext necessary
+                json.src = "audio/mpeg3;base64,";
+                json.src = "audio/x-wav;base64,";
+                self.speak(function result(body) {
+                    console.log('file', file + '.mp3')
+                    fs.readFile(file + '.wav', function (err, original_data) {
                         console.log('data', original_data)
-                        if ( speakOpts.playAudio !== true ) {
+                        if (speakOpts.playAudio !== true) {
                             json.src += new Buffer(original_data, 'binary').toString('base64');
                         }
                         json.status = 'ok';
                         res.json(json);
                     });
-                }, text , rate, voice, file,playAudio, speakOpts);
+                },
+                    /*text, rate, voice, file, playAudio, */
+                    speakOpts);
 
                 return;
 
             }
 
             var json = {}
-            json.src="audio/rx-wav;base64,";
-            self.speak(function onResultOfSpeaking(body){
+            json.src = "audio/rx-wav;base64,";
+            self.speak(function onResultOfSpeaking(body) {
                 if (self.settings.returnJSONAudio != true) {
-                    console.error('self.settings.returnJSONAudio != true');
+                    //console.error('self.settings.returnJSONAudio != true');
                     res.json(json)
                     return;
                 }
                 else {
-                fs.readFile(__dirname+'/www/cache/sound.wav', function(err, original_data){
-                    if ( original_data == null ) {
+                    fs.readFile(__dirname + '/www/cache/sound.wav', function (err, original_data) {
+                        if (original_data == null) {
+                            res.json(json);
+                            return;
+                        }
+                        json.src += new Buffer(original_data, 'binary').toString('base64');
+                        json.status = 'ok';
+                        // SEND RESULT
                         res.json(json);
-                        return;
-                    }
-                    json.src += new Buffer(original_data, 'binary').toString('base64');
-                    json.status = 'ok';
-                    // SEND RESULT
-                    res.json(json);
-                });
+                    });
                 }
-            }, text , rate, voice, file, playAudio, speakOpts);
+            }, /* text, rate, voice, file, playAudio, */speakOpts);
         }
 
 
@@ -237,7 +253,7 @@ function SayServerLite(){
             nextX.currentIndex = 0
         }
         nextX.next = function next() {
-            if ( nextX.arr.length >= nextX.currentIndex)
+            if (nextX.arr.length >= nextX.currentIndex)
                 nextX.currentIndex = -1
 
             nextX.currentIndex++
@@ -246,130 +262,162 @@ function SayServerLite(){
             return nextItem;
         }
         nextX.getCurrent = function getCurrent() {
-            if ( nextX.data.current == null) {
+            if (nextX.data.current == null) {
                 nextX.next()
             }
             return nextX.data.current;
         }
-        nextX.load( ['cachedFile1.wav','cachedFile2.wav','cachedFile3.wav'] )
+        nextX.load(['cachedFile1.wav', 'cachedFile2.wav', 'cachedFile3.wav'])
 
 
-        p.speak = function speak(fx, text, rate, voice, file, playAudio, speakOpts){
+        p.speak = function speak(fx, /* text, rate, voice, file, playAudio, */speakOpts) {
             var isMac = sh.isWin() == false
             speakOpts = sh.dv(speakOpts, {})
-            if ( speakOpts.speakOnce   ){
-                if (  self.speaking != 0 && self.speaking != null ) {
+            if (speakOpts.speakOnce) {
+                if (self.speaking != 0 && self.speaking != null) {
                     console.warn('ignoring speaking', self.speaking)
                     fx(true)
                     return;
                 }
             }
             self.speaking = Math.random();
+
+            speakOpts.voice = sh.dv(speakOpts.voice, 'IVONA 2 Brian')
             //setTimeout(function () {
 
             //},30*1000)
-            self.proc("speak.text: "+text);
-            if (text == 'zzz beep zzz') {
+            console.log('')
+            self.proc("speak.text: " + speakOpts.text);
+            if (speakOpts.text == 'zzz beep zzz') {
                 var fileSong = __dirname + '/' + 'www/' + 'audio/' + 'tone.mp3'
                 self.utils.playSong(fileSong, fx)
                 return;
             }
             var child_process = require('child_process');
-            if ( isMac ) {
+            if (isMac) {
                 var gb = "say "
-                voice = sh.dv(voice, 'Graham')
-                if (isMac && voice == 'IVONA 2 Emma') {
-                    voice = 'Heather'
+                voice = sh.dv(speakOpts.voice, 'Graham')
+                if (isMac && speakOpts.voice == 'IVONA 2 Emma') {
+                    speakOpts.voice = 'Heather'
                     // voice = 'Heather Infovox iVox'
                 }
-                if (isMac && voice == 'IVONA 2 Brian') {
-                    voice = 'Heather'
-                    voice = 'Graham'
+                if (isMac && speakOpts.voice == 'IVONA 2 Brian') {
+                    speakOpts.voice = 'Heather'
+                    speakOpts.voice = 'Graham'
                 }
 
-                gb += ' ' + '-v ' + voice + ' ';
-                gb += ' ' + sh.qq(text) + ' ';
+                gb += ' ' + '-v ' + speakOpts.voice + ' ';
+                gb += ' ' + sh.qq(speakOpts.text) + ' ';
 
-                if ( rate == null ) {
+                if (speakOpts.rate == null) {
                     //   rate = 300; //hard code until fix other scripts
                 }
 
 
-                if (rate != null) {
-                    rate = parseFloat(rate)*450/10
-                    rate *= 1.4 //temp till fix html
-                    gb += ' ' + '-r ' + rate + ' ';
+                if (speakOpts.rate != null) {
+                    speakOpts.rate = parseFloat(speakOpts.rate) * 450 / 10
+                    speakOpts.rate *= 1.4 //temp till fix html
+                    gb += ' ' + '-r ' + speakOpts.rate + ' ';
                 }
+                //var filePathFile = path.resolve(__dirname + '/www/cache/sound' + rand + '.wav')
+                filePathFile = sh.fs.trash('sayServerLiteXPrompt', 'soundoutput')
 
-                gb += ' ' + '-o ' + file + '.aiff' + ' ';
+                gb += ' ' + '-o ' + filePathFile + '.aiff' + ' ';
             }
             //  rate = 7
-            if(sh.isWin()){ //windows
+            if (sh.isWin()) { //windows
                 var path = require('path');
                 var rand = ''
-                if ( speakOpts.randomFile) {
-                    rand = Math.random()*1000
-                    rand = rand.toString().slice(0,2)
+                if (speakOpts.randomFile) {
+                    rand = Math.random() * 1000
+                    rand = rand.toString().slice(0, 2)
                 }
-                var filePath = path.resolve(__dirname+'/www/cache/txt.txt')
-                var filePathFile = path.resolve(__dirname+'/www/cache/sound'+rand+'.wav')
+
+                if (self.data.promptFiles == null) {
+                    self.data.promptFiles = new FileCountLimiter();
+                    var config = {};
+                    config.dirFiles = sh.fs.trash('sayServerLiteXPrompts')
+                    config.maxFiles = 10;
+                    self.data.promptFiles.init(config)
+                    self.data.promptFiles.method()
+
+                }
+                var fileTxtPrompt = sh.fs.join(self.data.promptFiles.settings.dirFiles, rand + '.txt')
+
+                var filePathFile = path.resolve(__dirname + '/www/cache/sound' + rand + '.wav')
 
 
+                var text = speakOpts.text;
                 var fileNext = nextX.getCurrent();
 
-                if ( self.settings.useTrash ) {
-                    var filePath = path.resolve(dirTrash+'/txt.txt')
-                    var filePathFile = path.resolve(dirTrash+'/sound'+rand+'.wav')
-                    var fileCached = path.resolve(dirTrash+'/'+fileNext)
+                var indexCachedFile = fileCachedWav =
+                    speakOpts.voice + '_' +
+                    text.slice(0, 35) + text.slice(-35) + text.split(' ').length + '.wav'
+                indexCachedFile = fileCachedWav = sh.replace(fileCachedWav, ' ', '_')
+                if (self.settings.useTrash) {
+                    // var fileTxtPrompt = fileTxtPrompt
+                    var filePathFile = path.resolve(dirTrash + '/sound' + rand + '.wav')
+                    fileCachedWav = path.resolve(dirTrash + '/' + fileCachedWav)
                 }
 
-                if ( speakOpts.playAudio && speakOpts.cacheAudio) {
-                    var cachedFile = self.data.cache[text]
-                    if ( cachedFile ) {
-                        console.log('>>> found cached', text)
+                if (speakOpts.cacheActive ||
+                    (speakOpts.playAudio && speakOpts.cacheAudio)) {
+                    var cachedFile = self.data.cache[indexCachedFile]
+                    if (cachedFile) {
+                        console.log(sh.t, '>>> found cached', text, cachedFile)
                         self.utils.playSong(cachedFile, fx)
                         return;
+                    } else {
+                        console.log(sh.t, 'file not cached')
                     }
                 }
 
+                if (speakOpts.cacheActive || speakOpts.cacheAudio) {
+                    filePathFile = fileCachedWav;
+                }
 
 
+                fileTxtPrompt = sh.fs.slash(fileTxtPrompt)
+                sh.writeFile(fileTxtPrompt, text);
+                gb = 'cscript "C:\\Program Files\\Jampal\\ptts.vbs" -u ' + fileTxtPrompt
 
-                filePath = filePath.replace(/\\/gi, "/")
-                sh.writeFile(filePath, text);
-                gb = 'cscript "C:\\Program Files\\Jampal\\ptts.vbs" -u '+filePath
-                if ( speakOpts.playAudioAfter || speakOpts.cacheAudio || self.settings.socketMode ) {
+                filePathFile = filePathFile.split(' ').join('_')
+                filePathFile = sh.qq(filePathFile)
+                if (speakOpts.playAudioAfter || speakOpts.cacheAudio || self.settings.socketMode) {
                     //store file
                     gb += ' ' + '-w ' + filePathFile + ' ';
                 }
-                gb +=  ' -voice ' + sh.qq(sh.dv(speakOpts.voice, 'IVONA 2 Brian'))// sh.qq('IVONA 2 Brian')
-                gb +=  ' -v ' + sh.dv(speakOpts.volume, '70')
-                if(rate != null){
-                    gb += ' -r ' + rate + ' ';
-                };
-                if ( playAudio != true ) {
-                   // gb += ' -w ' + filePathFile;
+                gb += ' -voice ' + sh.qq(speakOpts.voice)// sh.qq('IVONA 2 Brian')
+                gb += ' -v ' + sh.dv(speakOpts.volume, '70')
+                if (speakOpts.rate != null) {
+                    gb += ' -r ' + speakOpts.rate + ' ';
+                }
+                ;
+                if (speakOpts.playAudio != true) {
+                    // gb += ' -w ' + filePathFile;
                 }
 
-                if ( speakOpts.cacheAudio ) {
-                    self.proc('caching audio', filePathFile, fileCached, sh.qq(text) )
-                    sh.each(self.data.cache, function removeIfVal(k,v) {
-                        if ( v == fileCached ) {
-                            self.data.cache[k] == null;
-                            delete  self.data.cache[k]
-                        }
-                    })
-                    self.data.cache[text] = fileCached;
-                    sh.copyFile(filePathFile, fileCached)
-                   // asdf.g
+                if (speakOpts.cacheAudio) {
+                    console.log('caching audio', filePathFile, fileCachedWav, sh.qq(text))
+                    self.data.cachedFiles.push(fileCachedWav)
+                    /*sh.each(self.data.cache, function removeIfVal(k, v) {
+                     if (v == fileCachedWav) {
+                     self.data.cache[k] == null;
+                     delete  self.data.cache[k]
+                     }
+                     })*/
+                    if (self.data.cachedFiles.length > 10) {
+                        self.data.cachedFiles.unshift()
+                    }
+                    self.data.cache[indexCachedFile] = fileCachedWav;
+                    //sh.copyFile(filePathFile, fileCachedWav)
+                    // asdf.g
                 }
-
-
 
             }
 
             console.log('log', gb)
-            if ( self.lastCp) {
+            if (self.lastCp) {
                 self.lastCp.kill('SIGINT')
                 var spawn = require('child_process').spawn;
                 //spawn("taskkill", ["/pid",  self.lastCp.pid, '/f', '/t']);
@@ -377,10 +425,10 @@ function SayServerLite(){
 
             }
 
-            if ( sh.isWin() && speakOpts.endOld != false  ) {
-                var cp = child_process.exec( ["taskkill", "/IM ",
-                    'cscript.exe', "/f",'/t'].join(' '), function (err, stdout, stderr){
-                    if ( stderr.includes('ERROR: The process "cscript.exe" not found.') ) {
+            if (sh.isWin() && speakOpts.endOld != false) {
+                var cp = child_process.exec(["taskkill", "/IM ",
+                    'cscript.exe', "/f", '/t'].join(' '), function (err, stdout, stderr) {
+                    if (stderr.includes('ERROR: The process "cscript.exe" not found.')) {
 
                     } else {
                         console.log('cscript', stderr, stdout);
@@ -393,21 +441,21 @@ function SayServerLite(){
 
 
             function playAudioClip() {
-                if ( self.lastCp ) {
+                if (self.lastCp) {
                     self.lastCp.kill('SIGINT')
                 }
                 // EXECUTION
-                var cp = child_process.exec(gb, function (err, stdout, stderr){
+                var cp = child_process.exec(gb, function (err, stdout, stderr) {
                     self.speaking = 0;
-                    if ( isMac ) {
-                        var cmd2convert = 'lame -m m '+file+'.aiff '+file+'.mp3';
-                        var cmd2convert = 'ffmpeg -i '+file+'.aiff '+file+'.wav';
+                    if (isMac) {
+                        var cmd2convert = 'lame -m m ' + filePathFile + '.aiff ' + filePathFile + '.mp3';
+                        var cmd2convert = 'ffmpeg -i ' + filePathFile + '.aiff ' + filePathFile + '.wav';
                         console.log('cmd2convert', cmd2convert)
 
-                        if ( playAudio == true ) {
-                            var cmd2play = 'afplay ' + file+'.aiff';
+                        if (speakOpts.playAudio == true) {
+                            var cmd2play = 'afplay ' + filePathFile + '.aiff';
                             console.log('playAudio')
-                            var cp = child_process.exec(cmd2play, function (err, stdout, stderr){
+                            var cp = child_process.exec(cmd2play, function (err, stdout, stderr) {
                                 fx(true);
                                 console.log('....')
                                 // if ( playAudio != true ) {
@@ -418,33 +466,40 @@ function SayServerLite(){
                             return;
                         }
 
-                        var cp = child_process.exec(cmd2convert, function (err, stdout, stderr){
+                        var cp = child_process.exec(cmd2convert, function (err, stdout, stderr) {
                             fx(true);
                             console.log('finished converting')
                         });
                         return
                     }
 
-                    if ( speakOpts.cacheAudio && speakOpts.playAudio ) {
-                        self.utils.playSong(filePathFile, fx)
-                    }
-                    if ( speakOpts.playAudioAfter ) {
+                    if (speakOpts.cacheAudio && speakOpts.playAudio) {
                         self.utils.playSong(filePathFile, fx)
                         return;
                     }
-                    if ( self.settings.socketMode ) {
+                    if (speakOpts.playAudioAfter) {
                         self.utils.playSong(filePathFile, fx)
                         return;
                     }
-
+                    if (self.settings.socketMode) {
+                        self.utils.playSong(filePathFile, fx)
+                        return;
+                    }
+                    if (speakOpts.cacheAudio && speakOpts.playAudio !== true) {
+                       setTimeout(function waitToEnsureWRiing() {
+                           fx(true)
+                       },50)
+                        return;
+                    }
 
                     if (fx)
-                    fx(true);
+                        fx(true);
                     //console.log('done speaking', text, stdout);
                 });
                 self.lastCp = cp;
 
             }
+
             return;
         }
 
@@ -497,17 +552,19 @@ function SayServerLite(){
         }
         p.utils.playSong = function playSong(fileSong, fx) {
 
-            if ( self.settings.socketMode ) {
-                self.data.fxEndAudio =  fx;
+            if (self.settings.socketMode) {
+                self.data.fxEndAudio = fx;
                 dirTrash = sh.fs.slash(dirTrash)
-                fileSong= sh.fs.slash(fileSong)
+                fileSong = sh.fs.slash(fileSong)
                 fileSong = fileSong.replace(dirTrash, '')
-                fileSong += '?timestamp='+new Date()
+                fileSong += '?timestamp=' + new Date()
 
                 fileSong = fileSong.replace(self.data.dirWWW, '')
 
-                self.data.io.sockets.emit('play', { hello: 'world', file: '',
-                    url: fileSong});
+                self.data.io.sockets.emit('play', {
+                    hello: 'world', file: '',
+                    url: fileSong
+                });
 
                 return;
             }
@@ -543,27 +600,29 @@ function SayServerLite(){
 
         }
 
-        p.listVoices = function listVoices(req, res){
+        p.listVoices = function listVoices(req, res) {
             //console.log("speak.text: "+text);
             var child_process = require('child_process');
             var gb = "say -v '?'"
             var isMac = sh.isWin() == false
             //  rate = 7
-            if(sh.isWin()){ //windows
+            if (sh.isWin()) { //windows
                 gb = 'cscript "C:\\Program Files\\Jampal\\ptts.vbs" -vl ';
             }
             console.log('log', gb)
             // EXECUTION
-            var cp = child_process.exec(gb, function (err, stdout, stderr){
-                if ( isMac ) {
-                    var cmd2convert = 'lame -m m '+file+'.aiff '+file+'.mp3';
-                    var cmd2convert = 'ffmpeg -i '+file+'.aiff '+file+'.wav';
+            var cp = child_process.exec(gb, function (err, stdout, stderr) {
+                /*
+                if (isMac) {
+                    var cmd2convert = 'lame -m m ' + file + '.aiff ' + file + '.mp3';
+                    var cmd2convert = 'ffmpeg -i ' + file + '.aiff ' + file + '.wav';
                     console.log('cmd2convert', cmd2convert)
-                    var cp = child_process.exec(cmd2convert, function (err, stdout, stderr){
+                    var cp = child_process.exec(cmd2convert, function (err, stdout, stderr) {
                         fx(true);
                     });
                     return
                 }
+                */
 
                 res.send(stdout)
                 //console.log('done speaking', text, stdout);
@@ -571,70 +630,70 @@ function SayServerLite(){
             return;
         }
 
-        p.speakText = function speakText(req, res){
-             self.speak(function ok() {
-                 res.send('ok')
-             }, req.query.text, 6 )
+        p.speakText = function speakText(req, res) {
+            self.speak(function ok() {
+                res.send('ok')
+            }, req.query.text, 6)
 
         }
 
 
+        p.speakText2 = function speakText(req, res) {
+            /* self.speak(function ok() {
+             res.send('ok')
+             }, req.query.text, 6 )*/
 
-        p.speakText2 = function speakText(req, res){
-           /* self.speak(function ok() {
-                res.send('ok')
-            }, req.query.text, 6 )*/
-
-           var contents = req.body;
-           sh.writeFile('text.html', contents.html)
-           res.send()
+            var contents = req.body;
+            sh.writeFile('text.html', contents.html)
+            res.send()
 
         }
     }
+
     defineRoutes();
 
     p.test =
-        function test(){
+        function test() {
 
             var sentObjs = [
-                { text:'zzz beep zzz' },
-                { text:'Sentence'},
-                { text:'Sentence'},
-                { text:'Sentence',cacheAudio:true,playAudio:false},
+                {text: 'zzz beep zzz'},
+                {text: 'Sentence'},
+                {text: 'Sentence'},
+                {text: 'Sentence', cacheAudio: true, playAudio: false},
                 //{ text:'Sentence2',cacheAudio:true},
-                { text:'Sentence',cacheAudio:true},
-                { text:'Sentence',cacheAudio:true},
+                {text: 'Sentence', cacheAudio: true},
+                {text: 'Sentence', cacheAudio: true},
             ]
 
 
-            var h= {}
+            var h = {}
             h.d = new Date();
 
             var ddd = [];
 
             var index = 0;
 
-            sh.async(sentObjs, function onCall(k,fx) {
+            sh.async(sentObjs, function onCall(k, fx) {
                 //e.start();
                 // asdf.g
                 index++;
-                console.log('\t',index, 'pu', k.text)
+                console.log('\t', index, 'pu', k.text)
                 var req = {};
                 req.body = {};
                 // k.text = 'take that dog outside i said, it\'s muddy'
                 req.body.text = k.text;
                 req.body.playAudio = 'true'
-                if ( k.cacheAudio ) {
+                if (k.cacheAudio) {
                     req.body.cacheAudio = 'true';
                 }
-                if ( k.playAudio == false ) {
+                if (k.playAudio == false) {
                     req.body.playAudio = 'false';
                 }
                 var res = {};
-                res.json = function onJSon () {
-                    var yy = sh.time.secs( h.d );
+                res.json = function onJSon() {
+                    var yy = sh.time.secs(h.d);
                     console.log('how much time', yy)
-                    h.d  = new Date();
+                    h.d = new Date();
                     ddd.push(yy)
                     fx()
                 }
@@ -646,8 +705,8 @@ function SayServerLite(){
 
         }
 
-    p.proc = function debugLogger(){
-        if(self.silent == true){
+    p.proc = function debugLogger() {
+        if (self.silent == true) {
             return
         }
         sh.sLog(arguments)
@@ -657,9 +716,16 @@ function SayServerLite(){
 
 exports.SayServerLite = SayServerLite;
 
-if(module.parent == null){
+if (module.parent == null) {
     var e = new SayServerLite()
     e.start();
+
+
+    var TTSTestCaching = require('./MaryTTS/SpeakServer/TTSTestCaching.js').TTSTestCaching
+    var s = new TTSTestCaching();
+    s.init()
+    s.test2()
+
     /*
      var req = {};
      req.body = {};
@@ -695,7 +761,8 @@ if(module.parent == null){
      */
 
 
-};
+}
+;
 
 
 

@@ -383,6 +383,44 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 p.onPlay2(null, false, changeIndex, true, false);
                 //keep play statse if false
             }
+
+
+            p.sideLoadSentences = function sideLoadSentences(dict) {
+                var spansByIndex = {}
+                var sp = $('span')
+                $.each(sp, function a(k, v) {
+                    var ui = $(v)
+                    var s = ui.attr('sentence-index')
+                    if (s == null) {
+                        return
+                    }
+                    var dictObj = dict[parseInt(s) - 1]
+                    if (dictObj == null) {
+                        console.log('...')
+                        return
+                    }
+                    dictObj.ui = [ui]
+                    dictObj.spans = [ui]
+                })
+
+                var arr = [];
+                $.each(dict, function a(k, dictObj) {
+                    if (dictObj.ui == null) {
+                        delete dict[k]
+                        return;
+                    }
+                    arr.push(dictObj)
+                })
+
+                self.data.currentSentences = {}
+                self.data.currentSentences.dictSentences2 = dict
+
+                self.data.currentSentences.sentences = {};
+                self.data.currentSentences.sentences.length = arr.length
+
+                self.data.currentSentences.dictSentences2 = arr
+//
+            }
             p.onPlay2 = function onPlay2(event, justScrollToPosition,
                                          changeIndex, force, keepPlayState) {
 
@@ -932,7 +970,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
         }
 
-        // http://stackoverflow.com/a/9795091
+// http://stackoverflow.com/a/9795091
         $.fn.wrapInTag = function (opts) {
             // http://stackoverflow.com/a/1646618
             function getText(obj) {
@@ -1158,7 +1196,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         }
                     }
 
-                    if ( window.scrollIntoViewDivs != true ) {
+                    if (window.scrollIntoViewDivs != true) {
                         console.log('scroll to top', scrollTop, target.height(),
                             scrollBody.scrollTop(), target.offset().top,
                             target.offset().top, target.parent().offset().top)
@@ -2319,6 +2357,8 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     u.cid(fxDone);
                     return;
                 }
+
+
                 //self.voice = voice;
                 var speakOnce = false
                 //var date = new Date();
@@ -2789,10 +2829,35 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
             var speakOnce = false
             var date = new Date();
 
+            if (window.skipJrlTitles) {
+                if (cfg.text.split('_').length == 4) {
+                    if (cfg.text.split('-').length == 3) {
+                        if (cfg.text.endsWith(':')) {
+                            if (cfg.fx) cfg.fx()
+                            return;
+                        }
+                    }
+                }
+
+                if (cfg.text.includes(':')) {
+                    var pre = cfg.text.split(':')[0]
+                    if (pre.split('_').length == 4) {
+                        if (pre.split('-').length == 3) {
+                            //   if ( pre.endsWith(':') ) {
+                            // if (cfg.fx) cfg.fx()
+                            // return;
+                            cfg.text = cfg.text.split(':')[1]
+                            //   }
+                        }
+                    }
+
+                }
+
+            }
 
             // debugger
             cfg.text = cfg.text.replace('->', ' refers to ');
-            if ( window.addCommaAfterEachSentence ) {
+            if (window.addCommaAfterEachSentence) {
                 cfg.text += ' , '
             }
             $.ajax({

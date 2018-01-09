@@ -272,6 +272,14 @@
                 result.css('width', '')
                 return result
             }
+            c.dom.clearHeight = function clearHeight(id) {
+                var result = c.dom.b.find(id)
+                result = $(result)
+                result.css('max-height', '')
+                result.css('min-height', '')
+                result.css('height', '')
+                return result
+            }
             c.dom.removeUIComps = removeUIComps;
             c.dom.doNotRead = function doNotRead(id) {
                 var result = c.dom.b.find(id)
@@ -301,7 +309,7 @@
             }
 
 
-            c.dom.hasLinkWithText = function hasLinkWithText(searchForTxt) {
+            c.dom.hasLinkWithText = function hasLinkWithText(searchForTxt, dbg) {
 
                 var hasIt = false;
                 var arr = b.find('a')
@@ -309,11 +317,42 @@
                     //console.log(k,v)
                     var ui = $(v)
                     var text = ui.text().trim()
+                    if  ( dbg )
+                    console.log(text, searchForTxt)
                     if (text.length < searchForTxt.length) {
                         return;
                     }
 
-                    if (searchForTxt.includes(text)) {
+                    if (text.includes(searchForTxt)) {
+                        hasIt = true
+                        return false;
+                    }
+                })
+
+                return hasIt
+            }
+
+            c.dom.hasUIWithText = function hasUIWithText(searchForTxt, type, dbg) {
+                var hasIt = false;
+                type  = sh.dv(type, '*')
+                var arr = b.find(type)
+                arr.each(function ok(k, v) {
+                    //console.log(k,v)
+                    var ui = $(v)
+                    var text = ui.text().trim()
+
+                    if (text.length < searchForTxt.length) {
+                        return;
+                    }
+                    if  ( dbg )
+                        console.log(k, text, searchForTxt.length, searchForTxt.includes(text)) //, sh.paren(searchForTxt) )
+                    if  ( dbg && k == 133 ) {
+                    //    console.log(k, text, searchForTxt.length, searchForTxt.includes(text))
+                     //   debugger;
+                    }
+
+                    //
+                    if (text.includes(searchForTxt)) {
                         hasIt = true
                         return false;
                     }
@@ -752,6 +791,42 @@
             }
 
 
+            var isPHPBB = d.dom.hasUIWithText('Forum Software © phpBB Limited', 'div', false)
+                && d.dom.doesHaveLinkToHref('https://www.phpbb.com/')
+           // debugger;
+            if (isPHPBB) { //d.dom.hasLinkWithText('Powered by SMF')) {
+               //  debugger;
+                d.dom.removeUIComps('#page-header', '#nav-breadcrumbs',
+                    '#viewtopic' , 'c.postprofile.resized', '.action-bar')
+             //   d.dom.removeUIComps('.has-profile', '.signature')
+               d.dom.removeUIComps('.post-buttons')
+               d.dom.removeUIComps('.codebox_plus_about')
+                d.dom.removeUIComps('.profile-posts')
+                d.dom.removeUIComps('.profile-joined')
+                var hasProfile = d.dom.b.find('.has-profile')
+                console.log(hasProfile)
+                d.dom.padding0('.inner')
+               // d.dom.removeUIComps('.post_buttons')
+                d.dom.clearHeight('.postprofile')
+                //d.dom.removeUIComps('.inner')
+                d.dom.doNotRead('.poster_info')
+                d.dom.doNotRead('.subject')
+                d.dom.doNotRead('.smalltext')
+                d.dom.removeUIComps('td.smalltext')
+                var td = d.dom.b.find('td.smalltext')
+                // debugger;
+                d.dom.doNotRead('.quote')
+                d.dom.doNotRead('.quoteheader')
+                //d.dom.b.find('#dgp-ad-wrapper').parents('td').remove()
+                d.dom.b.find('#dgp-ad-wrapper').remove()
+                d.dom.b.find('.maintab_first').parent().parent().remove()
+
+                //d.dom.findByText('previous topic').parents('table').remove();
+                return;
+            }
+
+
+
             var isQuora1 = d.dom.find({type: 'a', textIncludes: 'Home', clazz: 'nav_item_link'})
             var isQuora2 = d.dom.find({type: 'a', textIncludes: 'Ask Question', clazz: 'AskQuestionButton'})
             var isQuora3 = d.dom.find({type: 'zz', textIncludes: 'Home', clazz: 'nav_item_link'})
@@ -842,6 +917,9 @@
 
                     return;
                 }
+
+
+
             }
 
             lookForMainArticle();
@@ -911,6 +989,10 @@
             }
 
             amazonArticle();
+
+            if ( b.find('.l-article-body-segment').exists() ) {
+                d.dom.replaceWith('.l-article-body-segment')
+            }
 
             if (b.find('#content').exists()) {
                 var comments = b.find('entry_comments')
@@ -1150,6 +1232,7 @@
         };
 
         tHelper.playAllSentences = function readText() {
+            window.skipJrlTitles= true;
             var tiny = tinyMCE.get('mainContent');
             var content = tinyMCE.get('mainContent').getContent();
             var b = $(tinyMCE.get('mainContent').getBody());

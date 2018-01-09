@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>Black Lizard Books</dc:publisher>
+    <dc:description>&lt;p class="description"&gt;SUMMARY:&lt;br&gt;A warm day on Central Avenue, and Philip Marlowe's hunch about the man beside him is as vague as the heat waves that dance above the sidewalk. The way business is looking, even a hunch is enough. Moose Malloy stands six five and one-half and weighs two hundred and sixty-four pounds, without his necktie. After eight years in the pen, he wants little Velma back, and no cops or mobsters are ready to stand in his way. Marlowe's tough enough for the ride, but he can't help thinking there's never been a happy ending to the story of beauty and the beast ...&lt;/p&gt;</dc:description>
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="Chandler, Raymond" opf:role="aut">Raymond Chandler</dc:creator>
+    <meta name="calibre:timestamp" content="2011-02-21T05:00:00+00:00"/>
+    <dc:title opf:file-as="Farewell My Lovely">Farewell My Lovely</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>2002-10-15T04:00:00+00:00</dc:date>
+    <dc:contributor opf:role="bkp">calibre (0.7.46) [http://calibre-ebook.com]</dc:contributor>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">da9c81b6-ae9a-4394-b647-e1c732c1f927</dc:identifier>
+    <dc:subject>Crime</dc:subject>
+  </metadata>
+  <manifest>
+    <item href="50.xhtml" id="50" media-type="application/xhtml+xml"/>
+    <item href="51.xhtml" id="51" media-type="application/xhtml+xml"/>
+    <item href="52.xhtml" id="52" media-type="application/xhtml+xml"/>
+    <item href="53.xhtml" id="53" media-type="application/xhtml+xml"/>
+    <item href="54.xhtml" id="54" media-type="application/xhtml+xml"/>
+    <item href="55.xhtml" id="55" media-type="application/xhtml+xml"/>
+    <item href="56.xhtml" id="56" media-type="application/xhtml+xml"/>
+    <item href="57.xhtml" id="57" media-type="application/xhtml+xml"/>
+    <item href="58.xhtml" id="58" media-type="application/xhtml+xml"/>
+    <item href="59.xhtml" id="59" media-type="application/xhtml+xml"/>
+    <item href="60.xhtml" id="60" media-type="application/xhtml+xml"/>
+    <item href="61.xhtml" id="61" media-type="application/xhtml+xml"/>
+    <item href="62.xhtml" id="62" media-type="application/xhtml+xml"/>
+    <item href="63.xhtml" id="63" media-type="application/xhtml+xml"/>
+    <item href="64.xhtml" id="64" media-type="application/xhtml+xml"/>
+    <item href="65.xhtml" id="65" media-type="application/xhtml+xml"/>
+    <item href="66.xhtml" id="66" media-type="application/xhtml+xml"/>
+    <item href="67.xhtml" id="67" media-type="application/xhtml+xml"/>
+    <item href="68.xhtml" id="68" media-type="application/xhtml+xml"/>
+    <item href="69.xhtml" id="69" media-type="application/xhtml+xml"/>
+    <item href="70.xhtml" id="70" media-type="application/xhtml+xml"/>
+    <item href="71.xhtml" id="71" media-type="application/xhtml+xml"/>
+    <item href="72.xhtml" id="72" media-type="application/xhtml+xml"/>
+    <item href="73.xhtml" id="73" media-type="application/xhtml+xml"/>
+    <item href="74.xhtml" id="74" media-type="application/xhtml+xml"/>
+    <item href="75.xhtml" id="75" media-type="application/xhtml+xml"/>
+    <item href="76.xhtml" id="76" media-type="application/xhtml+xml"/>
+    <item href="77.xhtml" id="77" media-type="application/xhtml+xml"/>
+    <item href="78.xhtml" id="78" media-type="application/xhtml+xml"/>
+    <item href="79.xhtml" id="79" media-type="application/xhtml+xml"/>
+    <item href="80.xhtml" id="80" media-type="application/xhtml+xml"/>
+    <item href="81.xhtml" id="81" media-type="application/xhtml+xml"/>
+    <item href="82.xhtml" id="82" media-type="application/xhtml+xml"/>
+    <item href="83.xhtml" id="83" media-type="application/xhtml+xml"/>
+    <item href="84.xhtml" id="84" media-type="application/xhtml+xml"/>
+    <item href="85.xhtml" id="85" media-type="application/xhtml+xml"/>
+    <item href="86.xhtml" id="86" media-type="application/xhtml+xml"/>
+    <item href="87.xhtml" id="87" media-type="application/xhtml+xml"/>
+    <item href="88.xhtml" id="88" media-type="application/xhtml+xml"/>
+    <item href="89.xhtml" id="89" media-type="application/xhtml+xml"/>
+    <item href="90.xhtml" id="90" media-type="application/xhtml+xml"/>
+    <item href="91.xhtml" id="91" media-type="application/xhtml+xml"/>
+    <item href="cover.jpeg" id="cover" media-type="image/jpeg"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="50"/>
+    <itemref idref="51"/>
+    <itemref idref="52"/>
+    <itemref idref="53"/>
+    <itemref idref="54"/>
+    <itemref idref="55"/>
+    <itemref idref="56"/>
+    <itemref idref="57"/>
+    <itemref idref="58"/>
+    <itemref idref="59"/>
+    <itemref idref="60"/>
+    <itemref idref="61"/>
+    <itemref idref="62"/>
+    <itemref idref="63"/>
+    <itemref idref="64"/>
+    <itemref idref="65"/>
+    <itemref idref="66"/>
+    <itemref idref="67"/>
+    <itemref idref="68"/>
+    <itemref idref="69"/>
+    <itemref idref="70"/>
+    <itemref idref="71"/>
+    <itemref idref="72"/>
+    <itemref idref="73"/>
+    <itemref idref="74"/>
+    <itemref idref="75"/>
+    <itemref idref="76"/>
+    <itemref idref="77"/>
+    <itemref idref="78"/>
+    <itemref idref="79"/>
+    <itemref idref="80"/>
+    <itemref idref="81"/>
+    <itemref idref="82"/>
+    <itemref idref="83"/>
+    <itemref idref="84"/>
+    <itemref idref="85"/>
+    <itemref idref="86"/>
+    <itemref idref="87"/>
+    <itemref idref="88"/>
+    <itemref idref="89"/>
+    <itemref idref="90"/>
+    <itemref idref="91"/>
+  </spine>
+  <guide>
+    <reference href="titlepage.xhtml" type="cover" title="Cover"/>
+  </guide>
+</package>

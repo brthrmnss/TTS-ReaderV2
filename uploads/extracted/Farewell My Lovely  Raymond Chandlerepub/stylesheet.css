@@ -1,0 +1,125 @@
+@namespace h "http://www.w3.org/1999/xhtml";
+.body {
+    display: block;
+    font-size: 1.29167em;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 5pt;
+    margin-right: 5pt;
+    margin-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    page-break-before: always
+    }
+.bs {
+    border-bottom: 0;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-top: 0;
+    border-width: 0;
+    color: rgb(0, 0, 0);
+    display: block;
+    font-size: 1.29032em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-align: center;
+    text-indent: 1.5em
+    }
+.bs1 {
+    border-bottom: 0;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-top: 0;
+    border-width: 0;
+    color: rgb(0, 0, 0);
+    display: block;
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-align: center;
+    text-indent: 1.5em
+    }
+.bs2 {
+    border-bottom: 0;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-top: 0;
+    border-width: 0;
+    color: rgb(0, 0, 0);
+    display: block;
+    font-size: 0.77419em;
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-align: left;
+    text-indent: 1.5em
+    }
+.bs3 {
+    border-bottom: 0;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-top: 0;
+    border-width: 0;
+    color: rgb(0, 0, 0);
+    display: block;
+    font-size: 0.64516em;
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-align: center;
+    text-indent: 1.5em
+    }
+.calibre {
+    line-height: 1.2
+    }
+.calibre1 {
+    border-bottom: 0;
+    border-top: 0;
+    display: block;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-indent: 1.5em
+    }
+.calibre2 {
+    border-bottom: 0;
+    border-top: 0;
+    display: block;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-indent: 1.5em
+    }
+.calibre3 {
+    font-style: italic
+    }
+.ts {
+    font-size: 0.75em
+    }

@@ -4,8 +4,8 @@ var EasyRemoteTester = shelpers.EasyRemoteTester;
 //where is mary?
 //C:\Users\morriste\train\train_drive\trash\marytts\marytts-5.1.2\marytts-5.1.2\bin
 
-function TTSAudition() {
-    var p = TTSAudition.prototype;
+function TTSTestCaching() {
+    var p = TTSTestCaching.prototype;
     p = this;
     var self = this;
     self.settings = {}
@@ -217,58 +217,31 @@ function TTSAudition() {
                 var voices = sh.breakStringIntoLinesSafe(body);
                 console.log(voices)
 
-
-                sh.each(voices, function addCmds(k, voice) {
-                    if (voice == '') {
-                        return
-                    }
-                    if (voice.includes('Microsoft ')) {
-                        return;
-                    }
-                    if (voice.includes('Voice List')) {
-                        return;
-                    }
-                    if ( ! voice.includes('Emma')) {
-                    // return;
-                    }
-                   //nn voice = voice.split(' ')[0]
-                    t2.addNext_NowRandom = function addNext_NowRandom(fx) {
-                        time = 9*1000*Math.random()
-                        //time  = 1000
-                        setTimeout(fx, time)
-                    }
-                    t2.addNext_NowRandom(function onK() {
-                        var txt =  'me too ..... im waiting for ur response ...'
-                        /*
-                         console.log('aaaa', voice)
-                         var cfg = {};
-                         cfg.text =txt
-                         cfg.voice = 'dfki-obadiah';
-                         cfg.voice = voice
-                         cfg.playLocally = true;
-                         cfg.trash = true;
-                         cfg.fxDone = function ok(){
-                         console.log('aaaa-done')
-                         t2.cb()
-                         }
-                         self.speak(cfg)
-                         */
-
-
+                var reqs = [
+                    {voice: 'IVONA 2 Brian', text: 'This is a test of  a sentenct', cacheAudio: true},
+                    {voice: 'IVONA 2 Kendra', text: 'Very short quote', cacheAudio: true},
+                    {voice: 'IVONA 2 Brian', text: 'that breaks a sentence', cacheAudio: true},
+                    {voice: 'IVONA 2 Brian', text: 'This is a test of  a sentenct', cacheActive: true},
+                    {voice: 'IVONA 2 Kendra', text: 'Very short quote', cacheActive: true},
+                    {voice: 'IVONA 2 Brian', text: 'that breaks a sentence', cacheActive: true}
+                ]
+                sh.each(reqs, function addCmds(k, voiceReq) {
+                    t2.addNext(function onK() {
                         var cfg = {};
-                        cfg.voice = voice;
+                        cfg.voice = voiceReq.voice;
                         cfg.rate = 7
                         cfg.volume = 50
                         cfg.volume = 30
                         cfg.endOld = false;
-                        cfg.playAudioAfter = true;
+                        //cfg.playAudioAfter = true;
                         cfg.randomFile = true;
 
                         var req = {}
                         req.url = 'http://127.0.0.1:8080/speak'
                         req.method = 'POST'
                         req.json = {}
-                        req.json.text = txt; //sh.dv(text, 'boo.')
+                        sh.mergeObjects(voiceReq, req.json)
+                        req.json.text = voiceReq.text; //txt; //sh.dv(text, 'boo.')
                         if (cfg) {
                             sh.mergeObjects(cfg, req.json)
                         }
@@ -278,14 +251,15 @@ function TTSAudition() {
                                 //	console.log(body) // Show the HTML for the Google homepage.
                             }
                             //console.log("\n\n\n\n\n\n")
-                            console.log('->', 'logged', error)
+                            if (error)
+                                console.log('->', 'logged', error)
                             //console.error('result', error, body)
                             t2.cb()
                         })
                     }, k)
-
                 })
 
+                //t2.cb()
                 return;
             })
     }
@@ -314,11 +288,11 @@ function TTSAudition() {
 
 }
 
-exports.TTSAudition = TTSAudition;
+exports.TTSTestCaching = TTSTestCaching;
 
 if (module.parent == null) {
 
-    var s = new TTSAudition();
+    var s = new TTSTestCaching();
     s.init()
     s.test2()
 }

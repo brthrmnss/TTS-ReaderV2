@@ -4611,6 +4611,14 @@ window.uploadHTMLForPage = function uploadHTMLForPage(_fxPageComplete, processPa
     //console.clear();
     console.log2('uploadHTMLForPage')
 
+    var spans = $('#page_'+($scope.pdfCurrentPage-1)).find('#XLayer').children('span')
+    console.log('size of spans', spans.length)
+    $.each(spans, function addWH(k,v){
+        var ui = $(v)
+        ui.css('height', ui.height())
+        ui.css('width', ui.width())
+    })
+
     var pageNum = $scope.pdfViewerAPI.viewer.currentPage-1
     var url = 'http://127.0.0.1:6006/uploadPageOfBook';
     var data = {}

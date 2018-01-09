@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Pdf Reloader</title>
     <!--<script src="js/reloader.js"></script>-->
     <script type="application/javascript" src="js/lib/jquery-1.11.2.min.js"></script>
     <script src="js/lib/js.cookie.js"></script>
@@ -27,7 +27,7 @@
 
     <style>
         .highlight {
-            background-color: #FFC619  !important;
+            background-color: #FFC619;
             opacity: 0.3;
             opacity: 0.9;
         }
@@ -38,7 +38,7 @@
         }
 
         .highlight3 {
-            background-color: #14CCA0 !important;
+            background-color: #14CCA0;
             opacity: 0.5;
         }
 
@@ -117,6 +117,39 @@
             text-align: left;
         }
 
+    </style>
+
+    <style>
+        .page {
+            position: relative;
+            display: block;
+            /*margin: 10px auto;*/
+            margin: 0px !important;
+            box-shadow: 0px 0px 10px #666666;
+            background-color: #ffffff;
+        }
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            height: 1000px;
+        }
+        .text-layer > span {
+            /*color: transparent;*/
+            position: absolute;
+            white-space: pre;
+            cursor: text;
+            transform-origin: 0% 0%;
+        }
+        #XLayer > span {
+            /* color: transparent;*/
+            position: absolute;
+            white-space: pre;
+            cursor: text;
+            transform-origin: 0% 0%;
+        }
     </style>
 </head>
 <body style="text-align:left;">
@@ -288,10 +321,10 @@
 
 
 </div>
-<div  id="bookHolderContainerClone"  style="padding:20px;" >
+<!--<div  id="bookHolderContainerClone"  style="padding:20px;" >
 
-</div>
-<div style="padding:20px;">
+</div>-->
+<div style="padding:0px;">
     <div id="bookHolderContainer2">
         ---yyy---
     </div>
@@ -363,14 +396,13 @@
         //  debugger
         reloader.reloadWhen(leaf);
         //reloader.reloadWhen('index.html');
-        reloader.reloadWhen('bookCvert');
+        reloader.reloadWhen('bookCvert2');
         reloader.reloadWhen('epub_reload_viewer');
-        reloader.reloadWhen('speakHTMLText_CleanedV2');
         reloader.reloadIgnoreIf('noreload');
         // reloader.reloadWhen('ArucoBaby.js');
         // reloader.reloadWhen('baby_lib');
 
-       // G:\Dropbox\projects\delegation\Reader\TTS-Reader\www\js\speakHTMLText_CleanedV2.js
+
         /*   reloader.reloadWhenFx('baby_rend2.js', function onTestOneJs(a, b, c) {
          console.log('reload it', a, b, c);
          })
@@ -395,13 +427,6 @@
         onReloader()
     } catch (e) {
         console.error('e', e)
-    }
-
-    function jumptopage(i) {
-        $('[sentence-index='+i+']')[0].scrollIntoView()
-        var scrollTop = $(window).scrollTop()
-        $(window).scrollTop(scrollTop-260)
-        //document.getElementById("containingDiv").scrollTop += 280;
     }
 </script>
 

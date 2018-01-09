@@ -8,16 +8,22 @@ var nlp = require('compromise')
 var doc = nlp('London is calling')
 
 let file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/Farewell My Lovely  Raymond Chandlerepub/epub.html"
+
+var maxSize = 50 * 1000
+
+
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/The Mind Illuminated_ A Complet  John Yatesepub/epub.html"
+//maxSize = null;
+
 console.log(file)
 file = sh.deos(file)
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub.html"
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub_text.html"
 var contents = sh.readFile(file);
 console.log('orig', contents.length)
-if (contents.length > 50 * 1000) {
+if (maxSize && contents.length > maxSize) {
     //contents = contents.slice(0, contents.length *
-    contents = contents.slice(0, contents.length * .03)
+    contents = contents.slice(0, maxSize )//contents.length * .03)
 }
 
 var contentsHTML = '<div id="txtWrapper">' + contents + '</div>'
@@ -1104,6 +1110,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                     var div = u.tag('div')
                                     // holder.append(div)
                                     div.css('right', '0px')
+                                    // div.css('right', '20px')
                                     div.text(txt)
 
                                     div.css('margin-left', '70%')
@@ -1531,9 +1538,12 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         txt: h.currentSentence + str,
                         ui: _parent, why: why,
                         spans: h.currentSpans,
-                        images: h.images
+                        images: h.images,
+                        breaksLink: h.breaksLine
                     };
 
+
+                    h.breaksLine = null;
 
                     var quotesSplit = dictObj.txt.split('"')
                     var qqCount = quotesSplit.length - 1;
@@ -1625,7 +1635,14 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     }
 
                     h.dictSentences2[h.sentences.length - 1] = dictObj;
+
+                    $.each(dictObj.spans, function onChange(k, v) {
+                        var ui = $(v)
+                        ui.attr('sent-index', h.sentences.length)
+                    })
                     var span = $('<span >' + str + '</span>');
+                    span.attr('sentence-index', h.sentences.length)
+
 
                     if (h.data.debugWithOpacity) {
                         span.css({opacity: '0.2'});
@@ -1675,10 +1692,12 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         _parent.append(span); //add to div
                     }
 
+
                     h.quote.getNouns(dictObj)
                     h.currentSentence = ''; //refresh
                     h.currentSpans = {};
                     h.images = [];
+                    h.breaksLine = null;
                     self.lastObj = dictObj;
                 }
 
@@ -1789,8 +1808,11 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                     panel.append(uiUtils.lastTable)
                     panel.css('position', 'fixed')
                     panel.css('overflow-y', 'auto')
-                    panel.css('height', '150px')
+                    panel.css('height', '250px')
                     panel.css('z-index', '1001')
+                    panel.attr('id', 'debugCharactersDialog')
+                    panel.css('opacity', 0.8)
+                    panel.css('right', '10px')
                     $('body').prepend(panel)
 
                     function getIndex(i) {
@@ -1804,7 +1826,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                 var speakingWords = ['said']
                                 var y = sh.isAnyInAny2(speakingWords, s.verbs, false)
                                 if (y.length > 0) {
-                                   // debugger
+                                    // debugger
                                 }
                                 s.speakingVerbs = y;
                                 dictObj.stats = s;
@@ -1821,7 +1843,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         d.sents.dictObjs = []
                         d.sents.txt = [];
                         //for ( var id = i; i < i+5; i++)
-                        var times = '12345'.split('')
+                        var times = '123456789123456789'.split('')
                         $.each(times, function onK(k, v) {
                             var dictObj = h.dictSentences2[i + k + 0]
                             // console.log('ok', k,v)
@@ -1840,20 +1862,19 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                     d.sents.firstOneQuote = split[0]
                                     d.sents.firstOnceEnding = split[1]
                                     endQuote = true;
-                                    d.next = h.dictSentences2[i + k + 1  ]
-                                   ///d.next = null
-                                   // d.sents.nextText =  d.sents.firstOnceEnding
+                                    d.next = h.dictSentences2[i + k + 1]
+                                    ///d.next = null
+                                    // d.sents.nextText =  d.sents.firstOnceEnding
                                     return false;
                                 }
-                            } else{
+                            } else {
                                 if (dictObj.txt.includes('"')) {
 
                                     endQuote = true;
-                                    d.next = h.dictSentences2[i + k + 1 ]
+                                    d.next = h.dictSentences2[i + k + 1]
                                     return false;
                                 }
                             }
-
 
 
                         })
@@ -1861,25 +1882,40 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                         d.prev = h.dictSentences2[i - 1]
                         if (d.prev) {
                             d.sents.prevText = (d.prev.txt);
+                            if (o.breaksLink) {
+                                d.sents.prevText = '~pb'
+                            }
                         }
                         if (d.next) {
                             d.sents.nextText = (d.next.txt);
                             var nextSpan = getFirstSpan(d.next)
 
+                            if (o.breaksLink) {
+                                //  d.sents.nextText = '_b'
+                            }
+
+                            if (d.next.breaksLink) {
+                                d.sents.nextText = '~nb'
+                            }
                         }
 
+
+                        if (o.txt.includes('ding')) {
+                            //debugger
+                        }
                         function getFirstSpan(o) {
                             var firstSpan = null;
 
-                            $.each(o.spans, function getF(k,v) {
+                            $.each(o.spans, function getF(k, v) {
                                 v = $(v)
                                 firstSpan = v;
                                 return false;
                             })
                             return firstSpan
                         }
+
                         var firstSpan = getFirstSpan(o)
-                        var yy  = $(firstSpan).css('top')
+                        var yy = $(firstSpan).css('top')
                         d.sents.txt = d.sents.txt.join(' ')
 
                         /*$.each(times, function searchBackwards(k,v) {
@@ -1900,91 +1936,284 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                     }
 
+                    function getSpeakerInfo(ith) {
+                        var speakerInfo = {}
+                        var sI = speakerInfo;
+
+                        var txt = ith.nonQuotes.join(' ')
+
+                        //txt = txt.toLowerCase();
+
+                        words = txt.match(/\S+/g) || []
+
+                        if (txt.includes('said')) {
+                            speakerInfo.speakingVerb = 'said'
+                            var i = words.indexOf('said')
+                            var prev = words[i - 1]
+                            var next = words[i + 1]
+
+                            if (sh.str.isCapitalized(prev)) {
+                                sI.speaker = prev;
+                            }
+                            if (sh.str.isCapitalized(next)) {
+                                sI.speaker = next;
+                            }
+                            if (sI.speaker == null) {
+                                sI.speakerLastResort = 'prev'
+                                sI.speaker = prev;
+                            }
+                            if (sI.speaker == null) {
+                                sI.speakerLastResort = 'next'
+                                sI.speaker = next;
+                            }
+                        }
+
+                        var validVerbs = ['purred']
+
+                        var validPeople = ['big man']
+
+
+                        if (speakerInfo.speakingVerb == null) {
+                            var verbs = nlp(txt).verbs().out('array');
+                            if (itH.debugAllQuotes)
+                                console.log('verbs', verbs)
+                            sI.verbs = verbs;
+                        }
+
+
+                        if (speakerInfo.speakingVerb == null) {
+                            var verbs = nlp(txt).verbs().out('array');
+                            if (verbs.length == 0) {
+                                var forcedVerbs = sh.isAnyInAny2(words, validVerbs, false)
+                                var i = words.indexOf(forcedVerbs[0])
+                                var prev = words[i - 1]
+                                var next = words[i + 1]
+                                sI.speaker = prev
+                                sI.verbs = verbs
+                                speakerInfo.speakingVerb = forcedVerbs[0]
+                            }
+
+                            //console.log(verbs)
+                        }
+
+                        //console.log('speakerInfo', speakerInfo)
+
+                        return speakerInfo;
+                    }
+
                     wroteHeader = false;
                     var ic = 0
+                    var itH = {};
+                    itH.brokenLink = false
+                    itH.nonQuotes = [];
+                    itH.abbrv = false;
+                    itH.abbrv2 = false;
+                    itH.abbrv = false;
+                    itH.startAt = null;
+                    itH.endAt = null;
+                    //itH.startAt = 100;
+                    //itH.endAt = 110;
                     $.each(h.dictSentences2, function processChar(i, dictObj) {
-                        // console.log('di
-                        // ctObj', dictObj)
-                        i = parseInt(i)
-                        var allow = false;
-                        if (dictObj.txt.includes('Smokes')) {
-                            //asdf.g
-                        }
-
-                        if (dictObj.txt.includes('"')) {
-                            allow = true;
-                        }
+                            if (itH.abbrv && i > 70) {
+                                return false;
+                            }
 
 
-                        if (dictObj.isQuote) {
-                            allow = true;
-                        }
+                            if (itH.abbrv2 && i < 60) {
+                                return;
+                            }
 
-                        if (allow == false) {
+                            if (itH.startAt && i < itH.startAt) {
+                                return;
+                            }
+
+
+                            if (itH.endAt && i > itH.endAt) {
+                                return false;
+                            }
+
+                            // console.log('di
+                            // ctObj', dictObj)
+                            i = parseInt(i)
+                            var allow = false;
+                            if (dictObj.txt.includes('Smokes')) {
+                                //asdf.g
+                            }
+
+                            if (dictObj.txt.includes('"')) {
+                                allow = true;
+                            }
+
+                            if (dictObj.breaksLink) {
+                                if (itH.brokenLink) {
+                                    //  return
+                                } else {
+                                    if (wroteHeader) {
+
+
+                                        var txtNonQuotes = itH.nonQuotes.join('<br/>')
+                                        //txtNonQuotes+=' '+i
+
+
+                                        var sI = speakerInfo = getSpeakerInfo(itH)
+
+
+                                        //console.log('log', sI)
+                                        txtNonQuotes = txtNonQuotes.replace(sI.speakingVerb,
+                                            sh.html.wrapInHTMLTag(sI.speakingVerb, 'b'))
+
+                                        txtNonQuotes = txtNonQuotes.replace(sI.speaker,
+                                            sh.html.wrapInHTMLTag(sI.speaker, 'span',
+                                                {
+                                                    'color': 'blue',
+                                                    'text-decoration': 'underline'
+                                                }))
+
+                                        u.lastRow.children().slice(-2).html(txtNonQuotes)
+
+                                        u.lastRow.children().slice(-1).html(speakerInfo.speaker)
+
+                                        //console.log(i, u.lastRow.length, u.lastRow.text())
+                                        itH.nonQuotes = []; //i+Math.random()]
+                                        //itH.nonQuotes = [ i+Math.random()]
+
+                                        u.table.addRow('', '', '', '', '', '', '', '');
+                                        u.lastRow.css('border-bottom', '5px solid #DBDBDB')
+
+
+                                        itH.brokenLink = true
+
+
+                                    }
+                                }
+                            }
+
+
+                            if (dictObj.isQuote) {
+                                allow = true;
+                            }
+
+                            if (itH.debugAllQuotes)
+                                console.log(sh.t, '....', i, sh.paren(dictObj.txt),
+                                    dictObj.isQuote, itH.inQuote)
+                            if (allow == false) {
+                                return;
+                            }
+                            if (allow == false && i > 30) {
+                                return;
+                            }
+
+                            if (dictObj.processedQuotes) {
+                                if (itH.debugAllQuotes)
+                                    console.log('procced quotes')
+                                return;
+                            }
+                            itH.brokenLink = false
+                            if (dictObj.txt.startsWith('"') || itH.inQuote) {
+                                var d = searchForward(i)
+
+                                if (!d.sents.prevText.startsWith('~')) {
+                                    if (itH.nonQuotes.slice(-1)[0] != d.sents.prevText)
+                                        itH.nonQuotes.push(d.sents.prevText)
+                                }
+                                if (d.sents.nextText && !d.sents.nextText.startsWith('~')) {
+                                    if (itH.nonQuotes.slice(-1)[0] != d.sents.nextText)
+                                        itH.nonQuotes.push(d.sents.nextText)
+                                }
+
+                                itH.inQuote = true;
+
+                            } else if (itH.inQuote) {
+                                //var d = searchForward(i)
+
+                                /*if (!d.sents.prevText.startsWith('~')) {
+                                 if (itH.nonQuotes.slice(-1)[0] != d.sents.prevText)
+                                 itH.nonQuotes.push(d.sents.prevText)
+                                 }
+                                 if (d.sents.nextText && !d.sents.nextText.startsWith('~')) {
+                                 if (itH.nonQuotes.slice(-1)[0] != d.sents.nextText)
+                                 itH.nonQuotes.push(d.sents.nextText)
+                                 }
+                                 */
+
+                                //itH.inQuote = true;
+
+                            }
+                            else {
+                                d = {}
+                                d.sents = {}
+                                if (itH.debugAllQuotes)
+                                console.log(sh.t, 'new sent')
+                            }
+
+
+                            if (dictObj.txt.endsWith('"')) {
+                                itH.inQuote = false;
+                            }
+
+
+                            var prev2 = getIndex(i - 2)
+                            var prev = getIndex(i - 1)
+                            var next = getIndex(i + 1)
+                            var next2 = getIndex(i + 2)
+
+
+                            /*   if ( next && next.breaksLink ) {
+                             var txtNonQuotes = itH.nonQuotes.join(', ')
+                             itH.nonQuotes = []
+                             //asdf.g
+                             //  asdf.g
+                             }
+                             */
+                            var spkdbug = ''
+                            if (prev && prev.stats.speakingVerbs.length > 0) {
+                                spkdbug += '-1' + 'p ' + prev.stats.speakingVerbs
+                            }
+                            var dictObjStr = ''
+                            //  dictObjStr += dictObj.txt
+                            //sh.toJSONString(dictObj)
+                            if (wroteHeader != true) {
+                                wroteHeader = true
+                                u.table.addHRow('i', 'txt', '#', 'prev', 'for', '', '', '(s)')
+                                u.table.rowWidth(null, '30%')
+                                u.table.rowWidth(null, '30%')
+                            }
+                            u.table.addRow(i, d.sents.txt + '<br/>' + sh.paren(dictObj.txt), dictObj.spans.length,
+                                d.sents.prevText, d.sents.nextText, txtNonQuotes, '', '')
+
+                            u.lastRow.children().first().css('vertical-align', 'top')
+                            u.lastRow.children().first().css('opacity', '0.6')
+                            u.lastRow.children().first().attr('onclick', 'jumptopage(' + i + ')')
+                            u.lastRow.css('border-bottom', 'black 1px solid')
+
                             return;
-                        }
-                        if (allow == false && i > 30) {
-                            return;
-                        }
+                            //var color =
+                            var randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                            var colors = ['FFC619', '14CCA0', 'a94442']
+                            ic++;
+                            if (ic > colors.length - 1) {
+                                ic = 0;
+                            }
+                            randomColor = colors[ic]
 
-                        if (dictObj.processedQuotes) {
-                            return;
-                        }
-                        if (dictObj.txt.startsWith('"')) {
-                            var d = searchForward(i)
-                        } else {
-                            d = {}
-                            d.sents = {}
-                        }
+                            randomColor = '#' + randomColor
+                            var o = uiUtils.hexToRgb(randomColor)
+                            var p = [o.r, o.g, o.b, 0.3].join(', ')
+                            //  alert( hexToRgb("#0033ff").g );
 
-                        var prev2 = getIndex(i - 2)
-                        var prev = getIndex(i - 1)
-                        var next = getIndex(i + 1)
-                        var next2 = getIndex(i + 2)
-
-
-                        var spkdbug = ''
-                        if (prev.stats.speakingVerbs.length > 0) {
-                            spkdbug += '-1' + 'p ' + prev.stats.speakingVerbs
-                        }
-                        var dictObjStr = ''
-                        //  dictObjStr += dictObj.txt
-                        //sh.toJSONString(dictObj)
-                        if (wroteHeader != true) {
-                            wroteHeader = true
-                            u.table.addHRow('i', 'txt', '#', 'prev', 'for')
-                            u.table.rowWidth(null, '150px')
-                        }
-                        u.table.addRow(i, d.sents.txt + '<br/>' + sh.paren(dictObj.txt), dictObj.spans.length, d.sents.prevText, d.sents.nextText)
-
-                        u.lastRow.css('border-bottom', 'black 1px solid')
-                        return;
-                        //var color =
-                        var randomColor = Math.floor(Math.random() * 16777215).toString(16);
-                        var colors = ['FFC619', '14CCA0', 'a94442']
-                        ic++;
-                        if (ic > colors.length - 1) {
-                            ic = 0;
-                        }
-                        randomColor = colors[ic]
-
-                        randomColor = '#' + randomColor
-                        var o = uiUtils.hexToRgb(randomColor)
-                        var p = [o.r, o.g, o.b, 0.3].join(', ')
-                        //  alert( hexToRgb("#0033ff").g );
-
-                        randomColor = 'rgba' + sh.paren(p)
-                        //rgba(54, 25, 25, .5);
-                        // debugger
-                        $.each(dictObj.spans, function processChar(y, span) {
-                            //span.css({'color': randomColor})
+                            randomColor = 'rgba' + sh.paren(p)
+                            //rgba(54, 25, 25, .5);
+                            // debugger
+                            $.each(dictObj.spans, function processChar(y, span) {
+                                //span.css({'color': randomColor})
+                                //debugger
+                                $(span).css('background-color', randomColor)
+                                //  $(span).text('asdf')
+                            });
                             //debugger
-                            $(span).css('background-color', randomColor)
-                            //  $(span).text('asdf')
-                        });
-                        //debugger
-                        //console.log(2,'colorize', i, dictObj)
-                    });
+                            //console.log(2,'colorize', i, dictObj)
+                        }
+                    );
 
 
                     return;
@@ -2375,7 +2604,12 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             //why: debug ba d node types
                             //console.error('adding ' +  tab +  child.nodeName)
                             var nodeType = child.nodeName;
+                            //console.log(nodeType, child.type)
                             if (skipTagTypes.indexOf(nodeType) != -1) {
+                                return;
+                            }
+                            if (nodeType == null &&
+                                skipTagTypes.indexOf(child.type.toUpperCase()) != -1) {
                                 return;
                             }
                             var tagTypesVisibleCheck = ['SPAN', 'DIV']
@@ -2544,12 +2778,14 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                                 h.images.push(child);
                             }
                             else if ($(child).is('p')) {
+                                h.breaksLine = true
                                 //new sentence
                                 h.addSentence2('', null, 'p');
                                 h.quote.endQuoteForcily('p is breaking')
                             }
                             else if ($(child).is('br') || headingLike) {
                                 //new sentence
+                                h.breaksLine = true
                                 h.addSentence2('', null, 'br tag like')
                                 h.quote.endQuoteForcily('n is breaking')
                             }
@@ -2585,7 +2821,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
 
                 h.colorizeSentences();
-                //asdf.quotes h.utils.getQuotes(h.sentences)
+//asdf.quotes h.utils.getQuotes(h.sentences)
                 window.h = h;
 
 
@@ -2599,7 +2835,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 h.findQuoteSpeakers();
 
 
-                // debugger; //what is the last sentence? ...
+// debugger; //what is the last sentence? ...
                 /*
                  console.log('display helper', window.h)
                  if (h.quote.showWhenDone) {
@@ -2613,15 +2849,62 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 var dirStore = sh.fs.trash('bookCvert')
                 sh.fs.mkdirp(dirStore)
                 var fileOutput = sh.fs.join(dirStore, 'test.html')
-                sh.writeFile(fileOutput, $.html())
+                var script =
+                    `
+                    function setTimeout2() { 
+                        var sH = window.sentenceHelper; 
+                        console.log('sh', sH)
+                        $.each(window.sentences, function reConsistute(k,v) { 
+                            if(v.images == null) {
+                             v.images = []
+                            }
+                        });
+                       // debugger
+                        sH.sideLoadSentences(window.sentences)
+                        
+                        //$('#debugCharactersDialog').remove()
+                    }
+                    setTimeout(setTimeout2, 750)
+                    `
+                var scripts = '';
+                scripts += sh.html.wrapInHTMLTag(script, 'script')
+
+                //console.log()
+
+                var script = '' + 55
+                //var clone = sh.clone(h.dictSentences2)
+                var clone = (h.dictSentences2)
+                //console.log('clone', clone)
+                sh.each(clone, function rem(k, v) {
+                    v.spans = null
+                    delete v.spans
+                    delete v.breaksLink
+                    delete v.ui
+                    delete v.speaker
+                    delete v.images
+
+                    return;
+                    try {
+                        sh.clone(v)
+                    } catch ( e ) {
+                        console.log('cant cag',k)
+                        debugger
+                    }
+                })
+                script = 'window.sentences = ' + sh.toJSONString(clone)
+
+                scripts += sh.html.wrapInHTMLTag(script, 'script')
+
+
+                sh.writeFile(fileOutput, $.html() + scripts)
 
                 var q = h.quote
                 console.log('took', u.secs(h.data.timeDate))
 
-                console.log('q', q.data.nouns)
+//  console.log('q', q.data.nouns)
                 var ReloadWatcher = require('./ReloaderWatcher.js').ReloadWatcher;
                 ReloadWatcher.reloadFile('bookCvert')
-                // debugger
+// debugger
                 return;
 
             }
@@ -2881,7 +3164,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
     }
 
 
-    // initSpeakerControls()
+// initSpeakerControls()
 }
 
 console.log('loaded file speakHTMLTest_Cleaned.js')

@@ -83,6 +83,20 @@ function onProcessBookInWorld(req, res) {
 app.get("/process_book_in_node", onProcessBookInWorld);
 
 
+function onProcessPdfBookInNode(req, res) {
+    var txt = sh.readFile('www/pdf_book_processor_reload_viewer.html');
+    var fileContent = '';
+
+    var dirStore = sh.fs.trash('bookCvert')
+    var fileOutput = sh.fs.join(dirStore, 'test_pdf.html')
+    fileContent = sh.readFile(fileOutput)
+
+    console.log('size of file', fileOutput, fileContent.length)
+    txt = txt.replace('---yyy---', fileContent)
+    res.send(txt)
+}
+app.get("/process_pdf_book_in_node", onProcessPdfBookInNode);
+
 function onProj1TextToHTML(req, res) {
     var txt = sh.readFile('www/proj1_text_to_html.html');
     var fileContent = '';
