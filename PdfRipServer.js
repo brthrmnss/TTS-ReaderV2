@@ -163,6 +163,9 @@ function PdfRipServer() {
 
             var html = p.rawContents;
             var dirTestPages = sh.fs.join(__dirname, 'rips', 'testPages')
+            if (p.dirName) {
+                dirTestPages += '/' + p.dirName + '/'
+            }
             sh.fs.mkdirp(dirTestPages)
             var dirFile = sh.fs.join(dirTestPages, p.page_name + '.html')
 
@@ -208,7 +211,7 @@ function PdfRipServer() {
 
             /*     sh.log.file(dirFile, 'output to')*/
             console.log(dirFile, 'output to')
-            console.log('file:///'+sh.slash(dirFile), 'output to')
+            console.log('file:///' + sh.slash(dirFile), 'output to')
             sh.writeFile(dirFile, html)
 
             res.send('done')
@@ -239,7 +242,19 @@ function PdfRipServer() {
             var imageBuffer = decodeBase64Image(data);
             console.log('bpp', p.name)
             var name = p.name;
-            sh.writeFile(__dirname + '/' + 'rips/image/' + name, imageBuffer.data, 'base64')
+
+            var fileName = __dirname + '/' + 'rips/image/'
+            if (p.dirName) {
+                fileName += '' + d.fileName + '/'
+            }
+
+            fileName += name;
+            if (name.includes('/')) {
+                var path = sh.fs.base(fileName)
+                sh.fs.mkdirp(path)
+            }
+            console.log('fileName', fileName, name, path)
+            sh.writeFile(fileName, imageBuffer.data, 'base64')
             res.send('done')
             return;
             upload(req, res, function (err) {
@@ -263,7 +278,29 @@ function PdfRipServer() {
             });
         });
 
+        app.post('/doUpJSON', function doUpJSON(req, res) {
+            var p = req.body;
+            //console.log(imageBuffer, p);
+            var data = p.data;
+            console.log('bpp', p.name)
+            var name = p.name;
 
+            var key = p.key;
+            var val = p.val;
+
+            var fileName = __dirname + '/' + 'rips/jsons/' + name + '.json';
+            var path = sh.fs.base(fileName)
+            sh.fs.mkdirp(path)
+            var contents = sh.readJSONFile(fileName, {}, true)
+
+            var TestEvalRemoteJSONPos = require(__dirname + '/' + 'TestEvalRemoteJSONPos.js').TestEvalRemoteJSONPos
+
+            TestEvalRemoteJSONPos.setVal(key, val, contents)
+
+            sh.writeJSONFile(fileName, contents)
+            res.send('done')
+            return;
+        });
         app.listen(self.settings.port, function () {
             //console.log('Listening on ' + app.address().port)
         });

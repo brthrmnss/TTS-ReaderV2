@@ -419,8 +419,93 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                 self.data.currentSentences.sentences.length = arr.length
 
                 self.data.currentSentences.dictSentences2 = arr
-//
             }
+
+
+            p.sideLoadSentences2 = function sideLoadSentences2(arrSentenceObjs, limitTo) {
+                var dictSentences = {}
+                var spansByIndex = {}
+                var root = $('body')
+                if (limitTo) {
+                    root = limitTo
+                }
+                var sp = root.find('span')
+                var dictSpanIndexToSpan = {}
+                $.each(sp, function a(k, v) {
+                    var ui = $(v)
+                    var sI = ui.attr('spanIndex')
+                    if (sI == null) {
+                        return
+                    }
+                    sI = parseInt(sI)
+
+                    dictSpanIndexToSpan[sI] = ui;
+
+                    return;
+                    var span = dictSpanIndexToSpan[parseInt(s) - 1]
+                    if (dictObj == null) {
+                        console.log('...')
+                        return
+                    }
+                    dictObj.ui = [ui]
+                    dictObj.spans = [ui]
+                })
+
+                $.each(arrSentenceObjs, function a(k, sentDict) {
+                    sentDict.spans = []
+                    sentDict.txt = sentDict.sentence;
+                    $.each(sentDict.spansNumbers, function a(k, spansNumber) {
+                        var span = dictSpanIndexToSpan[spansNumber]
+                        //debugger
+                        if (span) {
+                            sentDict.spans.push(span)
+                        }
+                        if (sentDict.spans.length == 0) {
+                            debugger
+                        }
+                    })
+                    sentDict.spans =
+                        sentDict.ui = sentDict.spans; //.push(span)
+                    return;
+                    var ui = $(v)
+
+
+                    var s = ui.attr('sentence-index')
+                    if (s == null) {
+                        return
+                    }
+                    var dictObj = dict[parseInt(s) - 1]
+                    if (dictObj == null) {
+                        console.log('...')
+                        return
+                    }
+                    dictObj.ui = [ui]
+                    dictObj.spans = [ui]
+                })
+
+                /*
+                 var arr = [];
+                 $.each(dict, function a(k, dictObj) {
+                 if (dictObj.ui == null) {
+                 delete dict[k]
+                 return;
+                 }
+                 arr.push(dictObj)
+                 })
+                 */
+
+                self.data.currentSentences = {}
+                self.data.currentSentences.dictSentences2 = arrSentenceObjs
+
+                self.data.currentSentences.sentences = {};
+                self.data.currentSentences.sentences.length = arrSentenceObjs.length
+
+                self.data.currentSentences.dictSentences2 = arrSentenceObjs
+
+                //self.data.currentSentences = 0
+                window.h.dictSentences2 = arrSentenceObjs;
+            }
+
             p.onPlay2 = function onPlay2(event, justScrollToPosition,
                                          changeIndex, force, keepPlayState) {
 
@@ -537,6 +622,13 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                 }
 
+                if (window.playIndexAt0) {
+                    window.playIndexAt0 = false;
+                    startOnUIElement = $()
+                    startOnUIElement = c.dictSentences2[0].spans[0]
+                    window.playIndexAt02 = true;
+                    playIndex = 0
+                }
 
                 var async = $.async(c.dictSentences2,
                     function procSentence(k, sentenceObj, fxEnd, controller) {
@@ -556,6 +648,10 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                         }
 
+                        if (window.playIndexAt02) {
+                            window.playIndexAt02 = null
+                            startOnUIElement = null;
+                        }
                         if (startOnUIElement != null) {
                             $.each(sentenceObj.spans, function (kI, kV) {
                                 if (foundStartingElement == false) {
@@ -569,6 +665,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             });
 
                             if (foundStartingElement == false) {
+                                console.warn('foundStartingElement', '== false')
                                 fxEnd()
                                 return;
                             }
@@ -590,6 +687,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
                             // debugger
                             //sentence = sentence.replace(/#/gi, '');
                             console.log('looking for', sentence);
+                            console.log('\t', sentenceObj)
                             self.clearAllSpans()
                             //pH.clearAllspans();
                             var firstSentenceElement = null;
@@ -663,6 +761,7 @@ window.fxHtmlSpeaker = function fxHtmlSpeaker() {
 
                     },
                     function onDone() {
+                        uiUtils.cid(window.fxDoneCurrentPage)
                         // helper.goToNextPage();
                     }, 10,
                     playIndex)

@@ -59,7 +59,7 @@
 
         function initStyles() {
 
-           // return;
+            // return;
             /*
              background-color: #EEF8C8;
              opacity: 1;
@@ -161,7 +161,7 @@
                 var href = imgYahoo.attr('src');
 
                 if (imgYahoo.length > 0 && href &&
-                   href.includes(href)) {
+                    href.includes(href)) {
                     return true;
                 }
                 return false
@@ -287,15 +287,26 @@
                 result.addClass('doNotReadComp')
             }
 
-            c.dom.removeTextThatSays = function removeTextThatSays(fxCall) {
+            c.dom.removeTextThatSays = function removeTextThatSays(fxCall, all) {
                 var arr = b.find('*').contents().filter(function () {
                     return this.nodeType === 3;
                 });
 
                 arr.add(b.find('span'))
+
+                if (all) {
+                    arr = b.find('*');
+                }
                 arr.each(function ok(k, v) {
                     //console.log(k,v)
+
                     var ui = $(v)
+                    if (all) {
+                        if (ui.children().length > 0) {
+                            return;
+                        }
+                    }
+
                     var text = ui.text().trim()
 
                     var text2 = text.replace(/ +(?= )/g, '');
@@ -317,8 +328,8 @@
                     //console.log(k,v)
                     var ui = $(v)
                     var text = ui.text().trim()
-                    if  ( dbg )
-                    console.log(text, searchForTxt)
+                    if (dbg)
+                        console.log(text, searchForTxt)
                     if (text.length < searchForTxt.length) {
                         return;
                     }
@@ -334,7 +345,7 @@
 
             c.dom.hasUIWithText = function hasUIWithText(searchForTxt, type, dbg) {
                 var hasIt = false;
-                type  = sh.dv(type, '*')
+                type = sh.dv(type, '*')
                 var arr = b.find(type)
                 arr.each(function ok(k, v) {
                     //console.log(k,v)
@@ -344,11 +355,11 @@
                     if (text.length < searchForTxt.length) {
                         return;
                     }
-                    if  ( dbg )
+                    if (dbg)
                         console.log(k, text, searchForTxt.length, searchForTxt.includes(text)) //, sh.paren(searchForTxt) )
-                    if  ( dbg && k == 133 ) {
-                    //    console.log(k, text, searchForTxt.length, searchForTxt.includes(text))
-                     //   debugger;
+                    if (dbg && k == 133) {
+                        //    console.log(k, text, searchForTxt.length, searchForTxt.includes(text))
+                        //   debugger;
                     }
 
                     //
@@ -581,6 +592,90 @@
             }
 
 
+            //window.inner = d;
+            //  debugger
+            if (d.dom.b.find('#pcl-logo') && d.dom.b.find('#menu-bar')) {
+                //  debugger;
+
+
+                d.dom.removeUIComps('#menu-bar')
+
+
+                //comments
+                d.dom.removeUIComps('.gr5ox', '.reply-buttons')
+                d.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+
+                        // console.log('content', x2)
+                        if (x2.includes('Location:')) {
+                            return true;
+                        }
+                    }
+                )
+
+                //d.dom.removeUIComps('img')
+
+                //b.find('.reference.external').addClass('doNotReadComp');
+                d.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+                    console.log('content', ui[0].type, x2)
+                    if (x2 == 'Documentation:') {
+                        //return true;
+                        // debugger
+                        ui.addClass('doNotReadComp')
+                    }
+                    if (x2 == 'Tutorials:') {
+                        //return true;
+                        ui.addClass('doNotReadComp')
+                    }
+                    if (x2 == 'Background') {
+                        ui.addClass('doNotReadComp')
+                    }
+                    if (x2 == 'Interacts with:') {
+                        //return true;
+                        ui.addClass('doNotReadComp')
+                    }
+                    if (ui.is('a') && x2.includes('pointclouds.org')) {
+                        ui.addClass('doNotReadComp')
+                    }
+                }, true)
+
+                d.dom.removeTextThatSays(function clearHourse(x, ui, x2) {
+                        console.log('content', x2)
+                        if (x2 == 'Top') {
+                            return true;
+                        }
+                    }
+                )
+                d.dom.removeUIComps('.docutils')
+                var bl = d.dom.b.find('blockquote')
+                $.each(bl, function onBl(k, v) {
+                    var ui = $(v)
+                    if (ui.text().includes('MAC OS')) {
+                        ui.remove();
+                        return
+                    }
+                })
+
+                var bl = d.dom.b.find('blockquote')
+                $.each(bl, function onBl(k, v) {
+                    var ui = $(v)
+                    if (ui.find('ul').length > 0) {
+                        if (ui.text().trim() == '') {
+                            ui.remove();
+                        }
+                        ui.addClass('doNotReadComp')
+                    }
+
+                    return;
+                    //$.each(a, func)
+                    if (ui.text().includes('MAC OS')) {
+                        ui.remove();
+                        return
+                    }
+                })
+
+                return;
+            }
+
             b.find('.js-inject-promo').remove()
             b.find('.social-kit-top').remove()
             b.find('.article-embed-share').remove()
@@ -603,6 +698,23 @@
                 b.find('.domain').addClass('doNotReadComp');
                 b.find('.trending-subreddits-content').remove();
                 b.find('#siteTable_organic').remove();
+
+                //jump t ocontent
+                b.find('#header').remove()
+
+                b.find('.footer-parent').remove()
+
+                d.dom.padding0('.content')
+                d.dom.margin0('.content')
+
+                b.find('.flat-list.buttons').remove()
+                b.find('.infobar').remove()
+
+                b.find('.panestack-title').remove() //all x comments
+//listingsignupbar
+
+                b.find('.seo-comments').remove() //MORE COMMENTS
+                b.find('.seo-comments-recommendations').remove() //recommendations
 
                 b.find('a').each(function ok(k, v) {
                     //console.log(k,v)
@@ -773,10 +885,44 @@
 
             if (isSMF) { //d.dom.hasLinkWithText('Powered by SMF')) {
                 // debugger;
+                console.log('is SMF')
                 d.dom.removeUIComps('.tborder', '.signature')
                 d.dom.doNotRead('.poster_info')
                 d.dom.doNotRead('.subject')
                 d.dom.doNotRead('.smalltext')
+
+                d.dom.doNotRead('.nav') //will have to undo these
+                d.dom.doNotRead('td.middletext') //top left numbers
+                d.dom.doNotRead('.mirrortab_back')
+
+                // debugger
+                var tr = d.dom.b.find('tr')
+                $.each(tr, function removeAddRow(k, v) {
+                    var tr = $(v)
+                    var text = tr.text();
+                    var spans = tr.find('span')
+                    removeAdRow = false;
+                    $.each(spans, function removeAddSpan(k, v) {
+                        var tr = $(v)
+                        // console.log('log text', tr.text() )
+                        // var spans = tr.children('span')
+                        var classList = tr.attr('class')
+                        classList = sh.dv(classList, '')
+                        classList = classList.split(/\s+/);
+                        //console.log('\t', '\t', classList )
+                        $.each(classList, function (index, className) {
+                            if (className.endsWith('-ad')) {
+                                removeAdRow = true;
+                                return false;
+                            }
+                        });
+
+                    })
+
+                    if (removeAdRow) {
+                        tr.remove()
+                    }
+                })
                 d.dom.removeUIComps('td.smalltext')
                 var td = d.dom.b.find('td.smalltext')
                 // debugger;
@@ -793,20 +939,21 @@
 
             var isPHPBB = d.dom.hasUIWithText('Forum Software © phpBB Limited', 'div', false)
                 && d.dom.doesHaveLinkToHref('https://www.phpbb.com/')
-           // debugger;
+            // debugger;
             if (isPHPBB) { //d.dom.hasLinkWithText('Powered by SMF')) {
-               //  debugger;
+                //  debugger;
+                console.log('is bt sytem')
                 d.dom.removeUIComps('#page-header', '#nav-breadcrumbs',
-                    '#viewtopic' , 'c.postprofile.resized', '.action-bar')
-             //   d.dom.removeUIComps('.has-profile', '.signature')
-               d.dom.removeUIComps('.post-buttons')
-               d.dom.removeUIComps('.codebox_plus_about')
+                    '#viewtopic', 'c.postprofile.resized', '.action-bar')
+                //   d.dom.removeUIComps('.has-profile', '.signature')
+                d.dom.removeUIComps('.post-buttons')
+                d.dom.removeUIComps('.codebox_plus_about')
                 d.dom.removeUIComps('.profile-posts')
                 d.dom.removeUIComps('.profile-joined')
                 var hasProfile = d.dom.b.find('.has-profile')
                 console.log(hasProfile)
                 d.dom.padding0('.inner')
-               // d.dom.removeUIComps('.post_buttons')
+                // d.dom.removeUIComps('.post_buttons')
                 d.dom.clearHeight('.postprofile')
                 //d.dom.removeUIComps('.inner')
                 d.dom.doNotRead('.poster_info')
@@ -824,7 +971,6 @@
                 //d.dom.findByText('previous topic').parents('table').remove();
                 return;
             }
-
 
 
             var isQuora1 = d.dom.find({type: 'a', textIncludes: 'Home', clazz: 'nav_item_link'})
@@ -849,7 +995,7 @@
             }
 
             var isGuardian = c.dom.find('.inline-guardian-logo-160');
-            if ( isGuardian ) {
+            if (isGuardian) {
                 //debugger
                 d.dom.remove('.content__secondary-column')
                 d.dom.remove('aside')
@@ -917,7 +1063,6 @@
 
                     return;
                 }
-
 
 
             }
@@ -990,7 +1135,7 @@
 
             amazonArticle();
 
-            if ( b.find('.l-article-body-segment').exists() ) {
+            if (b.find('.l-article-body-segment').exists()) {
                 d.dom.replaceWith('.l-article-body-segment')
             }
 
@@ -1232,7 +1377,7 @@
         };
 
         tHelper.playAllSentences = function readText() {
-            window.skipJrlTitles= true;
+            window.skipJrlTitles = true;
             var tiny = tinyMCE.get('mainContent');
             var content = tinyMCE.get('mainContent').getContent();
             var b = $(tinyMCE.get('mainContent').getBody());

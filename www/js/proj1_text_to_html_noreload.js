@@ -21,6 +21,9 @@ file = "C:/Users/user1/Downloads/Documents/High Rise  How 1,000 Men and Women Wo
 file = "G:/dropbox/books2/Admin/The science of footwear (4795)/The science of footwear - Admin"
 file += '.txt'
 
+file=  "C:/Users/user1/Downloads/Documents/[Martin_Weinmann_(auth.)]_Reconstruction_and_Analy(book4you.org).txt"
+
+
 
 /*
  var contents = sh.readFile(file);
@@ -469,6 +472,7 @@ if (module.parent == null) {
     var instance = new ConvertTextToBook();
     var config = {};
     config.file = "G:/dropbox/books2/Unknown/Skyscraper The Making of a Building (4718)/Skyscraper The Making of a Buil - Unknown.txt"
+    config.file = "C:/Users/user1/Downloads/Documents/[Martin_Weinmann_(auth.)]_Reconstruction_and_Analy(book4you.org).txt"
     instance.init(config)
 }
 

@@ -8,11 +8,11 @@ function ScreenCapture() {
 
     p.init = function init() {
 
-        var formToAdd = '<form method="POST" xonSubmit="captureForm()"'+
-            'enctype="multipart/form-data"'+
-            'action="http://127.0.0.1:6006/doUp2/"'+
-            'id="myForm">'+
-            '     <input type="hidden" name="img_val" id="img_val" value="" />'+
+        var formToAdd = '<form method="POST" xonSubmit="captureForm()"' +
+            'enctype="multipart/form-data"' +
+            'action="http://127.0.0.1:6006/doUp2/"' +
+            'id="myForm">' +
+            '     <input type="hidden" name="img_val" id="img_val" value="" />' +
             '     </form>'
 
         var holder = $('<div></div>')
@@ -22,17 +22,16 @@ function ScreenCapture() {
         $('body').append(holder)
 
 
-
     }
 
-    p.capture =  function capture(target,data) {
+    p.capture = function capture(target, data) {
         var config = {}
-        if ( target.target ) {
+        if (target.target) {
             config = target
         }
-        if ( config.target == null ) config.target = '#target';
+        if (config.target == null) config.target = '#target';
         config.data = data;
-        $( config.target).html2canvas({
+        $(config.target).html2canvas({
             onrendered: function (canvas) {
                 //Set hiddeen field's value to image data (base-64 string)
                 $('#img_val').val(canvas.toDataURL("image/png"));
@@ -49,7 +48,7 @@ function ScreenCapture() {
                     console.log('go')
                     var formData = new FormData($(this)[0]);
                     // formData.name = 'd3'
-                    $.each(data, function copyToFormData(k,v) {
+                    $.each(data, function copyToFormData(k, v) {
                         formData.append(k, v)
                     })
 
@@ -62,7 +61,7 @@ function ScreenCapture() {
                         success: function onSuccess(data) {
                             // alert(data)
                             console.log('uploaded ....')
-                            if ( config.fx ) config.fx(config)
+                            if (config.fx) config.fx(config)
                         },
                         cache: false,
                         contentType: false,
@@ -79,9 +78,61 @@ function ScreenCapture() {
     }
 
 
-
 }
 
+function upP(fxDone) {
+
+
+    var page = $scope.pdfViewerAPI.viewer.currentPage-1
+    $('#page_Y_'+page).remove();
+    var div = $('#page_'+page)
+
+    html2canvas(/*document.body*/div[0]).then(function (canvas) {
+
+        $('#snapshotCapture').remove()
+        document.body.appendChild(canvas);
+        var c = $(canvas)
+        c.css('position', 'absolute')
+        c.css('width', '50%')
+        c.css('height', '50%')
+        c.css('top', '0px')
+        c.attr('id', 'snapshotCapture')
+
+        var dbg = {}
+        dbg.img = canvas.toDataURL("image/png")
+
+        console.log(dbg)
+        var cdata = {}
+        cdata.data = dbg.img ;
+        cdata.name = [pH.data.bookname,$scope.pdfViewerAPI.viewer.currentPage].join('/');
+        cdata.name+='.png'
+
+        $.ajax({
+            url: "http://127.0.0.1:6006/doUp3/",
+            type: 'POST',
+           // data: cdata,
+            data: JSON.stringify(cdata),
+            contentType: 'application/json',
+            // async: true,
+            success: function (data) {
+                console.log('save', name)
+                if ( fxDone ) {fxDone()}
+                // alert(data)
+                //if ( config.fx ) config.fx(config)
+            },
+            error: function onError(a, b, c) {
+                console.error(a, b, c)
+            },
+            cache: false,
+            //contentType: false,
+            //contentType: 'json',
+            processData: false
+        });
+
+    });
+}
+
+upP()
 
 
 function uploadPicture(data, name) {
@@ -114,15 +165,14 @@ function uploadPicture(data, name) {
     )
 
 
-
     return;
 
 
     curretnPage
-    if ( currentPage != lastPage ) {
+    if (currentPage != lastPage) {
         window.picCount = 0
     }
-    picCount ++
+    picCount++
 
     var name = bookName = window.pickCount + '.png'
 
@@ -130,16 +180,16 @@ function uploadPicture(data, name) {
         url: "http://127.0.0.1:6006/doUp3/",
         type: 'POST',
         data: cdata,
-        data : JSON.stringify(cdata),
-        contentType : 'application/json',
+        data: JSON.stringify(cdata),
+        contentType: 'application/json',
         // async: true,
         success: function (data) {
             console.log('save', name)
             // alert(data)
             //if ( config.fx ) config.fx(config)
         },
-        error: function onError(a,b,c) {
-            console.error(a,b,c)
+        error: function onError(a, b, c) {
+            console.error(a, b, c)
         },
         cache: false,
         //contentType: false,

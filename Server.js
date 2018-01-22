@@ -96,7 +96,25 @@ function onProcessPdfBookInNode(req, res) {
     res.send(txt)
 }
 app.get("/process_pdf_book_in_node", onProcessPdfBookInNode);
+function onPDFBookProcJSON(req, res) {
+    //var txt = sh.readFile('www/pdf_book_processor_reload_viewer.html');
+    //var fileContent = '';
+    var dirStore = sh.fs.trash('bookCvert')
+    var fileOutput = sh.fs.join(dirStore, 'test_pdf.html.json')
+    fileContent = sh.readFile(fileOutput)
+    res.send(fileContent)
+}
 
+
+app.get("/pdf_book_reader", onPDFBookReader);
+function onPDFBookReader(req, res) {
+    var dirStore = sh.fs.trash('bookCvert')
+    var fileOutput = sh.fs.join(dirStore, 'test_pdf.html.json')
+    fileContent = sh.readFile(fileOutput)
+    res.send(fileContent)
+}
+
+app.get("/pdf_book_processor_senctences.json", onPDFBookProcJSON);
 function onProj1TextToHTML(req, res) {
     var txt = sh.readFile('www/proj1_text_to_html.html');
     var fileContent = '';
@@ -152,6 +170,29 @@ app.get("/articles", function onGetListOfArticles(req, res) {
     // load the single view file (angular will handle the page changes on the front-end)
     res.send(str)
 });
+
+app.get("/pdfRips", function onGetListOfPdfRips(req, res) {
+    //sh.ListFilesInDirectoryMiddleware
+    var t = new sh.ListFilesInDirectoryMiddleware()
+    var config = {}
+    var dirFiles = sh.fs.join(__dirname, 'rips', 'testPages')
+    config.dirFiles = dirFiles;
+    config.fxItemUrl = function fxItemUrl(input)  {
+        var url = sh.str.after(input, 'testPage/')
+        var leaf = sh.fs.leaf(url)
+        url = `http://127.0.0.1:8080/pdf_book_processor_reload_viewer.html?loadBookFile=testPages/${leaf}/${leaf}_toc.json`
+        return url;
+    }
+    t.init(config)
+    var str = t.getStr()
+    console.log('str', str)
+    //options.port = 7789
+    // t.loadConfig(options);
+    //return;
+
+    res.send(str)
+});
+
 
 
 app.data = sh.dv(app.data, {})
@@ -955,6 +996,7 @@ app.post('/speak', function (req, res) {
 });
 
 app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/rips'));
 
 // listen (start app with node Server.js) ======================================
 app.listen(8080);

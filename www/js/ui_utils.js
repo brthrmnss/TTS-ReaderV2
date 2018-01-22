@@ -809,6 +809,15 @@ function defineUtils() {
         u.lastTable.append(tr)
         return tr
     }
+    uiUtils.table.updateLastRow = function updateLastRow(colIndex, val, overrideRow){
+        var targetRow = u.lastRow;
+        if ( overrideRow ) {
+            targetRow = overrideRow;
+        }
+        var td = targetRow.children().slice(colIndex, colIndex+1)[0];
+        td = $(td)
+        td.html(val)
+    }
 
 
     uiUtils.create =

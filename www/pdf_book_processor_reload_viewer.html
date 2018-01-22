@@ -128,6 +128,7 @@
             box-shadow: 0px 0px 10px #666666;
             background-color: #ffffff;
         }
+
         .text-layer {
             position: absolute;
             top: 0;
@@ -136,6 +137,7 @@
             overflow: hidden;
             height: 1000px;
         }
+
         .text-layer > span {
             /*color: transparent;*/
             position: absolute;
@@ -143,6 +145,7 @@
             cursor: text;
             transform-origin: 0% 0%;
         }
+
         #XLayer > span {
             /* color: transparent;*/
             position: absolute;
@@ -331,6 +334,8 @@
 
 </div>
 
+<div id="divArea"></div>
+
 <script>
     console.log('...')
 
@@ -395,6 +400,7 @@
         console.debug('leaf', leaf)
         //  debugger
         reloader.reloadWhen(leaf);
+        reloader.reloadWhen('pdf_book_processor_reload_viewer');
         //reloader.reloadWhen('index.html');
         reloader.reloadWhen('bookCvert2');
         reloader.reloadWhen('epub_reload_viewer');
@@ -430,6 +436,196 @@
     }
 </script>
 
+<script>
+
+    function onGetSpansForPage(url, limitTo) {
+        var dlSentences = uiUtils.getUrlVal('d');
+        urlSentences = '/pdf_book_processor_senctences.json'
+        if (url) {
+            urlSentences = url
+        }
+        uiUtils.getUrl(urlSentences, onGotSents)
+
+        function onGotSents(d) {
+
+            var sentObjs = d
+            if ($.isArray(d) == false) {
+                sentObjs = JSON.parse(d)
+            }
+
+            //debugger
+            var sH = window.sentenceHelper;
+            // console.log('sh', sH)
+            $.each(sentObjs, function reConsistute(k, v) {
+                if (v.images == null) {
+                    v.images = []
+                }
+            });
+            // debugger
+            //windowSelection.anchorNode.parentElement = sentObjs[0].span
+            window.playIndexAt0 = true
+            sH.sideLoadSentences2(sentObjs, limitTo)
+        }
+    }
+
+    var loadBookFile = uiUtils.getUrlVal('loadBookFile');
+    if (loadBookFile == null) {
+        setTimeout(onGetSpansForPage, 1200)
+    }
+
+
+</script>
+
+
+<script>
+
+    function onPdfSh() {
+        var loadBookFile = uiUtils.getUrlVal('loadBookFile');
+        if (loadBookFile == null) {
+            return;
+        }
+
+
+        function Bookr() {
+            var p = Bookr.prototype;
+            p = this;
+            var self = this;
+            self.data = {};
+            p.init = function init(config) {
+                self.settings = sh.dv(config, {});
+            }
+
+            p.loadPagesUpTo = function loadPagesUpTo(pageNumber) {
+                console.log('pages up to', pageNumber)
+                $.each(self.settings.book.pages, function checkEachPage(k,pageTOCInfo) {
+                    if ( pageTOCInfo.pageNumber > pageNumber ) {
+                        return false;
+                    }
+                    if ( pageTOCInfo.pageLoaded ) {
+                        return;
+                    }
+                    self.loadPage(pageTOCInfo.pageNumber)
+                })
+
+            }
+            p.loadPage = function loadPage(pageNumber) {
+                self.data.currentPage
+                var pageTOCInfo = self.data.dictPageList[pageNumber]
+                var cfg = {}
+                //cfg.id = 'divResults'; // = $('#divLoad')
+                cfg.div = pageTOCInfo.div;
+                cfg.url = self.settings.base + pageTOCInfo.file;
+                cfg.fxDone = function on() {
+                    var img = uiUtils.tag('img')
+                    var pic = pageTOCInfo.file;
+                    pic = pic.replace('testPages/', 'image/')
+                    pic = pic.split('output/')[0]
+                    pic += pageTOCInfo.pageNumber+'.png'
+                    img.attr('src', pic)
+                    img.css('position', 'absolute')
+                    img.css('top', '0px')
+                    img.css('left', '0px')
+                    //cfg.div.find('.page').append(img)
+                    var div2 = cfg.div.find('.page').children().eq(0)
+                   // debugger
+                    console.log('div2', div2)
+                    div2.after(img)
+                }
+                uiUtils.utils.loadPage(cfg)
+                pageTOCInfo.pageLoaded = true;
+
+
+                return;
+            }
+
+            p.proc = function debugLogger() {
+                if ( self.silent == true) {
+                    return;
+                }
+                sh.sLog(arguments);
+            };
+        }
+
+
+
+
+
+        var base = '';
+        if (loadBookFile.startsWith('http') == false) {
+            base = 'http://' + window.location.host + '/'
+            loadBookFile = 'http://' + window.location.host + '/' + loadBookFile
+        }
+        uiUtils.getUrl(loadBookFile, onGotPDFBookTOC)
+
+        function onGotPDFBookTOC(d) {
+            var bookr = new Bookr()
+            bookr.init({book:d,base:base})
+            window.fxDoneCurrentPage = function fxDoneCurrentPage() {
+                console.log('dnoe wiht page', window.currentReadingPage)
+                window.currentReadingPage++
+                var pageTOCInfo = window.dictPageList[window.currentReadingPage]
+                onGetSpansForPage(pageTOCInfo.fileJSONSentences, pageTOCInfo.div)
+                window.sentenceHelper.onPlay2();
+                window.sentenceHelper.onPlay2();
+            }
+
+            window.dictPageList = {};
+            bookr.data.dictPageList = dictPageList;
+            $.each(d.pages, function okmakediv(k, v) {
+
+                window.dictPageList[v.pageNumber] = v;
+                var div = uiUtils.tag('div') //'+v.pageNumber)
+                v.div = div;
+                div.attr('id', 'd_page_' + v.pageNumber)
+                div.text('page ' + v.pageNumber)
+                div.mouseover(function ok() {
+                    console.log('mouse over', v.pageNumber)
+                    bookr.loadPagesUpTo(v.pageNumber+5)
+                    //div.off('mouseover', ok)
+
+                    //  onGetSpansForPage(v.fileJSONSentences, div)
+                })
+
+                div.dblclick(function ok() {
+                    console.log('dbclick', v.pageNumber)
+                    //div.off('mouseover', ok)
+                    window.currentReadingPage = k
+                    onGetSpansForPage(v.fileJSONSentences, div)
+                })
+                $('#divArea').append(div)
+                if (k > 10) {
+                    return
+                }
+                bookr.loadPage(v.pageNumber)
+                return;
+                var cfg = {}
+                //cfg.id = 'divResults'; // = $('#divLoad')
+                cfg.div = div;
+                cfg.url = base + v.file;
+                uiUtils.utils.loadPage(cfg)
+                v.pageLoaded = true;
+                //uiUtils.loadPage()
+            })
+
+            //debugger
+            return;
+            var sentObjs = JSON.parse(d)
+            //debugger
+            var sH = window.sentenceHelper;
+            // console.log('sh', sH)
+            $.each(sentObjs, function reConsistute(k, v) {
+                if (v.images == null) {
+                    v.images = []
+                }
+            });
+            // debugger
+            sH.sideLoadSentences2(sentObjs)
+        }
+    }
+
+    setTimeout(onPdfSh, 1200)
+
+</script>
 
 </body>
 </html>

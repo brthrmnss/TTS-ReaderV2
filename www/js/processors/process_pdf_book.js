@@ -21,10 +21,22 @@ function ProcessPdfBook() {
         var sh = require('shelpers').shelpers;
         var shelpers = require('shelpers');
         //let file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/testContent/testPages/BUILT ON WATER LISA BAKER 276P (NXPowerLite Copy).pdf_4.html"
-        let file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/rips/testPages/BUILT ON WATER LISA BAKER 276P (NXPowerLite Copy).pdf_4.html"
+        if (self.settings.pdfCurrentPage==null) {
+            var file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/rips/testPages/BUILT ON WATER LISA BAKER 276P (NXPowerLite Copy).pdf_4.html"
+            self.settings.pdfCurrentPage = 4
+            // var file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/rips/testPages/BUILT ON WATER LISA BAKER 276P (NXPowerLite Copy).pdf_0.html"
+            // self.settings.pdfCurrentPage = 0
+        }
+
+        if (self.settings.file) {
+            file = self.settings.file;
+        }
+
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/The Mind Illuminated_ A Complet  John Yatesepub/epub.html"
         console.log(file)
         file = sh.deos(file)
+
+        self.data.bookname = sh.fs.leaf(file)
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub.html"
 //file = "G:/Dropbox/projects/delegation/Reader/TTS-Reader/uploads/extracted/testquotesepub/epub_text.html"
         var contents = sh.readFile(file);
@@ -74,7 +86,7 @@ function ProcessPdfBook() {
                 rUtils.colors[name] = colors;
             }
             rUtils.colors.makeCircle = function makeCircle(name) {
-                if ($.isString(name)) {
+                if (sh.isString(name)) {
                     colors = rUtils.colors[name]
                 }
 
@@ -954,6 +966,9 @@ function ProcessPdfBook() {
                         return;
                     }
                     var w = span.css('width');
+                    if (w == null) {
+                        w = '0'
+                    }
                     w = parseFloat(w.replace('px', ''))
                     return w;
 
@@ -964,6 +979,9 @@ function ProcessPdfBook() {
                         return;
                     }
                     var h = span.css('height');
+                    if (h == null) {
+                        h = '0'
+                    }
                     h = parseFloat(h.replace('px', ''))
                     return h;
                 }
@@ -1014,6 +1032,11 @@ function ProcessPdfBook() {
             return spans
         }
         $scope.pdfCurrentPage = 5;
+        if (self.settings.pdfCurrentPage != null) {
+            $scope.pdfCurrentPage = self.settings.pdfCurrentPage + 1;
+        }
+        console.log('$scope.pdfCurrentPage', $scope.pdfCurrentPage)
+        //sdf.g
 
         var doc = nlp('London is calling')
 
@@ -1048,6 +1071,7 @@ function ProcessPdfBook() {
 // alert('whs')
         var rip = {}
         rip.settings = {}
+        rip.data = {}
 
         rip.settings.autoRead = true;
         rip.settings.autoAnnotate = true;
@@ -1073,7 +1097,7 @@ function ProcessPdfBook() {
         rip.settings.newSentence_OnVerticalSpace_log2_displayPurple = true;
         rip.settings.processors = []
         rip.settings.addDashesOnVGap = false;
-        rip.settings.stopAfterSorting = true
+        //rip.settings.stopAfterSorting = true
         rip.dbg = {}
         rip.dbg.sorting = false;
         rip.dbg.finalSentenceParsedList = false;
@@ -1858,8 +1882,14 @@ function ProcessPdfBook() {
                 bookSettings = {}
                 //bookSettings.tryToDetect3Columns = true;
                 bookSettings.tryToDetect3ColumnsExt = true;
+                bookSettings.quantizeFontSizePercent = 0.2
+                bookSettings.showSpanNumbers = false;
                 //bookSettings.margin = {l:1,t:5,r:9,b:10};
                 bookSettings.margin = {l: 2, t: 4, r: 2, b: 7};
+                //--default settings
+                bookSettings.highlightSpans = false;
+                //bookSettings.newSentence_OnVerticalSpace_log2_displayPurple = false;
+                bookSettings.removeAllAnnotations = true;
                 // bookSettings.margin.b = 10
                 // bookSettings.startOnPage = null;
             }
@@ -1985,6 +2015,7 @@ function ProcessPdfBook() {
                 var page = $('#page_' + (window.$scope.pdfCurrentPage - 1));
                 var page_ = page.find('#XLayer')
 
+                console.log('at page', pH.currentPage)
                 pH.pageHeight = page_.css('height');
                 pH.pageWidth = page_.css('width');
                 pH.pageWidth = rUtils.clearPixels(pH.pageWidth)
@@ -2286,7 +2317,7 @@ function ProcessPdfBook() {
                     if (cfg.clearAnnotations !== false)
                         $('.spanSortAnnotations').remove();
                     var count = 0;
-                    if ( cfg.startAtIndex ) {
+                    if (cfg.startAtIndex) {
                         count = cfg.startAtIndex;
                     }
                     window.dc = dictSpansByRow
@@ -2299,6 +2330,8 @@ function ProcessPdfBook() {
                         $.each(sortedSpansAtRow, function (indexSpan, span) {
                             spans.push(span);
                             sortedSpansAtRowTxt.push(span.text());
+                            count++
+                            span.attr('spanIndex', count)
                             if (rip.settings.showSpanNumbers) {
                                 var spanClone = $(span);
                                 var cloneSpanNumber = spanClone.clone()
@@ -2306,7 +2339,7 @@ function ProcessPdfBook() {
 
                                 cloneSpanNumber.addClass('spanSortAnnotations')
                                 p.append(cloneSpanNumber);
-                                cloneSpanNumber.text((count + 1) + '.')
+                                cloneSpanNumber.text((count) + '.')
                                 cloneSpanNumber.attr('pen', span.text());
                                 cloneSpanNumber.css('color', 'blue')
                                 cloneSpanNumber.css('font-family', 'Arial')
@@ -2315,7 +2348,7 @@ function ProcessPdfBook() {
                                 cloneSpanNumber.css('font-size', '16px')
                                 cloneSpanNumber.css('letter-spacing', '-3px')
                                 //console.log2('adding to', p[0], cloneSpanNumber[0])
-                                count++
+
                             }
 
                         })
@@ -3420,10 +3453,11 @@ function ProcessPdfBook() {
                         }
 
                         p.redressColoumns = function redressColoumns() {
+                            var finalSpanList = [];
                             $('.spanSortAnnotations').remove();
                             var startingIndex = 0;
                             sh.each(self.data.cols, function grabCols(k, col) {
-                               // if (k == 0) return
+                                // if (k == 0) return
                                 var box = col.box;
                                 //  sh.each( self.data.colPACModeSearch, function filterS(k,v) {
 
@@ -3446,8 +3480,8 @@ function ProcessPdfBook() {
                                  var ui = $(v)
                                  console.log(sh.t, sh.t, ui.text())
                                  })*/
-                                col.text  = '';
-                                sh.each(filterList, function onK(k,v) {
+                                col.text = '';
+                                sh.each(filterList, function onK(k, v) {
                                     var ui = $(v)
                                     //console.log(sh.t, sh.t, ui.text())
                                     col.text += ui.text() + ' '
@@ -3462,9 +3496,9 @@ function ProcessPdfBook() {
 
 
                                 /*
-                                var testMarker = rUtils.drawRectangle(box.x, box.y, box.width, box.height, 'brown');
-                                testMarker.text(box.name)
-                                */
+                                 var testMarker = rUtils.drawRectangle(box.x, box.y, box.width, box.height, 'brown');
+                                 testMarker.text(box.name)
+                                 */
 
                                 var cfg = {
                                     spans: yDict,
@@ -3472,11 +3506,14 @@ function ProcessPdfBook() {
                                     startAtIndex: startingIndex
                                 }
                                 var spansZ = utilsSort.flattendRows(cfg);
-                                startingIndex = spansZ.length+startingIndex;
+                                startingIndex = spansZ.length + startingIndex;
 
+                                finalSpanList = finalSpanList.concat(spansZ)
 
                                 //debugger
                             })
+
+                            return finalSpanList;
                         }
                     }
 
@@ -3556,8 +3593,8 @@ function ProcessPdfBook() {
                             }
                         ]
                     colHelper.importCols(boxes)
-                    colHelper.redressColoumns();
-                    return;
+                    var spansOrdered = colHelper.redressColoumns();
+                    return spansOrdered;
 
                     //window.colsTrue = cols
 
@@ -3776,8 +3813,10 @@ function ProcessPdfBook() {
 
 
                 if (rip.settings.tryToDetect3ColumnsExt) {
-                    var _spans2 = sSH.detectColumns_PACMode(_spans);
+                    var spansZ = sSH.detectColumns_PACMode(_spans);
+                    //asdf.g
                     // sde4f.g.dfds.stopToDetectColumns
+                    rip.data.alreadySorted = true;
                 }
 
 
@@ -3797,14 +3836,28 @@ function ProcessPdfBook() {
             pH.highlightSpans = function highlightSpans(_spans, addNumbers) {
                 var idx = 0
 
+
                 function removeAllClassesOfClass(cssclass) {
                     $('.' + cssclass).removeClass(cssclass)
                     //console.log2('y',  $('.'+cssclass))
                 }
 
+
                 removeAllClassesOfClass('highlight2')
                 removeAllClassesOfClass('highlight3')
                 removeAllClassesOfClass('highlight4')
+
+                if (rip.settings.removeAllAnnotations) {
+                    $('.spanMargins').remove();
+                    $('.brokenLine').remove()
+                }
+
+                if (rip.settings.highlightSpans === false) {
+                    return;
+                }
+
+                sxxx7.g.g
+
                 var classes = ['highlight2', 'highlight3', 'highlight4']
                 //return
                 $.each(_spans, function (indexSpan, v) {
@@ -3837,6 +3890,7 @@ function ProcessPdfBook() {
             pH.highlightSpans(spans);
 
             if (rip.settings.stopAfterSorting) {
+                console.log('rip.settings.stopAfterSorting')
                 return;
             }
 
@@ -3857,6 +3911,7 @@ function ProcessPdfBook() {
             }
 
 
+            //if ( rip.data.alreadySorted != true ) {
             pH.determineAverageFontSize = function determineAverageFontSize(spans) {
                 var dbg = false;
                 var tagName = 'determineAverageFontSize'
@@ -3901,11 +3956,13 @@ function ProcessPdfBook() {
 
             //debugger;
             pH.markUpSpans(spans)
+            //  }
 
             pH.createSentences = function createSentence(spans) {
 
                 var cSH = {};
                 cSH.sentences = [];
+                cSH.sentenceObjs = [];
                 cSH.uiElements = [];
                 cSH.uiElements_markup = $()
                 cSH.uiElementsClear = function uiElementsClear(reason, addIn) {
@@ -4060,7 +4117,7 @@ function ProcessPdfBook() {
 
 
                         styles.isLargeVerticalGap = function isLargeVerticalGap(otherStyles) {
-                            var expectedNewlineYDiff = styles.fontSizeAsNumber * 1.7
+                            var expectedNewlineYDiff = styles.fontSizeAsNumber * 2.8 //1.7
                             var maxYPosition = styles.top + expectedNewlineYDiff;
 
                             var diffY = styles.top - otherStyles.top
@@ -4082,7 +4139,7 @@ function ProcessPdfBook() {
                             }
                             if (vGapIsLargerThan1Line) {
                                 if (rip.settings.newSentence_OnVerticalSpace_log2) {
-                                    console.error('brokenline', 'match', styles.text)
+                                    console.error('brokenline', 'match', styles.text, diffY, '>', expectedNewlineYDiff)
                                 }
 
 
@@ -4412,6 +4469,15 @@ function ProcessPdfBook() {
                             cSH.currentSentence = cSH.currentSentence.replace(/“/gi, '"')
                             cSH.currentSentence = cSH.currentSentence.replace(/”/gi, '"')
                             cSH.sentences.push(cSH.currentSentence)
+                            var sentObj = {};
+                            sentObj.sentence = cSH.currentSentence
+                            sentObj.spansNumbers = [];
+                            sh.each(cSH.currentSentenceSpans, function onK(k, v) {
+                                var spanIndex = $(v).attr('spanIndex')
+                                spanIndex = parseInt(spanIndex)
+                                sentObj.spansNumbers.push(spanIndex)
+                            });
+                            cSH.sentenceObjs.push(sentObj)
                             cSH.dictSentencesToSpans[cSH.currentSentence] = cSH.currentSentenceSpans;
 
                         }
@@ -4579,6 +4645,29 @@ function ProcessPdfBook() {
 
 
                         var fontIsDiff = cSH.currentStyle.fontSizeAsNumber != cSH.lastStyle.fontSizeAsNumber
+                        var fontSizeIfDiff = fontIsDiff;
+                        if (fontSizeIfDiff) {
+                            if (rip.settings.quantizeFontSizePercent) {
+                                function isQuantiezedTo(a, b, maxPercentDiff) {
+                                    var diff = a - b
+                                    var per = Math.abs(diff / a)
+                                    if (per < maxPercentDiff) {
+                                        return true
+                                    }
+                                    return false;
+                                }
+
+                                var isQuantizedSmaller = isQuantiezedTo(cSH.currentStyle.fontSizeAsNumber,
+                                    cSH.lastStyle.fontSizeAsNumber,
+                                    rip.settings.quantizeFontSizePercent);
+                                if (isQuantizedSmaller) {
+                                    fontIsDiff = false;
+                                }
+                                //asdf.g
+                            }
+                            // asdf.g
+                        }
+
 
                         rUtils.isRatioLessThan = function isRatioLessThan(a, b, targetRatio) {
                             var val = a - b
@@ -4917,7 +5006,6 @@ function ProcessPdfBook() {
                 return cSH.sentences;
             }
 
-
             var sentencesX = pH.createSentences(spans);
             console.log2('sentencesX', 'k', sentencesX);
             console.log2('cSH', pH.cSH);
@@ -4934,6 +5022,11 @@ function ProcessPdfBook() {
 //console.clear()
 //console.error('food...')
 
+            console.log('--final output--')
+            console.log('cSH.sentenceObjs', pH.cSH.sentenceObjs)
+            self.data.pH = pH;
+            //debugger
+
             pH.testSelectAllSentences = function highlightEachSentence(_sentences) {
                 var idx = 0
 
@@ -4945,6 +5038,11 @@ function ProcessPdfBook() {
                 removeAllClassesOfClass('highlight2')
                 removeAllClassesOfClass('highlight3')
                 removeAllClassesOfClass('highlight4')
+
+                if (rip.settings.highlightSpans === false) {
+                    return;
+                }
+
                 var classes = ['highlight2', 'highlight3', 'highlight4']
                 //return
                 $.each(pH.cSH.dictSentencesToSpans, function (k, v) {
@@ -5111,7 +5209,8 @@ function ProcessPdfBook() {
                     markup(v)
 
                 if (inBlock) {
-                    if (next.css('fontFamily') != 'monospace') {
+                    var isValidElement = next.attribs != null
+                    if (isValidElement && next.css('fontFamily') != 'monospace') {
                         var number = parseInt(next.text())
                         if (isNaN(number)) {
                             inBlock = false;
@@ -5492,14 +5591,31 @@ function ProcessPdfBook() {
         var dirStore = sh.fs.trash('bookCvert')
         sh.fs.mkdirp(dirStore)
         var fileOutput = sh.fs.join(dirStore, 'test_pdf.html')
+
+        if (self.settings.fileOutput) {
+            fileOutput = self.settings.fileOutput;
+        }
+
         sh.writeFile(fileOutput, $.html())
         // sh.writeFile(fileOutput, self.data.contents)
 
-
+        var fileMetas = fileOutput + self.data.bookname + '.xlist.json';
+        sh.writeFile(fileMetas, sh.toJSONString(self.data.pH.cSH.sentenceObjs))
+        var fileJSONs = fileOutput + '.json';
+        sh.writeFile(fileJSONs, sh.toJSONString(self.data.pH.cSH.sentenceObjs))
         //  console.log('q', q.data.nouns)
-        var ReloadWatcher = require('./../ReloaderWatcher.js').ReloadWatcher;
-        ReloadWatcher.reloadFile('bookCvert2')
-        // debugger
+        sh.log.file(fileJSONs)
+        sh.log.file(fileMetas)
+
+        self.data.fileJSONSentences = fileJSONs
+        self.data.sentenceLength = self.data.pH.cSH.sentenceObjs.length;
+        //
+
+        if (self.settings.fileOutput == null) {
+            var ReloadWatcher = require('./../ReloaderWatcher.js').ReloadWatcher;
+            ReloadWatcher.reloadFile('bookCvert2')
+            // debugger
+        }
     }
 
     p.proc = function debugLogger() {

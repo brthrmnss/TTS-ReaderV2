@@ -4611,22 +4611,23 @@ window.uploadHTMLForPage = function uploadHTMLForPage(_fxPageComplete, processPa
     //console.clear();
     console.log2('uploadHTMLForPage')
 
-    var spans = $('#page_'+($scope.pdfCurrentPage-1)).find('#XLayer').children('span')
+    var spans = $('#page_' + ($scope.pdfCurrentPage - 1)).find('#XLayer').children('span')
     console.log('size of spans', spans.length)
-    $.each(spans, function addWH(k,v){
+    $.each(spans, function addWH(k, v) {
         var ui = $(v)
         ui.css('height', ui.height())
         ui.css('width', ui.width())
     })
 
-    var pageNum = $scope.pdfViewerAPI.viewer.currentPage-1
+    var pageNum = $scope.pdfViewerAPI.viewer.currentPage - 1
     var url = 'http://127.0.0.1:6006/uploadPageOfBook';
     var data = {}
     data.page_name = window.$scope.pdfURL;
-    data.page_name =   data.page_name.replace('./uploads/', '')
+    data.page_name = data.page_name.replace('./uploads/', '')
     data.page_name += '_' + pageNum;
+    data.dirName = pH.data.bookname
     // data.contents = window.pH.cSH.sentences;
-//    data.htmlContents = window.pH.cSH.pageHTML;
+    //    data.htmlContents = window.pH.cSH.pageHTML;
     //data.errors = window.pH.errors;
 
     data.rawContents = $('#page_' + (pageNum))
@@ -4644,10 +4645,68 @@ window.uploadHTMLForPage = function uploadHTMLForPage(_fxPageComplete, processPa
 
     function onWavDataResponseRecieved() {
         console.info('done')
+        if ( _fxPageComplete ) {
+            _fxPageComplete();
+        }
     }
 
 }
 
+window.uploadHTMLForPage_All = function uploadHTMLForPage_All(_maxPageCount) {
+    var cfg = {};
+    cfg.maxPageCount = 10;
+    cfg.pageCount = 0;
+    if (_maxPageCount) {
+        cfg.maxPageCount = _maxPageCount
+    }
+    if ( window.goAllUploadPages == false ) {
+        console.error('done done end', 'goAllUploadPages')
+        return
+    }
+    window.uploadHTMLForPage(goToNextPage_Loop);
+    function goToNextPage_Loop() {
+        var page = window.$scope.pdfCurrentPage;
+        //debugger;
+        cfg.pageCount++;
+        if (cfg.maxPageCount != -1) {
+            if (cfg.pageCount > cfg.maxPageCount) {
+                console.log2('ended', page, cfg.pageCount, cfg.maxPageCount)
+                return;
+            }
+        }
+        if (page == cfg.lastPage) {
+            console.log2('ended early', page, cfg.pageCount, cfg.maxPageCount)
+            return;
+        }
+        cfg.lastPage = page;
+
+
+
+
+        upP(endToNextPage)
+
+        function endToNextPage() {
+            window.$scope.pdfViewerAPI.goToNextPage();
+            setTimeout(function ok(){
+                window.uploadHTMLForPage(goToNextPage_Loop)
+            }, 1500)
+        }
+
+    }
+}
+
+window.entire_uploadHTMLForPage = function entire_uploadHTMLForPage() {
+    $scope.pdfViewerAPI.goToPage(1)
+    window.goAllUploadPages = true;
+    setTimeout(function startUploading() {
+        window.uploadHTMLForPage_All(-1);
+    }, 800)
+}
+
+
+window.stopUpload = function stopA() {
+    window.goAllUploadPages = false;
+}
 
 window.uploadAllPages = function uploadAllPages(_maxPageCount) {
     var cfg = {};
@@ -5150,7 +5209,7 @@ window.fxStartPdf = function fxStartPdf() {
 
     if (window.$scope.pdfViewerAPI.getZoomLevel() != targetZoom) {
         window.$scope.pdfViewerAPI.zoomTo(targetZoom)
-        debugger;
+        //debugger;
         setTimeout(function () {
             window.processPage();
         }, 1500);
