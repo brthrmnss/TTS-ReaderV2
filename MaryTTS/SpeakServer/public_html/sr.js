@@ -379,10 +379,10 @@ if ( window.sr == null || alwaysReload ) {
 console.info('req')
 window.sr.getList();
 
-function asdf() {
+function testIn500() {
     console.log('ll5')
 }
-setTimeout(asdf, 500);
+setTimeout(testIn500, 500);
 
 function listenForRefresh() {
     var socket = io()

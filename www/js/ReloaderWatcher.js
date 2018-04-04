@@ -117,6 +117,7 @@ function ReloadWatcher() {
             console.log('connected...')
             //p.trigger(art);
             socket.emit('window.invoke', file)
+            console.log('exiting....')
             setTimeout(process.exit, 120); //sh.exit();
         });
         socket.on('event', function (data) {

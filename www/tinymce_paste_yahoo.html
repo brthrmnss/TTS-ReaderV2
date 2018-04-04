@@ -168,6 +168,10 @@
             }
 
 
+            c.exists = function asdf(jq) {
+                return c.dom.b.find(jq).exists()
+            }
+
             c.dom.findAnyJQWithPropValeqX = function findAnyJQWithPropValeqX(jq, prop, findVal) {
                 var findUIs = b.find(jq);
                 var found = null;
@@ -465,6 +469,7 @@
             $(body).find('iframe').remove();
             $(body).find('#main-navigation').remove()
             window.scrollIntoViewDivs = true
+            debugger
             var d = createCDom(b);
 
 
@@ -594,9 +599,8 @@
 
             //window.inner = d;
             //  debugger
-            if (d.dom.b.find('#pcl-logo') && d.dom.b.find('#menu-bar')) {
+            if (d.dom.b.find('#pcl-logo').exists() && d.dom.b.find('#menu-bar').exists() ) {
                 //  debugger;
-
 
                 d.dom.removeUIComps('#menu-bar')
 
@@ -973,26 +977,58 @@
             }
 
 
-            var isQuora1 = d.dom.find({type: 'a', textIncludes: 'Home', clazz: 'nav_item_link'})
-            var isQuora2 = d.dom.find({type: 'a', textIncludes: 'Ask Question', clazz: 'AskQuestionButton'})
-            var isQuora3 = d.dom.find({type: 'zz', textIncludes: 'Home', clazz: 'nav_item_link'})
-            if (isQuora1 && isQuora2) {
-                //debugger
-                d.dom.remove('.SiteHeader', '.layout_2col_side')
-                d.dom.remove('.ActionBar', '.answer_auto_expanded_comments')
-                d.dom.remove('.upper_content')
-                d.dom.remove('.OriginallyAnsweredBanner')
+            function checkQuora() {
+                var isQuora1 = d.dom.find({type: 'a', textIncludes: 'Home', clazz: 'nav_item_link'})
+                var isQuora2 = d.dom.find({type: 'a', textIncludes: 'Add Question', clazz: 'AskQuestionButton'})
+                var isQuora3 = d.dom.find({type: 'zz', textIncludes: 'Home', clazz: 'nav_item_link'})
+                //LookupBarAskQuestionModalButton AskQuestionButton
+              //debugger
+                if (isQuora1 && isQuora2) {
+                    //debugger
+                    d.dom.remove('.SiteHeader', '.layout_2col_side')
+                    d.dom.remove('.ActionBar', '.answer_auto_expanded_comments')
+                    d.dom.remove('.upper_content')
+                    d.dom.remove('.OriginallyAnsweredBanner')
 
 
-                d.dom.remove('.ContentPageFeed')
+                    d.dom.remove('.ContentPageFeed')
 
 
-                // d.dom.doNotRead('AnswerFooter');
-                d.dom.remove('.CredibilityFacts')
-                d.dom.remove('.TopicListItems2')
+                    // d.dom.doNotRead('AnswerFooter');
+                    d.dom.remove('.CredibilityFacts')
+                    d.dom.remove('.TopicListItems2')
 
-                //TopicListItems2 Toggle SimpleToggle QuestionTopicListItems QuestionTopicHorizontalListItems
+
+                    d.dom.replaceWith('.layout_2col_main')
+                    //TopicListItems2 Toggle SimpleToggle QuestionTopicListItems QuestionTopicHorizontalListItems
+                }
+                return;
             }
+            checkQuora();
+d
+            function checkGitHubSrc() {
+                var isFileNav = c.dom.find('.file-navigation');
+                var isCommit = c.dom.find('.commit-tease');
+                if (isFileNav && isCommit) {
+                   // debugger
+
+                    d.dom.replaceWith('.blob-wrapper')
+                    lines = c.dom.find('.js-file-line-container').find('tr')
+                    $.each(lines, function asdf(k,ui) {
+                        var line = $(ui)
+                        var content = line.find('.blob-code-inner');
+                        var text = content.text();
+                        text = text.trim();
+                        //debugger
+                        if ( text.startsWith('#')==false){
+                            d.dom.doNotRead(line)
+                        }
+                    })
+                    //TopicListItems2 Toggle SimpleToggle QuestionTopicListItems QuestionTopicHorizontalListItems
+                }
+                return;
+            }
+            checkGitHubSrc();
 
             var isGuardian = c.dom.find('.inline-guardian-logo-160');
             if (isGuardian) {
@@ -1164,6 +1200,23 @@
             }
 
             roboDK()
+
+            //debugger
+
+            function github() {
+
+                if (false == d.exists('.header-logo-invertocat') ) {
+                    return
+                }
+                if (false == d.exists('.repository-content') ) {
+                    return
+                }
+               // debugger
+                d.dom.replaceWith('.repository-content')
+                d.dom.doNotRead('.gh-header-actions')
+            }
+
+            github()
 
         }
 
@@ -1386,12 +1439,14 @@
             var content = b.text();
             var children = b.children();
             var foundElement = false;
-            console.debug('dblclick: ', children);
+
             var text = '';
 
             var toDiv = $($('iframe')[1]).contents().find('body')
             window.sentenceHelper.setupSentences(toDiv, toDiv);
 
+            console.debug('dblclick: ', children, toDiv);
+            debugger
             if (c.speakSettings) {
                 $.each(c.speakSettings, function copyTo(k, v) {
                     window.sentenceHelper.settings[k] = v

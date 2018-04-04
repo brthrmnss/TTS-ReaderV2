@@ -228,17 +228,18 @@ function TTSAudition() {
                     if (voice.includes('Voice List')) {
                         return;
                     }
-                    if ( ! voice.includes('Emma')) {
-                    // return;
+                    if (!voice.includes('Emma')) {
+                        // return;
                     }
-                   //nn voice = voice.split(' ')[0]
+                    //nn voice = voice.split(' ')[0]
                     t2.addNext_NowRandom = function addNext_NowRandom(fx) {
-                        time = 9*1000*Math.random()
+                        time = 9 * 1000 * Math.random()
                         //time  = 1000
                         setTimeout(fx, time)
                     }
+                    t2.addNext_NowRandom = t2.add;
                     t2.addNext_NowRandom(function onK() {
-                        var txt =  'me too ..... im waiting for ur response ...'
+                        var txt = 'me too ..... im waiting for ur response ...'
                         /*
                          console.log('aaaa', voice)
                          var cfg = {};
@@ -253,6 +254,8 @@ function TTSAudition() {
                          }
                          self.speak(cfg)
                          */
+
+                        console.log('voice', voice)
 
 
                         var cfg = {};
@@ -288,6 +291,57 @@ function TTSAudition() {
 
                 return;
             })
+    }
+
+    p.test3 = function test3(cfgO) {
+        if ( self.data.t2 == null ) {
+            var port = 4444
+            var baseUrl = 'http://127.0.0.1:' + port
+            var t = EasyRemoteTester.create('Test say basics', {showBody: false});
+            var data = {};
+            t.settings.baseUrl = baseUrl
+            var urls = {};
+            urls.notes = {};
+            urls.say = t.utils.createTestingUrl('say')
+            urls.voices = t.utils.createTestingUrl('voices')
+            urls.voices = t.utils.createTestingUrl('list')
+
+            var t2 = t.clone('test a few voices notes');
+            self.data.t2 = t2;
+        } else {
+            t2 = self.data.t2
+        }
+        t2.add(function onSpeakTtxt() {
+            var txt = 'me too ..... im waiting for ur response ...'
+            console.log('voice', cfgO.voice)
+            var cfg = cfgO;
+            //cfg.voice = voice;
+            cfg.ratte = sh.dv(cfg.rate, 7)//cfg.rate = 7
+            cfg.volume = 50
+            cfg.volume = 30
+            cfg.endOld = false;
+            cfg.playAudioAfter = true;
+            cfg.randomFile = true;
+
+            var req = {}
+            req.url = 'http://127.0.0.1:8080/speak'
+            req.method = 'POST'
+            req.json = {}
+           // req.json.text = txt; //sh.dv(text, 'boo.')
+            if (cfg) {
+                sh.mergeObjects(cfg, req.json)
+            }
+            //return
+            request(req, function onResponse(error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    //	console.log(body) // Show the HTML for the Google homepage.
+                }
+                //console.log("\n\n\n\n\n\n")
+                console.log('->', 'logged', error)
+                //console.error('result', error, body)
+                t2.cb()
+            })
+        })
     }
 
     p.proc = function debugLogger() {

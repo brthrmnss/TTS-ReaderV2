@@ -16,7 +16,7 @@
     <script src="js/contextMenu.js"></script>
     <script type="text/javascript" src="http://127.0.0.1:10110/g/js/reloaderGH.js"></script>
 
-    <script src="js/dropzone.js"></script>
+    <xscript src="js/dropzone.js"></xscript>
 
 
     <script src="js/list.js"></script>
@@ -216,7 +216,7 @@
 
         <div id="upload-widget" style="background-color: #d2d2d2; height: 20px; width:200px;"></div>
 
-        <script>
+        <xscript>
             var myDropzone = new Dropzone("#upload-widget", {
                 maxFilesize: 500,
                 url: "/upload"
@@ -242,7 +242,7 @@
                 var response = $.parseJSON(data.xhr.response);
                 console.error('asdfasdf', file)
             });
-        </script>
+        </xscript>
 
 
         <!-- HTML heavily inspired by http://blueimp.github.io/jQuery-File-Upload/ -->
@@ -282,7 +282,7 @@
 
         </div>
 
-        <script src="js/dropzone2.js"></script>
+        <xscript src="js/dropzone2.js"></xscript>
 
         <div id="col2" class="colFLoating">
             <div id="col2_1"></div>
@@ -438,7 +438,7 @@
 
 <script>
 
-    function onGetSpansForPage(url, limitTo) {
+    function onGetSpansForPage(url, limitTo, fxDone) {
         var dlSentences = uiUtils.getUrlVal('d');
         urlSentences = '/pdf_book_processor_senctences.json'
         if (url) {
@@ -465,6 +465,8 @@
             //windowSelection.anchorNode.parentElement = sentObjs[0].span
             window.playIndexAt0 = true
             sH.sideLoadSentences2(sentObjs, limitTo)
+
+            u.cid(fxDone)
         }
     }
 
@@ -497,11 +499,11 @@
 
             p.loadPagesUpTo = function loadPagesUpTo(pageNumber) {
                 console.log('pages up to', pageNumber)
-                $.each(self.settings.book.pages, function checkEachPage(k,pageTOCInfo) {
-                    if ( pageTOCInfo.pageNumber > pageNumber ) {
+                $.each(self.settings.book.pages, function checkEachPage(k, pageTOCInfo) {
+                    if (pageTOCInfo.pageNumber > pageNumber) {
                         return false;
                     }
-                    if ( pageTOCInfo.pageLoaded ) {
+                    if (pageTOCInfo.pageLoaded) {
                         return;
                     }
                     self.loadPage(pageTOCInfo.pageNumber)
@@ -520,15 +522,15 @@
                     var pic = pageTOCInfo.file;
                     pic = pic.replace('testPages/', 'image/')
                     pic = pic.split('output/')[0]
-                    pic += pageTOCInfo.pageNumber+'.png'
+                    pic += pageTOCInfo.pageNumber + '.png'
                     img.attr('src', pic)
                     img.css('position', 'absolute')
                     img.css('top', '0px')
                     img.css('left', '0px')
                     //cfg.div.find('.page').append(img)
                     var div2 = cfg.div.find('.page').children().eq(0)
-                   // debugger
-                    console.log('div2', div2)
+                    // debugger
+                    //console.log('div2', div2)
                     div2.after(img)
                 }
                 uiUtils.utils.loadPage(cfg)
@@ -539,7 +541,7 @@
             }
 
             p.proc = function debugLogger() {
-                if ( self.silent == true) {
+                if (self.silent == true) {
                     return;
                 }
                 sh.sLog(arguments);
@@ -547,7 +549,94 @@
         }
 
 
+        function BookrTester() {
+            var p = BookrTester.prototype;
+            p = this;
+            var self = this;
+            self.data = {};
+            p.init = function init(config) {
+                self.settings = sh.dv(config, {});
+            }
 
+            p.jumpToBookrPage = function jumpToBookrPage(pageNumber) {
+                console.log('pages up to', pageNumber)
+                uiUtils.setScrollPosition('html', 4000);
+            }
+
+            p.playBookrAtIndex = function playBookrAtIndex(newIndex) {
+                var ui = document.elementsFromPoint(10,10)
+                var foundPage = null;
+                $.each(ui, function findELement(k,v) {
+                    var id = $(v).attr('id');
+                    //console.log('iii', id)
+                    if ( id != null && id.includes('d_')) {
+                        foundPage = $(v )
+                    }
+                })
+
+                if ( foundPage ) {
+                    console.log('foundPage', foundPage)
+                    foundPage.trigger('mouseover');
+                    var id = foundPage.attr('id')
+                    id = id.replace('d_page_', '')
+                    id = parseInt(id)
+
+                    console.log('id', id)
+                    window.currentReadingPage = id;
+                }
+
+              //  return;
+               // div.attr('id', 'd_page_' + v.pageNumber)
+                console.log('windowCurrentPage', window.currentReadingPage)
+                var pageTOCInfo = window.dictPageList[window.currentReadingPage]
+                onGetSpansForPage(pageTOCInfo.fileJSONSentences, pageTOCInfo.div, function onReady() {
+                    sentenceHelper.onPlay3(newIndex)
+                })
+              //  sentenceHelper.onPlay3(newIndex)
+                //console.log('pages up to', pageNumber)
+                // uiUtils.setScrollPosition('body', 500)
+            }
+
+            p.playBookrNextPage = function playBookrNextPage(newSentenceIndex) {
+
+
+                console.log('dnoe wiht page', window.currentReadingPage)
+                window.currentReadingPage++
+                var pageTOCInfo = window.dictPageList[window.currentReadingPage]
+                onGetSpansForPage(pageTOCInfo.fileJSONSentences, pageTOCInfo.div)
+
+
+                if ( pageTOCInfo ) {
+                    var foundPage =   pageTOCInfo.div
+                    console.log('foundPage', pageTOCInfo)
+                    foundPage.trigger('mouseover');
+                    var id = foundPage.attr('id')
+                    id = id.replace('d_page_', '')
+                    id = parseInt(id)
+
+                    console.log('id', id)
+                  //  window.currentReadingPage = id;
+                } else {
+                    console.log('no page ... end of book???')
+                    return;
+                }
+
+                //  return;
+                // div.attr('id', 'd_page_' + v.pageNumber)
+                console.log('windowCurrentPage', window.currentReadingPage)
+                onGetSpansForPage(pageTOCInfo.fileJSONSentences, pageTOCInfo.div, function onReady() {
+                    sentenceHelper.onPlay3()
+                })
+
+            }
+
+            p.proc = function debugLogger() {
+                if (self.silent == true) {
+                    return;
+                }
+                sh.sLog(arguments);
+            };
+        }
 
 
         var base = '';
@@ -559,8 +648,11 @@
 
         function onGotPDFBookTOC(d) {
             var bookr = new Bookr()
-            bookr.init({book:d,base:base})
+            bookr.init({book: d, base: base})
             window.fxDoneCurrentPage = function fxDoneCurrentPage() {
+
+                window.bookrTester.playBookrNextPage(window.currentReadingPage)
+                return;
                 console.log('dnoe wiht page', window.currentReadingPage)
                 window.currentReadingPage++
                 var pageTOCInfo = window.dictPageList[window.currentReadingPage]
@@ -580,7 +672,7 @@
                 div.text('page ' + v.pageNumber)
                 div.mouseover(function ok() {
                     console.log('mouse over', v.pageNumber)
-                    bookr.loadPagesUpTo(v.pageNumber+5)
+                    bookr.loadPagesUpTo(v.pageNumber + 5)
                     //div.off('mouseover', ok)
 
                     //  onGetSpansForPage(v.fileJSONSentences, div)
@@ -607,6 +699,30 @@
                 //uiUtils.loadPage()
             })
 
+            //
+
+
+            function asdf() {
+                var b = new BookrTester();
+                b.jumpToBookrPage(6);
+                window.bookrTester = b
+
+                //b.playBookrAtIndex(6);
+
+                function asdf2() {
+                    //var b = new BookrTester();
+                    //b.jumpToBookrPage(6);
+
+                    window.playIndexAt0 = false
+                    b.playBookrAtIndex(71);
+                }
+
+                setTimeout(asdf2, 500)
+
+            }
+
+            setTimeout(asdf, 800)
+
             //debugger
             return;
             var sentObjs = JSON.parse(d)
@@ -620,6 +736,9 @@
             });
             // debugger
             sH.sideLoadSentences2(sentObjs)
+
+            //no need to press
+
         }
     }
 

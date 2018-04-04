@@ -1,5 +1,83 @@
 [
 	{
+		"originalUrl": "/epub.html/Babylon.js%20Essentials%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
+		"name": "Babylonjs Essentials  Unknown"
+	},
+	{
+		"originalUrl": "/upload",
+		"fileHtml": "http://127.0.0.1:8080/epub_reload_viewer.html?loadBookFile=Crazy Rich Asians  Kevin Kwanepub/epub_offline.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Crazy Rich Asians  Kevin Kwanepub//epub.html",
+		"name": "Crazy Rich Asians  Kevin Kwanepub"
+	},
+	{
+		"originalUrl": "/epubV2.html/Babylon.js%20Essentials%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
+		"name": "Babylonjs Essentials  Unknown"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Mind%20Illuminated_%20A%20Complet%20-%20John%20Yates.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Mind Illuminated_ A Complet  John Yatesepub/epub.html",
+		"name": "The Mind Illuminated_ A Complet  John Yates"
+	},
+	{
+		"originalUrl": "/epubV2.html/A%20Mind%20For%20Numbers%20-%20Barbara%20Oakley.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/A Mind For Numbers  Barbara Oakleyepub/epub.html",
+		"name": "A Mind For Numbers  Barbara Oakley"
+	},
+	{
+		"originalUrl": "/epubV2.html/Survival%20of%20the%20Savvy_%20High-Int%20-%20Rick%20Brandon.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Survival of the Savvy_ HighInt  Rick Brandonepub/epub.html",
+		"name": "Survival of the Savvy_ HighInt  Rick Brandon"
+	},
+	{
+		"originalUrl": "/epubV2.html/8_keys_to_eliminating_passive_.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/8_keys_to_eliminating_passive_epub/epub.html",
+		"name": "8_keys_to_eliminating_passive_"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Dark%20Side%20of%20Relationship%20P%20-%20William%20R.%20Cupach.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Dark Side of Relationship P  William R Cupachepub/epub.html",
+		"name": "The Dark Side of Relationship P  William R Cupach"
+	},
+	{
+		"originalUrl": "/epubV2.html/The%20Leader's%20Guide%20to%20Speaking%20-%20Baldoni,%20John.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Leaders Guide to Speaking  Baldoni Johnepub/epub.html",
+		"name": "The Leaders Guide to Speaking  Baldoni John"
+	},
+	{
+		"originalUrl": "/epubV2.html/Mass%20Effect%20-%20Lauren%20Cornell.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Mass Effect  Lauren Cornellepub/epub.html",
+		"name": "Mass Effect  Lauren Cornell"
+	},
+	{
+		"originalUrl": "/epubV2.html/[Wilde_Oscar]_The_Picture_Of_Do%20-%20Unknown.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Wilde_Oscar_The_Picture_Of_Do  Unknownepub/epub.html",
+		"name": "Wilde_Oscar_The_Picture_Of_Do  Unknown"
+	},
+	{
+		"originalUrl": "/epubV2.html/[Aditya_Ravi_Shankar]_Pro_HTML5_Games(book4you.org).epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Aditya_Ravi_Shankar_Pro_HTML5_Gamesbook4youorgepub/epub.html",
+		"name": "Aditya_Ravi_Shankar_Pro_HTML5_Gamesbook4youorg"
+	},
+	{
+		"originalUrl": "/epubV2.html/Foundation%20Game%20Design%20With%20HTM%20-%20Rex%20van%20der%20Spuy.epub",
+		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
+		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Foundation Game Design With HTM  Rex van der Spuyepub/epub.html",
+		"name": "Foundation Game Design With HTM  Rex van der Spuy"
+	},
+	{
 		"originalUrl": "/epubV2.html/Built%20for%20Growth_%20How%20Builder%20P%20-%20Chris%20Kuenne.epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Built for Growth_ How Builder P  Chris Kuenneepub/epub.html",
@@ -58,12 +136,6 @@
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Video Game Storytelling_ What E  Evan Skolnickepub/epub.html",
 		"name": "Video Game Storytelling_ What E  Evan Skolnick"
-	},
-	{
-		"originalUrl": "/epubV2.html/The%20Mind%20Illuminated_%20A%20Complet%20-%20John%20Yates.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Mind Illuminated_ A Complet  John Yatesepub/epub.html",
-		"name": "The Mind Illuminated_ A Complet  John Yates"
 	},
 	{
 		"originalUrl": "/epubV2.html/Programming%20Game%20AI%20by%20Example%20-%20Mat%20Buckland.epub",
@@ -132,12 +204,6 @@
 		"name": "Goodbye Things_ The New Japane  Fumio Sasaki"
 	},
 	{
-		"originalUrl": "/epubV2.html/The%20Dark%20Side%20of%20Relationship%20P%20-%20William%20R.%20Cupach.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Dark Side of Relationship P  William R Cupachepub/epub.html",
-		"name": "The Dark Side of Relationship P  William R Cupach"
-	},
-	{
 		"originalUrl": "/epubV2.html/How%20to%20Lead%20When%20You're%20Not%20in%20-%20Clay%20Scroggins.epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/How to Lead When Youre Not in  Clay Scrogginsepub/epub.html",
@@ -186,22 +252,10 @@
 		"name": "Emotional Vampires_ Dealing Wit  Bernstein Albert J_"
 	},
 	{
-		"originalUrl": "/epubV2.html/8_keys_to_eliminating_passive_.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/8_keys_to_eliminating_passive_epub/epub.html",
-		"name": "8_keys_to_eliminating_passive_"
-	},
-	{
 		"originalUrl": "/epubV2.html/101%20Tough%20Conversations%20to%20Have%20-%20Paul%20Falcone.epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/101 Tough Conversations to Have  Paul Falconeepub/epub.html",
 		"name": "101 Tough Conversations to Have  Paul Falcone"
-	},
-	{
-		"originalUrl": "/epubV2.html/The%20Leader's%20Guide%20to%20Speaking%20-%20Baldoni,%20John.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Leaders Guide to Speaking  Baldoni Johnepub/epub.html",
-		"name": "The Leaders Guide to Speaking  Baldoni John"
 	},
 	{
 		"originalUrl": "/epubV2.html/beyond%20the%20babble%20leadership%20c%20-%20Unknown.txt.epub",
@@ -220,12 +274,6 @@
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/The Science of Footwear  Goonetilleke Ravindra S_epub/epub.html",
 		"name": "The Science of Footwear  Goonetilleke Ravindra S_"
-	},
-	{
-		"originalUrl": "/epubV2.html/Survival%20of%20the%20Savvy_%20High-Int%20-%20Rick%20Brandon.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Survival of the Savvy_ HighInt  Rick Brandonepub/epub.html",
-		"name": "Survival of the Savvy_ HighInt  Rick Brandon"
 	},
 	{
 		"originalUrl": "/epubV2.html/Speed%20Lead%20-%20Kevan%20Hall.epub",
@@ -792,12 +840,6 @@
 		"name": "Cyber War_ The Next Threat to N  Richard A Clarke"
 	},
 	{
-		"originalUrl": "/epub.html/Babylon.js%20Essentials%20-%20Unknown.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
-		"name": "Babylonjs Essentials  Unknown"
-	},
-	{
 		"originalUrl": "/epub.html/Applied%20Social%20Intelligence%20-%20Stephen%20Sampson.epub",
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epub.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Applied Social Intelligence  Stephen Sampsonepub/epub.html",
@@ -814,12 +856,6 @@
 		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
 		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Eon  Greg Bearepub/epub.html",
 		"name": "Eon  Greg Bear"
-	},
-	{
-		"originalUrl": "/epubV2.html/Babylon.js%20Essentials%20-%20Unknown.epub",
-		"fileHtml": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/www/epubV2.html",
-		"file": "G:\\Dropbox\\projects\\delegation\\Reader\\TTS-Reader/uploads/extracted/Babylonjs Essentials  Unknownepub/epub.html",
-		"name": "Babylonjs Essentials  Unknown"
 	},
 	{
 		"originalUrl": "/epubV2.html/Antianxiety%20Food%20Solution%20-%20Trudy%20Scott.epub",

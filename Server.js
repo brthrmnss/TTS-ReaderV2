@@ -48,6 +48,7 @@ var upload = multer({storage: storage});
 var allowCrossDomain = function (req, res, next) {
 
     // Website you wish to allow to connect
+
     res.setHeader('Access-Control-Allow-Origin', '*');
     // Request headers you wish to allow
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -55,7 +56,7 @@ var allowCrossDomain = function (req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     next();
 }
 
@@ -68,66 +69,105 @@ app.get("/epub.html", function (req, res) {
     res.sendFile(__dirname + '/www/epub.html');
 });
 
-function onProcessBookInWorld(req, res) {
-    var txt = sh.readFile('www/epub_reload_viewer.html');
-    var fileContent = '';
+var dirStore = sh.fs.trash('bookCvert')
+console.log('dir',dirStore )
+app.use('/bookConvert', express.static(dirStore));
 
-    var dirStore = sh.fs.trash('bookCvert')
-    var fileOutput = sh.fs.join(dirStore, 'test.html')
-    fileContent = sh.readFile(fileOutput)
 
-    console.log('size of file', fileContent.length)
-    txt = txt.replace('---yyy---', fileContent)
-    res.send(txt)
+function definePDFBooks() {
+    function onProcessBookInWorld(req, res) {
+        var txt = sh.readFile('www/epub_reload_viewer.html');
+        var fileContent = '';
+
+        if (req.query.loadBookFile == null) {
+            var dirStore = sh.fs.trash('bookCvert')
+            var fileOutput = sh.fs.join(dirStore, 'test.html')
+            fileContent = sh.readFile(fileOutput)
+
+            console.log('size of file', fileContent.length)
+            txt = txt.replace('---yyy---', fileContent)
+        }
+        res.send(txt)
+    }
+
+    app.get("/process_book_in_node", onProcessBookInWorld);
+
+
+    function onProcessPdfBookInNode(req, res) {
+        var txt = sh.readFile('www/pdf_book_processor_reload_viewer.html');
+        var fileContent = '';
+
+        var dirStore = sh.fs.trash('bookCvert')
+        var fileOutput = sh.fs.join(dirStore, 'test_pdf.html')
+        fileContent = sh.readFile(fileOutput)
+
+        console.log('size of file', fileOutput, fileContent.length)
+        txt = txt.replace('---yyy---', fileContent)
+        res.send(txt)
+    }
+
+    app.get("/process_pdf_book_in_node", onProcessPdfBookInNode);
+    function onPDFBookProcJSON(req, res) {
+        //var txt = sh.readFile('www/pdf_book_processor_reload_viewer.html');
+        //var fileContent = '';
+        var dirStore = sh.fs.trash('bookCvert')
+        var fileOutput = sh.fs.join(dirStore, 'test_pdf.html.json')
+        fileContent = sh.readFile(fileOutput)
+        res.he
+        res.send(fileContent)
+    }
+
+
+    app.get("/pdf_book_reader", onPDFBookReader);
+    function onPDFBookReader(req, res) {
+        var dirStore = sh.fs.trash('bookCvert')
+        var fileOutput = sh.fs.join(dirStore, 'test_pdf.html.json')
+        fileContent = sh.readFile(fileOutput)
+        res.send(fileContent)
+    }
+
+    app.get("/pdf_book_processor_senctences.json", onPDFBookProcJSON);
+    function onProj1TextToHTML(req, res) {
+        var txt = sh.readFile('www/proj1_text_to_html.html');
+        var fileContent = '';
+
+        var dirStore = sh.fs.trash('bookCvert2')
+        var fileOutput = sh.fs.join(dirStore, 'test_proj1_text_to_html.html')
+        fileContent = sh.readFile(fileOutput)
+
+        console.log('size of file', fileContent.length)
+        txt = txt.replace('---yyy---', fileContent)
+        res.send(txt)
+    }
+
+    app.get("/process_proj1_text_to_html", onProj1TextToHTML);
+
+
+    app.get("/pdfRips", function onGetListOfPdfRips(req, res) {
+        //sh.ListFilesInDirectoryMiddleware
+        var t = new sh.ListFilesInDirectoryMiddleware()
+        var config = {}
+        var dirFiles = sh.fs.join(__dirname, 'rips', 'testPages')
+        config.dirFiles = dirFiles;
+        config.fxItemUrl = function fxItemUrl(input)  {
+            var url = sh.str.after(input, 'testPage/')
+            var leaf = sh.fs.leaf(url)
+            url = `http://127.0.0.1:8080/pdf_book_processor_reload_viewer.html?loadBookFile=testPages/${leaf}/${leaf}_toc.json`
+            return url;
+        }
+        t.init(config)
+        var str = t.getStr()
+        console.log('str', str)
+        //options.port = 7789
+        // t.loadConfig(options);
+        //return;
+
+        res.send(str)
+    });
+
+
+
 }
-app.get("/process_book_in_node", onProcessBookInWorld);
-
-
-function onProcessPdfBookInNode(req, res) {
-    var txt = sh.readFile('www/pdf_book_processor_reload_viewer.html');
-    var fileContent = '';
-
-    var dirStore = sh.fs.trash('bookCvert')
-    var fileOutput = sh.fs.join(dirStore, 'test_pdf.html')
-    fileContent = sh.readFile(fileOutput)
-
-    console.log('size of file', fileOutput, fileContent.length)
-    txt = txt.replace('---yyy---', fileContent)
-    res.send(txt)
-}
-app.get("/process_pdf_book_in_node", onProcessPdfBookInNode);
-function onPDFBookProcJSON(req, res) {
-    //var txt = sh.readFile('www/pdf_book_processor_reload_viewer.html');
-    //var fileContent = '';
-    var dirStore = sh.fs.trash('bookCvert')
-    var fileOutput = sh.fs.join(dirStore, 'test_pdf.html.json')
-    fileContent = sh.readFile(fileOutput)
-    res.send(fileContent)
-}
-
-
-app.get("/pdf_book_reader", onPDFBookReader);
-function onPDFBookReader(req, res) {
-    var dirStore = sh.fs.trash('bookCvert')
-    var fileOutput = sh.fs.join(dirStore, 'test_pdf.html.json')
-    fileContent = sh.readFile(fileOutput)
-    res.send(fileContent)
-}
-
-app.get("/pdf_book_processor_senctences.json", onPDFBookProcJSON);
-function onProj1TextToHTML(req, res) {
-    var txt = sh.readFile('www/proj1_text_to_html.html');
-    var fileContent = '';
-
-    var dirStore = sh.fs.trash('bookCvert2')
-    var fileOutput = sh.fs.join(dirStore, 'test_proj1_text_to_html.html')
-    fileContent = sh.readFile(fileOutput)
-
-    console.log('size of file', fileContent.length)
-    txt = txt.replace('---yyy---', fileContent)
-    res.send(txt)
-}
-app.get("/process_proj1_text_to_html", onProj1TextToHTML);
 
 function onGetRecentBooks(req, res) {
     var json = sh.readJSONFile('recent_files.json', [], true)
@@ -139,7 +179,23 @@ function onGetRecentBooks(req, res) {
     var str = ''
     str += '<title>e-Recents</title>'
     sh.each(json, function addLink(k, v) {
-        str += sh.join(['<a href=', sh.qq(v.originalUrl), '>', v.name, '</a>', sh.br]);
+
+        var dirName = v.originalUrl;
+        if ( dirName ) {
+            dirName = v.originalUrl.replace('/epubV2.html/','')//.replace('.epub', '')
+            dirName = decodeURI(dirName)
+            dirName = sh.stripBadFiles(dirName)
+        }
+        var url2 = [
+            'http://127.0.0.1:8080/epub_reload_viewer.html?loadBookFile='+
+            dirName
+            +'/epub_offline.html'].join('')
+        var link2 = [
+            '<a href=',
+          sh.qq(url2),
+            '>', v.name, '</a>',
+        ].join('')
+        str += sh.join(['<a href=', sh.qq(v.originalUrl), '>', v.name, '</a>', ' . ', link2, sh.br]);
     })
     //asdf.g
     // load the single view file (angular will handle the page changes on the front-end)
@@ -170,30 +226,6 @@ app.get("/articles", function onGetListOfArticles(req, res) {
     // load the single view file (angular will handle the page changes on the front-end)
     res.send(str)
 });
-
-app.get("/pdfRips", function onGetListOfPdfRips(req, res) {
-    //sh.ListFilesInDirectoryMiddleware
-    var t = new sh.ListFilesInDirectoryMiddleware()
-    var config = {}
-    var dirFiles = sh.fs.join(__dirname, 'rips', 'testPages')
-    config.dirFiles = dirFiles;
-    config.fxItemUrl = function fxItemUrl(input)  {
-        var url = sh.str.after(input, 'testPage/')
-        var leaf = sh.fs.leaf(url)
-        url = `http://127.0.0.1:8080/pdf_book_processor_reload_viewer.html?loadBookFile=testPages/${leaf}/${leaf}_toc.json`
-        return url;
-    }
-    t.init(config)
-    var str = t.getStr()
-    console.log('str', str)
-    //options.port = 7789
-    // t.loadConfig(options);
-    //return;
-
-    res.send(str)
-});
-
-
 
 app.data = sh.dv(app.data, {})
 app.get("/postText", function onGetListOfArticles(req, res) {
@@ -682,6 +714,8 @@ sh.fs.exists(__dirname + '/www', 'y u not have it?')
 app.use(express.static(__dirname + '/www'));                 	// set the static files location /www/img will be /img for users
 //app.use(express.static();
 app.use('/uploads', express.static(__dirname + '/uploads'))
+//http://127.0.0.1:8080/uploads/extracted/Wilde_Oscar_The_Picture_Of_Do%20Unknownepub/epub_offline.html
+
 //app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({limit: '5mb', 'extended': 'true'}));
@@ -759,6 +793,17 @@ function spellCheck(req, res) {
     res.send('asdf')
 }
 
+var TestStoreBookEmotesInfo = require('./TestStoreBookEmotesInfo.js').TestStoreBookEmotesInfo
+
+app.get('/addEmote', function onAddEmote(req, res) {
+    TestStoreBookEmotesInfo.storeRake(req.query)
+    res.send('done')
+})
+
+app.get('/processEmotes', function onProcEmotes(req, res) {
+    TestStoreBookEmotesInfo.flattenEmotesFile(req.query)
+    res.send('done')
+})
 
 /*
  // application -------------------------------------------------------------
@@ -781,9 +826,12 @@ app.post('/getRecentFiles', function (req, res) {
     res.send(obj);
 });
 
+var ProcessEpubOffline = require('./www/js/process_epub_offline.js').ProcessEpubOffline
 // UPLOAD FILE
+ProcessEpubOffline()
 app.post('/upload', upload.single('file'), function (req, res) {
 
+    var fullMode = true
     var filename = req.file.filename;
     var isArchiveFile = req.file.filename.indexOf('.htmlz') != -1
     if (req.file.filename.indexOf('.epub') != -1 || isArchiveFile) {
@@ -793,17 +841,82 @@ app.post('/upload', upload.single('file'), function (req, res) {
         filePath = '"' + filePath + '"'
         var dirBook = filename.replace(/[^\w\s]/gi, '')
         dirExtraction += dirBook + '/'
+        origDirExtraction = dirExtraction
         dirExtraction = '"' + dirExtraction + '"'
+
+
         var args = ['-o', filePath, '-d', dirExtraction];
         console.log(args)
         args = args.join(' ')
         console.log(args)
+        xfx = sh.str.after(origDirExtraction, 'extracted/')
+/*
+        fileEpubHtml = 'http://127.0.0.1:8080/epub_reload_viewer.html?' +
+            'loadBookFile=' +
+            xfx +// '/' +
+            'epub_offline.html'
+        if ( sh.fs.exists() ) {
+            res.send(fileEpubHtml)
+            return;
+        }
+        */
+
         var exeZip = sh.fs.join(__dirname, 'bin', 'windows', 'unzip.exe')
         try {
             var code = execSync(exeZip + ' ' + args);
         } catch (e) {
             console.error(e)
             console.error('prob book existed ... already ')
+        }
+        if ( fullMode ) {
+
+            var go = new MergeEpub()
+            //var dir = 'C:/trash/epub/HBR\'s 10 Must Reads on Leadersh - Harvard Business Review'
+
+            var options = {};
+            options.dir = origDirExtraction;
+            options.fxDone = function done(file) {
+
+                var j = new JSONFileHelper();
+                var config = {};
+                config.file = __dirname + '/' + 'recent_files.json';
+                j.init(config);
+
+                fileEpubHtml = 'http://127.0.0.1:8080/epub_reload_viewer.html?' +
+                    'loadBookFile=' +
+                    'Wilde_Oscar_The_Picture_Of_Do%20%20Unknownepub/' +
+                    'epub_offline.html'
+                fileEpubHtml = 'http://127.0.0.1:8080/epub_reload_viewer.html?' +
+                    'loadBookFile=' +
+                    xfx +// '/' +
+                    'epub_offline.html'
+
+                var bookJSON = {
+                    originalUrl: req.originalUrl,
+                    fileHtml: fileEpubHtml,
+                    file: file,
+                    name: dirBook
+                }
+
+                j.add(bookJSON, true, 'originalUrl');
+
+                console.log('ok')
+
+              /*  //epub = epub.replace(/src="\.\.\//gi, '~~~~')
+                if (req.query.endAt != null) {
+                    var endAt = parseFloat(req.query.endAt)
+                    console.log('end at ', endAt)
+                    fileContent = fileContent.slice(0, endAt)
+                }
+                epub = epub.replace('---yyy---', fileContent)*/
+                //res.redirect(epub);
+                convertBook(origDirExtraction)
+                res.send(fileEpubHtml)
+            }
+            go.init(options);
+            go.go()
+
+
         }
     }
 
@@ -834,6 +947,47 @@ app.post('/upload', upload.single('file'), function (req, res) {
     res.status(204).end();
     req.filename;
 });
+
+
+function convertBook(origDirExtraction) {
+
+    var i = new ProcessEpubOffline();
+    var config = {};
+
+    let file = origDirExtraction+"/epub.html"
+    config.file = file
+    config.maxSize =  null
+    i.init(config)
+    var quickMode = true;
+    quickMode = false;
+    if (quickMode == false) {
+        i.loadFile()
+    } else {
+
+    }
+
+    i.convertFile(quickMode)
+    i.saveFile()
+
+
+    var i = new ProcessEpubOffline();
+    var config = {};
+    config.file = file
+     config.maxSize =  null
+    i.init(config)
+    var quickMode = true;
+    //quickMode = false;
+    if (quickMode == false) {
+        i.loadFile()
+    } else {
+
+    }
+
+    i.convertFile(quickMode)
+    i.saveFile()
+}
+
+
 app.post('/writeArticle', function onWriteArticle(req, res) {
 
     console.log("body: " + JSON.stringify(req.body));//.replace(/\\/g, ""));
@@ -995,8 +1149,54 @@ app.post('/speak', function (req, res) {
 
 });
 
+
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/rips'));
+
+
+
+var lastResort = function  lastResort(req, res, next) {
+
+    console.log('last resort', req.originalUrl)
+    if (req != null) {
+        var referer = req.headers['referer'];
+    }
+
+    var dirReferrer = null;
+    if (referer && referer.includes('epub_reload_viewer.html') ) {
+        var str = sh.str.after(referer, 'loadBookFile=')
+        str = sh.str.before(str, '/')
+        str = unescape(str)
+        var dirExtracted = sh.fs.join(__dirname, 'uploads', 'extracted', str)
+        var exists = sh.fs.exists(dirExtracted)
+        console.log(exists, dirExtracted)
+        var fileResource = sh.fs.join(dirExtracted, req.originalUrl)
+        var exists = sh.fs.exists(fileResource)
+        if ( exists == false ) {
+            var fileResource = sh.fs.join(dirExtracted, 'OEBPS' ,req.originalUrl)
+            var exists = sh.fs.exists(fileResource)
+        }
+        if ( exists == false ) {
+            var fileResource = sh.fs.join(dirExtracted, 'OEBPS', req.originalUrl)
+            var exists = sh.fs.exists(fileResource)
+        }
+
+        console.log(exists, fileResource)
+        res.sendFile(fileResource);
+        return
+        //dirReferrer = unescape(referer).split('epub.html/')[1]
+        //console.error('change it ..', fileOrig, dirReferrer)
+    }
+    if (referer && referer.indexOf('epubV2.html') != -1) {
+        dirReferrer = unescape(referer).split('epubV2.html/')[1]
+        //console.error('change it ..', fileOrig, dirReferrer)
+    }
+
+    next();
+}
+
+app.use(lastResort);
+
 
 // listen (start app with node Server.js) ======================================
 app.listen(8080);

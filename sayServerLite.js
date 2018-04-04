@@ -287,6 +287,7 @@ function SayServerLite() {
 
             //},30*1000)
             console.log('')
+            console.log('speakOpts',speakOpts)
             self.proc("speak.text: " + speakOpts.text);
             if (speakOpts.text == 'zzz beep zzz') {
                 var fileSong = __dirname + '/' + 'www/' + 'audio/' + 'tone.mp3'
@@ -376,6 +377,27 @@ function SayServerLite() {
                     filePathFile = fileCachedWav;
                 }
 
+                if ( speakOpts.storeAudioInBookname ) {
+                    if (self.settings.useTrash) {
+                        // var fileTxtPrompt = fileTxtPrompt
+                        var dirBook = sh.fs.join(dirTrash, 'storedAudio', speakOpts.bookname)
+                        sh.fs.mkdirp(dirBook)
+                        var filePathCacheStoredAudio = sh.fs.join(dirBook, speakOpts.sentenceIndex+ '.mp3')
+                        //
+                        speakOpts.filePathCacheStoredAudio = filePathCacheStoredAudio;
+                        if ( sh.fs.exists(filePathCacheStoredAudio)) {
+                            console.log(sh.t, '>>> filePathCacheStoredAudio', filePathCacheStoredAudio)
+                            if ( speakOpts.doNotPlay ) {
+                                console.log('do not play')
+                                fx()
+                                return;
+                            }
+                            self.utils.playSong(filePathCacheStoredAudio, fx)
+                            return;
+                        }
+                    }
+                }
+
 
                 fileTxtPrompt = sh.fs.slash(fileTxtPrompt)
                 sh.writeFile(fileTxtPrompt, text);
@@ -444,6 +466,8 @@ function SayServerLite() {
                 if (self.lastCp) {
                     self.lastCp.kill('SIGINT')
                 }
+
+
                 // EXECUTION
                 var cp = child_process.exec(gb, function (err, stdout, stderr) {
                     self.speaking = 0;
@@ -472,6 +496,32 @@ function SayServerLite() {
                         });
                         return
                     }
+                    if (self.data.modeApplyConversions) {
+                        spark2();
+                    } else {
+                        self.utils.doConvert(filePathFile, spark2, speakOpts);
+                    }
+
+                })
+
+
+                function spark2(newSoundPath) {
+
+                    //filePathFile = asdf
+                    if ( newSoundPath ) {
+                        filePathFile = newSoundPath;
+                    }
+
+                    if (  speakOpts.filePathCacheStoredAudio ) {
+                        console.log('copy stuff',filePathFile, speakOpts.filePathCacheStoredAudio )
+                        sh.fs.copy(filePathFile, speakOpts.filePathCacheStoredAudio)
+                    }
+
+                    if ( speakOpts.doNotPlay ) {
+                        console.log('do not play2')
+                        fx()
+                        return;
+                    }
 
                     if (speakOpts.cacheAudio && speakOpts.playAudio) {
                         self.utils.playSong(filePathFile, fx)
@@ -495,7 +545,7 @@ function SayServerLite() {
                     if (fx)
                         fx(true);
                     //console.log('done speaking', text, stdout);
-                });
+                }
                 self.lastCp = cp;
 
             }
@@ -547,9 +597,43 @@ function SayServerLite() {
                 sec -= timeDiff;
                 console.log('td', timeDiff)
                 console.log('duration', strDuration, dbg, sec, ms)
+
+                //doConvertVoice()
                 fx(sec);
             }
+            /*function onConvertDone() {
+                fx(sec);
+            }*/
         }
+        p.utils.doConvert = function doConvert(fileSound, fxDone, speakOpts) {
+                var SoundPitcher = require(__dirname+'/MaryTTS/SpeakServer/SoundPitch.js').SoundPitcher;
+                var s = new SoundPitcher();
+                s.init()
+                s.sound(fileSound ); //"C:/Users/user1/trash/sayServerLite/sound54.wav")
+
+                /*
+                 var config = {
+                 reverblite:true,
+                 highpass:true,
+                 }
+                 */
+                s.init();
+                s.setupData();
+                s.activeSoundConfig(speakOpts);
+                s.convertAsync(function onDone(newOutputFile) {
+
+                    //onConvertDone();
+                    //return;
+                    console.log('newOutputFile', newOutputFile)
+
+                    sh.cid(fxDone, newOutputFile)
+                    // s.play(kfile)
+                })
+
+
+            }
+
+
         p.utils.playSong = function playSong(fileSong, fx) {
 
             if (self.settings.socketMode) {

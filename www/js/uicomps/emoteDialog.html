@@ -1,0 +1,51 @@
+<body class="home">
+
+<style>
+    .mini-panel {
+        background: #f2f2f2;
+        padding: 10px;
+        width: 50%;
+
+    }
+</style>
+
+<mini-panel fixed style="min-width:350px;">
+    <h3>Emote Dialog</h3>
+    <hr/>
+
+    <div id="listEmotes">
+    </div>
+    <br/>
+    <div id="listEmotes_Collector">
+    </div>
+    <br/>
+    <div id="listFlows">
+    </div>
+    <div id="listFlows_Collector">
+    </div>
+    <br/>
+    <input id="txtSentence">
+    <br/>
+    <span id="txtCurrentIndex"></span>
+    <br/>
+    <div scrollheight150 id="txtContent"></div>
+    <br/>
+    <textarea id="txtNotes"></textarea>
+    <br/>
+    <horizontal-layout>
+        <button btn ng-click="acceptEmoteDialog()">ok</button>
+        <button btn-secondary ng-click="closeEmoteDialog()">cancel</button>
+        <!--<button>asdf</button>-->
+        <button btn-secondary ng-click="onProccessFLows()" title="PRocess">
+            <glyph icon="random"></glyph>
+        </button>
+    </horizontal-layout>
+
+    <glyph icon="remove" finger tr abs glyph-remove ng-click="closeEmoteDialog()"></glyph>
+</mini-panel>
+
+
+<div id="listEmotes_partial">
+    <span id="holderIcon">asdfsdf</span>
+</div>
+</body>

@@ -103,6 +103,8 @@ function MergeEpub() {
         // var dir = 'C:/trash/epub/HBR\'s 10 Must Reads on Leadersh - Harvard Business Review'
         dir = self.settings.dir;
         var fileToc = dir + '/' + 'toc.ncx'
+        self.data.fileTOC = fileToc
+        self.data.fileJSONToc = dir + '/' + 'toc.json'
         var origDir = self.settings.dir
 
 
@@ -137,7 +139,36 @@ function MergeEpub() {
             // console.dir(result);
             var navPointItems = result.ncx.navMap[0].navPoint;
             var files = []
+            var navPoints = []
 
+            function getNavTitle(sdf){
+                var title = '';
+                title = result.ncx.docTitle[0].text[0]
+                return title;
+            }
+            var title = getNavTitle()
+            function getContentForNavPoint(v) {
+                var fileSrc = v.content[0].$.src;
+                fileSrc = /*dir2 + */fileSrc.split('#')[0];
+                return  fileSrc
+            }
+            function getTextForNavPoint(v) {
+                var navLabel = v.navLabel[0].text[0];
+                return  navLabel
+            }
+            function createNavPoint(v, parentNav) {
+                var nav = {};
+                nav.title = getTextForNavPoint(v);
+                nav.file = getContentForNavPoint(v);
+
+                nav.children = [];
+                if ( parentNav == null) {
+                    navPoints.push(nav)
+                } else {
+                    parentNav.children.push(nav)
+                }
+                return nav;
+            }
 
             //  if ( result.ncx.navMap.length > 1 ){
             //  sh.each( result.ncx.navMap, function onAddEachFile(k,navMapSlice) {
@@ -152,6 +183,7 @@ function MergeEpub() {
                     return; //skip included
                 }
                 files.push(fileSrc)
+                var l1_NavPoint = createNavPoint(v)
 
                 v.navPoint = sh.dv(v.navPoint, [])
                 sh.each(v.navPoint, function onAddEachFile(k, v) {
@@ -164,7 +196,7 @@ function MergeEpub() {
                         return; //skip included
                     }
                     files.push(fileSrc)
-
+                    var l2_NavPoint = createNavPoint(v, l1_NavPoint)
                     if (v.navPoint) {
                         sh.each(v.navPoint, function onAddEachFile_inner(k, v) {
                             var fileSrc = v.content[0].$.src;
@@ -177,6 +209,7 @@ function MergeEpub() {
                             }
                             //https://youtu.be/jmoRkepTHsg?t=36s
                             files.push(fileSrc)
+                            var l3_NavPoint = createNavPoint(v, l2_NavPoint)
                         })
 
                     }
@@ -200,6 +233,30 @@ function MergeEpub() {
              files.push(fileSrc)
              })*/
 
+            var navPointsConverted = navPoints;
+            sh.tree.all(navPointsConverted, function ok(node){
+                if ( node.children.length == 0 ) {
+                    delete node.children;
+                }
+            })
+
+            var flat = sh.tree.flat(navPointsConverted)
+            flat = sh.clone(flat)
+            sh.tree.all(flat, function ok(node){
+                delete node.children
+                node.file = sh.fs.slash(node.file)
+
+            })
+            console.log(sh.toJSONString(navPointsConverted))
+
+            var jsonTOC = {}
+            jsonTOC.title = title;
+            jsonTOC.navPoints = navPointsConverted
+            jsonTOC.flat = flat
+
+            sh.fs.writeJSONFile(self.data.fileJSONToc, jsonTOC)
+
+            sh.fs.log(self.data.fileJSONToc, 'store json file:')
             console.dir('navPointItems', navPointItems);
             console.log('found', files.length, 'files')
             console.log('Done');
@@ -207,6 +264,12 @@ function MergeEpub() {
 
 
             self.data.files = files;
+
+            if ( self.settings.stopAfterTOC) {
+           //     console.log('files', files)
+                console.log('stopAfterTOC')
+                return
+            }
             self.mergeFiles();
             // sh.toJSONString(x, true)
         });
@@ -443,6 +506,7 @@ if (module.parent == null) {
     dirLeaf = 'Robert_Earl_Fleury_The_small_business_survival_gbook4youorgepub'
     dirLeaf = 'Antianxiety Food Solution  Trudy Scottepub'
     dirLeaf = 'The Black Jacobins  C L R Jamesepub'
+    dirLeaf = 'Crazy Rich Asians  Kevin Kwanepub'
     dir = dirExtracted + '/' + dirLeaf
 
     options.dir = dir;
@@ -452,6 +516,7 @@ if (module.parent == null) {
         console.log('finished')
     }
     options.force = true;
+    options.stopAfterTOC = true;
     go.init(options);
     go.go()
     return;

@@ -1,6 +1,11 @@
 if (typeof exports !== 'undefined') {
     // debugger
     var $ = global.$;
+    if ($ == null) {
+        $ = require('shelpers').shelpers
+    }
+} else {
+
 }
 
 function forwardArgsTo(fx, args, delay) {
@@ -79,6 +84,189 @@ function throwIfNull(prop, msg) {
     }
 }
 
+
+function convertColor(color1, color2, stepCount) {
+    // elements for obtaining vals
+    /*  var val1El = document.getElementById('color1');
+     var val2El = document.getElementById('color2');
+     var stepsEl = document.getElementById('steps');*/
+
+// constants for switch/case checking representation type
+    const HEX = 1;
+    const RGB = 2;
+    const RGBA = 3;
+
+// get the string representation
+// type and set it on the element (HEX/RGB/RGBA)
+    function getType(val) {
+        if (val.indexOf('#') > -1) return HEX;
+        if (val.indexOf('rgb(') > -1) return RGB;
+        if (val.indexOf('rgba(') > -1) return RGBA;
+    }
+
+// process the value irrespective of representation type
+    function processValue(el) {
+        switch (el.dataType) {
+            case HEX: {
+                return processHEX(el.value);
+            }
+            case RGB: {
+                return processRGB(el.value);
+            }
+            case RGBA: {
+                return processRGB(el.value);
+            }
+
+        }
+    }
+
+//return a workable RGB int array [r,g,b] from rgb/rgba representation
+    function processRGB(val) {
+        var rgb = val.split('(')[1].split(')')[0].split(',');
+        alert(rgb.toString());
+        return [
+            parseInt(rgb[0], 10),
+            parseInt(rgb[1], 10),
+            parseInt(rgb[2], 10)
+        ];
+    }
+
+//return a workable RGB int array [r,g,b] from hex representation
+    function processHEX(val) {
+        //does the hex contain extra char?
+        var hex = (val.length > 6) ? val.substr(1, val.length - 1) : val;
+        // is it a six character hex?
+        if (hex.length > 3) {
+
+            //scrape out the numerics
+            var r = hex.substr(0, 2);
+            var g = hex.substr(2, 2);
+            var b = hex.substr(4, 2);
+
+            // if not six character hex,
+            // then work as if its a three character hex
+        } else {
+
+            // just concat the pieces with themselves
+            var r = hex.substr(0, 1) + hex.substr(0, 1);
+            var g = hex.substr(1, 1) + hex.substr(1, 1);
+            var b = hex.substr(2, 1) + hex.substr(2, 1);
+
+        }
+        // return our clean values
+        return [
+            parseInt(r, 16),
+            parseInt(g, 16),
+            parseInt(b, 16)
+        ]
+    }
+
+    function updateSpitter() {
+        //attach start value
+        var hasSpun = 0;
+
+        var val1RGB = processValue(color1);
+        var val2RGB = processValue(color2);
+        var val1RGB = processHEX(color1);
+        var val2RGB = processHEX(color2);
+        var colors = [
+            // somewhere to dump gradient
+        ];
+        var showColors = false
+        if (showColors) {
+            // the pre element where we spit array to user
+            var spitter = document.getElementById('spitter');
+        }
+
+        //the number of steps in the gradient
+        var stepsInt = stepCount;
+        //the percentage representation of the step
+        var stepsPerc = 100 / (stepsInt + 1);
+
+        // diffs between two values
+        var valClampRGB = [
+            val2RGB[0] - val1RGB[0],
+            val2RGB[1] - val1RGB[1],
+            val2RGB[2] - val1RGB[2]
+        ];
+
+
+        // build the color array out with color steps
+        for (var i = 0; i < stepsInt; i++) {
+            var clampedR = (valClampRGB[0] > 0)
+                ? pad((Math.round(valClampRGB[0] / 100 * (stepsPerc * (i + 1)))).toString(16), 2)
+                : pad((Math.round((val1RGB[0] + (valClampRGB[0]) / 100 * (stepsPerc * (i + 1))))).toString(16), 2);
+
+            var clampedG = (valClampRGB[1] > 0)
+                ? pad((Math.round(valClampRGB[1] / 100 * (stepsPerc * (i + 1)))).toString(16), 2)
+                : pad((Math.round((val1RGB[1] + (valClampRGB[1]) / 100 * (stepsPerc * (i + 1))))).toString(16), 2);
+
+            var clampedB = (valClampRGB[2] > 0)
+                ? pad((Math.round(valClampRGB[2] / 100 * (stepsPerc * (i + 1)))).toString(16), 2)
+                : pad((Math.round((val1RGB[2] + (valClampRGB[2]) / 100 * (stepsPerc * (i + 1))))).toString(16), 2);
+            colors[i] = [
+                '#',
+                clampedR,
+                clampedG,
+                clampedB
+            ].join('');
+        }
+        if (showColors) {
+            //build div representation of gradient
+            var html = [];
+            for (var i = 0; i < colors.length; i++) {
+                html.push("<div class='color' style='background-color:" + colors[i] + "; height:" + ((i - (i - 1)) / colors.length * 100) + "%;'></div>");
+            }
+            document.getElementById("colors").innerHTML = html.join('');
+        }
+        //update the pre element
+        return JSON.stringify(colors);
+    }
+
+    /**
+     * padding function:
+     * cba to roll my own, thanks Pointy!
+     * ==================================
+     * source: http://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript
+     */
+    function pad(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
+    return updateSpitter();
+}
+
+
+function convertValRange(val, arr) {
+    //  console.log('yy' ,arr.length, arr)
+    var len = arr.length;
+    var stepVal = 1 / len
+    //console.log(val, 'val')
+    var count = 0;
+    var selectedVal = null
+    $.each(arr, function f(k, v) {
+        if (count > val) {
+            return false
+        }
+        count += stepVal;
+        selectedVal = v;
+    })
+
+    return selectedVal
+}
+
+/*
+ var c = convertColor('#0000ff', '#ff3300', 15)
+ console.log('c', c)
+ var yy = ['<0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0']
+ console.log('selectedVal', converTTo(0.3, yy) )
+ console.log('selectedVal', converTTo(0.0, yy) )
+ console.log('selectedVal', converTTo(1, yy) )
+ console.log('selectedVal', converTTo(0.4, yy) )*/
+
+//process.exit()
 function defineUtils2() {
     $.async = function asyncHelper(items, fx, fxAllDone, delay, playIndex) {
         //var index = 0
@@ -148,7 +336,6 @@ defineUtils2();
 var uiUtils = {};
 window.uiUtils = uiUtils;
 
-
 uiUtils.addToDict = function addKeyToArrayDict(dict, key, val) {
     var keyVals = dict[key];
     if (keyVals == null) {
@@ -165,6 +352,10 @@ function defineUtils() {
     u.data = {}
 
     uiUtils.dictCfg = {};
+
+
+    u.convertColor = convertColor
+    u.convertValRange = convertValRange
 
     uiUtils.cid = uiUtils.callIfDefined = callIfDefined
     function defineExtras() {
@@ -280,6 +471,15 @@ function defineUtils() {
 
     p.forwardArgsTo = forwardArgsTo;
 
+
+    p.removeFromArray = function removeFromArray(array, value, clone) {
+        var index = array.indexOf(value)
+        if (index == -1)
+            return array;
+
+        array.splice(index, 1);
+        return array;
+    }
 
     self.clone = function clone(e) {
         var eee = JSON.stringify(e)
@@ -419,7 +619,7 @@ function defineUtils() {
         var ui = uiUtils.lastUI;
 
         var l = lOrUI
-        if (lOrUI.length) {
+        if (lOrUI && lOrUI.length) {
             ui = lOrUI
             l = t;
             t = r
@@ -486,23 +686,67 @@ function defineUtils() {
         ui = dv(ui, u.lastUI)
         t = dv(t, 10)
         l = dv(l, 10)
-        u.position(ui, t, l )
+        u.position(ui, t, l)
     }
 
-    uiUtils.makeAbs = function makeAbs(jquery, highPosition) {
-        jquery.css('position', 'absolute');
-        if (highPosition) {
-            jquery.css('z-index', highPosition + 200);
-        }
-
-        uiUtils.position(jquery, 0, 0)
-
+    u.pos.bl = function moveToTopLeft(ui, b, l) {
+        ui = dv(ui, u.lastUI)
+        b = dv(b, 10)
+        l = dv(l, 10)
+        u.position(ui, l, null, null, b)
     }
 
-    u.styleDialog = function styleDialog(ui) {
+    u.pos.tr = function moveToTopLeft(ui, t, r) {
+        ui = dv(ui, u.lastUI)
+        t = dv(t, 10)
+        r = dv(r, 10)
+        u.position(ui, null, t, r)
+    }
+
+    uiUtils.makeAbs = function makeAbs(ui, highPosition) {
         ui = dv(ui, u.lastUI)
         ui.css('position', 'absolute');
-        ui.css('z-index', '1001');
+        if (highPosition) {
+            ui.css('z-index', highPosition + 200);
+        }
+
+        uiUtils.position(ui, 0, 0)
+    }
+    uiUtils.zIndex = function zIndex(d, ui) {
+        ui = dv(ui, u.lastUI)
+        ui.css('z-index', d);
+    }
+
+    uiUtils.fontSize = function fontSize(fontSize, ui) {
+        ui = dv(ui, u.lastUI)
+        fontSize += 'px'
+        ui.css('font-size', fontSize);
+    }
+
+    uiUtils.makeRel = function makeRel(ui, highPosition) {
+        ui = dv(ui, u.lastUI)
+        ui.css('position', 'relative');
+        if (highPosition) {
+            ui.css('z-index', highPosition + 200);
+        }
+        uiUtils.position(ui, 0, 0)
+    }
+
+    uiUtils.makeFixed = function makeFixed(ui, highPosition) {
+        ui = dv(ui, u.lastUI)
+        ui.css('position', 'fixed');
+        if (highPosition) {
+            ui.css('z-index', highPosition + 200);
+        }
+        uiUtils.position(ui, 0, 0)
+    }
+
+    u.styleDialog = function styleDialog(ui, makeAbs) {
+        ui = dv(ui, u.lastUI)
+        if (makeAbs !== false) {
+            ui.css('position', 'absolute');
+            ui.css('z-index', '1001');
+        }
         ui.css('background-color', '#f2f2f2');
         ui.css('padding', '10px');
         ui.css('border', '1px #666666 solid');
@@ -514,7 +758,36 @@ function defineUtils() {
         }
         ui.css('padding', padding);
     }
-    
+
+    u.px = function px(amt) {
+        if ($.isNumeric(amt)) {
+            amt += 'px'
+        }
+        return amt;
+    }
+
+    u.marginRight = function marginRight(amt, ui) {
+        ui = dv(ui, u.lastUI)
+        ui.css('margin-right', u.px(amt))
+    }
+
+    u.marginLeft = function marginLeft(amt, ui) {
+        ui = dv(ui, u.lastUI)
+        ui.css('margin-left', u.px(amt))
+    }
+    u.underline = function underline(width, color, style) {
+        width = dv(width, width)
+        if (width.includes('px') == null) {
+            width += 'px'
+        }
+        color = dv(color, 'light-blue')
+        style = dv(style, 'solid')
+        uiUtils.lastUI.css('border-bottom', [width, color, style].join(' '));
+    }
+    u.addClass = function addClass(className, color, style) {
+        uiUtils.lastUI.addClass(className)
+    }
+
     uiUtils.center = function center(jquery, highPosition) {
         if (jquery == null) {
             jquery = uiUtils.lastUI;
@@ -760,19 +1033,19 @@ function defineUtils() {
     }
 
     uiUtils.table = {};
-    uiUtils.table.makeTable = function makeTable(){
+    uiUtils.table.makeTable = function makeTable() {
         var table = u.tag('table')
         table.css('background', 'transparent')
         u.lastTable = table;
         return table
     }
-    uiUtils.table.addHRow = function addRow(){
+    uiUtils.table.addHRow = function addRow() {
         var args = uiUtils.args(arguments)
 
 
         var tr = u.tag('tr')
 
-        $.each(args, function (k,v) {
+        $.each(args, function (k, v) {
             var td = u.tag('th')
             td.html(v)
             tr.append(td)
@@ -781,27 +1054,27 @@ function defineUtils() {
         u.lastTable.append(tr)
         return tr
     }
-    uiUtils.table.rowWidth = function rowWidth(){
+    uiUtils.table.rowWidth = function rowWidth() {
         var widths = uiUtils.args(arguments)
         var tr = u.tag('tr')
 
         var tds = u.lastRow.find('td,th')
-        $.each(widths, function (k,v) {
+        $.each(widths, function (k, v) {
             var td = $(tds[k])
-            if ( v != null) {
+            if (v != null) {
                 td.css('width', v)
             }
         })
         u.lastTable.append(tr)
         return tr
     }
-    uiUtils.table.addRow = function addRow(){
+    uiUtils.table.addRow = function addRow() {
         var args = uiUtils.args(arguments)
 
 
         var tr = u.tag('tr')
         u.lastRow = (tr)
-        $.each(args, function (k,v) {
+        $.each(args, function (k, v) {
             var td = u.tag('td')
             td.html(v)
             tr.append(td)
@@ -809,12 +1082,12 @@ function defineUtils() {
         u.lastTable.append(tr)
         return tr
     }
-    uiUtils.table.updateLastRow = function updateLastRow(colIndex, val, overrideRow){
+    uiUtils.table.updateLastRow = function updateLastRow(colIndex, val, overrideRow) {
         var targetRow = u.lastRow;
-        if ( overrideRow ) {
+        if (overrideRow) {
             targetRow = overrideRow;
         }
-        var td = targetRow.children().slice(colIndex, colIndex+1)[0];
+        var td = targetRow.children().slice(colIndex, colIndex + 1)[0];
         td = $(td)
         td.html(val)
     }
@@ -967,32 +1240,6 @@ function defineUtils() {
     uiUtils.makeInline = function makeInline() {
         uiUtils.lastCfg.ui.css('display', 'inline-block')
     }
-
-    function defineScrollable() {
-        uiUtils.scrollToBottom = function scrollToBottom(jq) {
-
-            var ui = $(jq)
-            //$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
-            $(jq).clearQueue();
-            $(jq).stop(true, true);
-            $(jq).animate({scrollTop: $(jq).prop("scrollHeight")}, 10);
-            console.log('scrollto', ui.prop('scrollHeight'), ui.scrollTop())
-        }
-
-        uiUtils.makeScrollable = function makeScrollaboe(div, height) {
-            div.css('overflow', 'auto')
-            div.css('max-height', height + 'px')
-            //debugger
-        }
-        uiUtils.scrollToTop = function scrollToTop(jq) {
-            //$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
-            $(jq).clearQueue();
-            $(jq).stop(true, true);
-            $(jq).animate({scrollTop: 0}, 10);
-        }
-    }
-
-    defineScrollable()
 
     uiUtils.addBtn = function addBtn(cfg, fxD) {
         cfg = u.cfg.str(cfg, 'text')
@@ -1211,6 +1458,10 @@ function defineUtils() {
     }
 
 
+    uiUtils.jumpToParent = function jumpToParent() {
+        uiUtils.lastUI = uiUtils.lastUI.parent()
+    }
+
     function defineStyles() {
         uiUtils.pad = function addPadding(l, t, r, b) {
             if (l) {
@@ -1228,10 +1479,18 @@ function defineUtils() {
         }
         uiUtils.wH = function setWidthAndHeight(w, h) {
             if (w) {
-                uiUtils.lastUI.css('width', w + 'px')
+                if (w.includes('px') || w.includes('%')) {
+                } else {
+                    w += 'px'
+                }
+                uiUtils.lastUI.css('width', w)
             }
             if (h) {
-                uiUtils.lastUI.css('height', h + 'px')
+                if (h.includes('px') || h.includes('%')) {
+                } else {
+                    h += 'px'
+                }
+                uiUtils.lastUI.css('height', h)
             }
         }
         uiUtils.wH100 = function setWidthAndHeight(w, h) {
@@ -1284,9 +1543,19 @@ function defineUtils() {
                 b: parseInt(result[3], 16)
             } : null;
         }
+        /*uiUtils.color = function setBgColor(l, ui, alpha) {
+         var ui = uiUtils.lastUI;
+         if (alpha) {
+         var o = hexToRgb(l)
+         var p = [o.r, o.g, o.b, alpha].join(', ')
+         randomColor = 'rgba' + sh.paren(p)
+         l = randomColor;
+         }
+         ui.css('color', l)
+         }*/
         uiUtils.bg = function setBgColor(l, ui, alpha) {
             var ui = uiUtils.lastUI;
-            if ( alpha ) {
+            if (alpha) {
 
 
                 var o = hexToRgb(l)
@@ -1319,9 +1588,13 @@ function defineUtils() {
             ui.css('display', 'inline-block')
         }
 
-        uiUtils.height = function set_height(height, ui) {
+        uiUtils.height = function set_height(height, ui, maxH) {
             var ui = uiUtils.lastUI;
-            ui.css('height', height)
+            var prop = 'height'
+            if (maxH || maxH == 'max') {
+                prop = 'max-height'
+            }
+            ui.css(prop, height)
         }
 
         uiUtils.opacity = function setOpacity(opacity, _ui) {
@@ -1336,7 +1609,7 @@ function defineUtils() {
             ui.css('opacity', opacity)
         }
 
-        uiUtils.opac = uiUtils.opacity
+        uiUtils.alpha = uiUtils.opac = uiUtils.opacity
 
 
         uiUtils.copySize = function copySize(ui1, ui2) {
@@ -1397,13 +1670,50 @@ function defineUtils() {
     defineStyles();
 
     uiUtils.br = function addBr(cfg, fxD) {
+        if (cfg == undefined) {
+            return u.tag('br')
+        }
+        var cfgOrig = cfg;
+
         cfg = dv(cfg, {})
         cfg = u.cfg.str(cfg, 'text')
         uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
-        var btn = u.tag('br')
-        u.addUI(cfg, btn)
+        var br = u.tag('br')
+
+        if (cfgOrig.length) {
+            cfgOrig.append(br)
+            return;
+        }
+        u.addUI(cfg, br)
+
     }
 
+    u.addBr = function addBr() {
+        var img = u.tag('br')
+        u.append()
+    }
+
+    uiUtils.wordTag = function wordTag(txt, bgColor) {
+        var div = u.tag('div')
+        div.text(txt)
+        div.css('padding', '5px')
+        div.css('padding-top', '2px')
+        div.css('padding-bottom', '1px')
+        //div.css('display', 'inline-block')
+        div.css('background-color', bgColor)
+        return div;
+    }
+
+    uiUtils.wordTagSpan = uiUtils.spanTag = function wordTagSpan(txt, bgColor) {
+        var div = u.tag('span')
+        div.text(txt)
+        div.css('padding', '5px')
+        div.css('padding-top', '2px')
+        div.css('padding-bottom', '1px')
+        //div.css('display', 'inline-block')
+        div.css('background-color', bgColor)
+        return div;
+    }
 
     uiUtils.showTemp = function showTemp(cfg) {
         cfg = dv(cfg, {});
@@ -1444,6 +1754,15 @@ function defineUtils() {
         uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
         var btn = u.tag('hr')
         u.addUI(cfg, btn)
+    }
+
+    uiUtils.span = function span(cfg, fxD) {
+        // cfg = dv(cfg, {})
+        // cfg = u.cfg.str(cfg, 'text')
+        //  uiUtils.utils.mergeIn(uiUtils.flagCfg, cfg);
+        var btn = u.tag('span')
+        // u.addUI(cfg, btn)
+        return btn;
     }
 
     uiUtils.spacer = function spacer(cfg, fxD) {
@@ -1629,8 +1948,21 @@ function defineUtils() {
     }
     p.tag = function createTag(type) {
         var ui = $('<' + type + '/>');
+        u.lastUI2 = u.lastUI;
         u.lastUI = ui
         return ui
+    }
+    p.id = function setId(newId) {
+        if (u.lastUI.length > 1) {
+            console.warn('you sure you have a prob?, too many items', ui.lastUI)
+            throw new Error('too many items')
+        }
+        u.lastUI.attr('id', newId)
+        return u.lastUI
+    }
+
+    p.append = function appendLastONLast(u) {
+        uiUtils.lastUI2.append(uiUtils.lastUI)
     }
 
 
@@ -2113,7 +2445,7 @@ function defineUtils() {
     defineAnnotationMethods();
 
     p.utils = {};
-    p.utils.mergeIn = function mergeIn(a, b, overwriteVals) {
+    p.merge = p.utils.mergeIn = function mergeIn(a, b, overwriteVals) {
         if (a == null) {
             return
         }
@@ -2131,6 +2463,17 @@ function defineUtils() {
         //	}
     }
 
+    uiUtils.addOrMergeIn = function addOrMergeIn(addOn, current) {
+        if (addOn == null) {
+            return current;
+        }
+        if (current == null) {
+            current = {}
+        }
+        uiUtils.utils.mergeIn(addOn, current)
+        return current;
+
+    }
 
     p.utils.addIfDoesStartWith = function addIfDoesStartWith(u, strStrasWith) {
         var charStr = u.slice(0, 1);
@@ -2231,8 +2574,21 @@ function defineUtils() {
             if (_ui.length == null) {
                 var cfg = _ui;
             }
+
+            cfg.ui.clearQueue();
+            cfg.ui.stop(true, true);
+
             cfg.ui.show();
-            cfg.ui.css('opacity', 0.0)
+            if (cfg.resetAlpha != false) {
+                var alpha = parseFloat(cfg.ui.css('opacity'))
+                var startingAlpha = 0.0
+                if (cfg.resetAlphaTo != null && alpha > cfg.resetAlphaTo) {
+                    startingAlpha = cfg.resetAlphaTo;
+                }
+                cfg.ui.css('opacity', startingAlpha)
+            }
+
+
             cfg.duration = u.dv(cfg.duration, 600);
             cfg.opacity = u.dv(cfg.opacity, 1.0);
 
@@ -2253,20 +2609,24 @@ function defineUtils() {
         uiUtils.fadeOut = function fadeOut(_ui) {
             //function onHoverOut() {
             // debugger
-
-            $(_ui).clearQueue();
-            $(_ui).stop(true, true);
-            $(_ui).animate({
+            var cfg = {ui: _ui, duration: 300}
+            if (_ui.length == null) {
+                var cfg = _ui;
+            }
+            cfg.ui = $(cfg.ui)
+            cfg.ui.clearQueue();
+            cfg.ui.stop(true, true);
+            cfg.ui.animate({
                     opacity: 0.0
                 },
                 {
-                    duration: 300,
+                    duration: cfg.duration,
                     complete: function onEnd() {
-                        _ui.hide();
+                        cfg.ui.hide();
                     }
                 }
             );
-            console.error('fadeOut', _ui)
+            console.error('fadeOut', cfg.ui)
             //}
         }
 
@@ -2477,7 +2837,30 @@ function defineUtils() {
     function defineUI() {
         p.utils.loadPage = function loadPage(cfg) {
             var div = $(cfg.div)
+            if (cfg.baseUI) {
+                div = cfg.baseUI;
+            }
+            if (cfg.preload) {
+                cfg.noGet = true;
+            }
             if (cfg.noGet != true) {
+                if (cfg.divCreatable) {
+                    div = $('#' + cfg.divCreatable)
+                    if (div.empty()) {
+                        var body = $('body')
+                        var holderUI = $('<div/>')
+                        holderUI.attr('id', cfg.divCreatable)
+                        if (cfg.dbg) {
+                            holderUI.css('height', '10px')
+                            holderUI.css('width', '50%')
+                            holderUI.css('background', 'red')
+                        }
+                        body.prepend(holderUI)
+                        div = holderUI
+                        console.debug('...', cfg.divCreatable)
+                        //debugger
+                    }
+                }
                 if (div && div.empty() && cfg.id) {
                     //var id = cfg.id;
                     if (cfg.id.startsWith('#') == false) {
@@ -2486,41 +2869,102 @@ function defineUtils() {
                     div = u.cfg.getDiv(cfg.id);
                 }
                 if (div.length == 0) {
-                    throw new Error('could not find area ' + cfg.div);
+                    if (cfg.append !== true && div.length == 0) {
+                        throw new Error('could not find area ' + cfg.div);
+                    }
                 }
+            }
+            if (cfg.preloadedTemplate) {
+                //debugger;
+                onLoadedPageContents(cfg.preloadedTemplate)
+                console.debug('preloaded')
+
+                return;
             }
             //debugger
             $.ajax({
                 url: cfg.url,
                 datattype: "html",
                 //data: data,
-                success: function (data) {
-
-                    var output = p.utils.parseBodyHTML(data);
-
-
-                    if (cfg.noGet != true) {
-
-                        //debugger;
-                        div.html(output.body.html());
-                    }
-                    output.addStyles();
-
-                    cfg.ui = div;
-
-                    callIfDefined(cfg.fxDone, data, output.body)
-                },
+                success: onLoadedPageContents,
                 error: function (a, b, c) {
-                    //debugger;
-                    console.error('cannot get loadPage info');
+                    // debugger;
+                    console.error('cannot get loadPage info', cfg.url);
                     uiUtils.remoteFailed(a, b, c)
                 }
             });
+
+            function onLoadedPageContents(data) {
+                //console.error('okok', cfg.preload, cfg.fxPreloadTemplate)
+                if (cfg.preload) {
+                    cfg.preloadedTemplate = data;
+                    if (cfg.preloadedTemplate_StoreOn) {
+                        cfg.preloadedTemplate_StoreOn.preloadedTemplate = data;
+                    }
+                    sh.cid(cfg.fxPreloadTemplate, cfg) // data, output.body, cfg )
+                    return;
+                }
+                var output = p.utils.parseBodyHTML(data);
+                var newHTML = output.body.html()
+
+                if (cfg.replaceThis) {
+                    output.raw = output.raw.split(cfg.replaceThis).join(cfg.withThis)
+                }
+
+                if (data.includes('<body')) {
+                    if (cfg.jqOnHTML) {
+                        newHTML = $(output.raw).find(cfg.jqOnHTML).html().trim();
+                    } else if (cfg.fxHTMLRaw) {
+                        newHTML = cfg.fxHTMLRaw(output.raw)
+                    }
+                    else {
+                        newHTML = $(output.raw).html().trim();
+                    }
+
+                }
+                if (newHTML == null) {
+                    newHTML = $(output.raw).html().trim();
+                }
+
+                cfg.newHTML = newHTML;
+                if (cfg.noGet != true) {
+
+                    if (cfg.append) {
+                        div = $('body')
+
+                        var ui = $(newHTML)
+                        if (cfg.doNotWrap != true) {
+                            var container = u.tag('div')
+                            container.append(ui)
+                            div.append(container)
+                            //ui = container;
+                            div = container;
+                        } else {
+                            div.append(ui)
+                            div = ui;
+                        }
+
+
+                    } else {
+                        //debugger;
+                        div.html(newHTML);
+                        if (output.body.length == 0) {
+                            div.html(output.jquery.html());
+                        }
+                    }
+
+                }
+                output.addStyles();
+                //debugger;
+                cfg.ui = div;
+
+                callIfDefined(cfg.fxDone, data, output.body, cfg)
+            }
         }
 
 
-        uiUtils.remoteFailed = function remoteFailed(a, b, c) {
-            console.error(a, b, c)
+        uiUtils.remoteFailed = function remoteFailed(a, b, c, url) {
+            console.error('\t', url, a, b, c)
             debugger
         }
 
@@ -2739,7 +3183,7 @@ function defineUtils() {
                     callIfDefined(fxDone, data)
                 },
                 error: function (a, b, c) {
-                    console.error('request failed', a, b, c)
+                    console.error('request failed', url, a, b, c)
                     //gUtils.remoteFailed(a,b,c)
                 }
             });
@@ -2760,9 +3204,17 @@ function defineUtils() {
     defineUrl();
 
     function defineCookies() {
-        p.getVal = function getVal(key) {
+        p.getVal = function getVal(key, okIfFails) {
             var val = localStorage.getItem(key)
-            var json = JSON.parse(val);
+            try {
+                var json = JSON.parse(val);
+            } catch (e) {
+                console.error(e)
+                if (okIfFails) {
+                    json = null;
+                }
+            }
+
             return json
         }
 
@@ -2946,6 +3398,20 @@ function defineUtils() {
         uiUtils.setId = function setId(id) {
             uiUtils.lastUI.attr('id', id)
         }
+        uiUtils.height = function setHeight(id, maxH) {
+            if (id.toString().includes('px')) {
+
+            } else {
+                id += 'px'
+            }
+
+            var prop = 'height'
+            if (maxH || maxH == 'max') {
+                prop = 'max-height'
+            }
+
+            uiUtils.lastUI.css(prop, id)
+        }
     }
 
     defineAppendHelperMethods();
@@ -3020,6 +3486,186 @@ function defineUtils() {
                 }
             });
         }
+
+
+        u.copyObjProps = function copyObjProps(a, b) {
+            $.each(a, function copyTo(k, v) {
+                if ($.isFunction(v)) {
+                    b[k] = v;
+                }
+            })
+        }
+
+        u.copyNonObjProps = function copyNonObjProps(a, b) {
+            b = u.dv(b, {})
+            var str = ['string', 'boolean', 'number']
+            $.each(a, function copyTo(k, v) {
+                var type = typeof v
+                if (str.includes(type)) {
+                    b[k] = v;
+                }
+            })
+            return b;
+        }
+
+
+        /*
+         var cfgListen = {
+         str: [uiUtils.keys.space],
+         fx: function ok() {
+         console.log('hit space')
+         },
+         codeMode: true,
+         ignoreText: true
+         }
+
+         uiUtils.listenForKeyCodes(cfgListen);
+
+         uiUtils.listenForStr(' ', function onK() {
+         console.log('hit space2')
+         })
+         */
+
+        //https://css-tricks.com/snippets/javascript/javascript-keycodes/
+
+        uiUtils.keys = {};
+        uiUtils.keys.space = 32;
+        uiUtils.keys.enter = 13;
+        uiUtils.keys.esc = 27;
+        uiUtils.keys.pageup = 33;
+        uiUtils.keys.pagedown = 34;
+        uiUtils.keys.left = 37;
+        uiUtils.keys.up = 38;
+        uiUtils.keys.right = 39;
+        uiUtils.keys.down = 40;
+
+        uiUtils.keys.num1 = 97;
+        uiUtils.keys.num2 = 98;
+        uiUtils.keys.num3 = 99;
+        uiUtils.keys.num4 = 100;
+
+
+        uiUtils.listenForStr = uiUtils.listenForString = function listenForString(str, fx) {
+            var cfgListen = {
+                str: str,
+                fx: fx,
+                codeMode: false,
+                ignoreText: true
+            }
+            uiUtils.listenForKeyCodes(cfgListen)
+        }
+
+        uiUtils.listenForCode = function listenForCode(codeMode, fx) {
+            var cfgListen = {
+                keyCode: codeMode,
+                fx: fx,
+                codeMode: true,
+                ignoreText: true
+            }
+            uiUtils.listenForKeyCodes(cfgListen)
+        }
+
+        function isTextBox(element) {
+            var tagName = element.tagName.toLowerCase();
+            if (tagName === 'textarea') return true;
+            if (tagName !== 'input') return false;
+            var type = element.getAttribute('type')
+            if (type == null) {
+                type = 'input'
+            }
+            type = type.toLowerCase()
+            // if any of these input types is not supported by a browser, it will behave as input type text.
+            let inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week']
+            return inputTypes.indexOf(type) >= 0;
+        }
+
+        //str, fx , codeMode, ignoreText
+
+        uiUtils.listenForKeyCode =
+            uiUtils.listenForKeyCodes = uiUtils.listForCode = function listForCode(cfg) {
+                cfg.ignoreText = sh.dv(cfg.ignoreText, true);
+                cfg.codeMode = sh.dv(cfg.codeMode, true);
+                if (cfg.str) {
+                    if (cfg.str.split) {
+                        var match = cfg.str.split('');
+                    } else {
+                        match = cfg.str;
+                    }
+                }
+                var lastChars = [];
+                var timeout = 250;
+                timeout = 350;
+
+                uiUtils.listenForKeysList = uiUtils.dv(uiUtils.listenForKeysList, [])
+                uiUtils.listenForKeysList.push(cfg)
+
+                $('body').keyup(function onKey(e) {
+                    if (cfg.debug) {
+                        console.log('onkeyup', e.which, cfg.str)
+                    }
+                    if (e.which !== 0) {
+                        var char = String.fromCharCode(e.which);
+                        char = char.toLowerCase();
+                    }
+                    if (cfg.keyCode) {
+                        if (cfg.keyCode == e.which) {
+                            if (cfg.fx) cfg.fx()
+                        }
+                        return;
+                    }
+                    if (cfg.codeMode) {
+                        char = e.which
+                        //if ( e.keyCode==e)
+                        //return;
+
+                    }
+                    if (cfg.ignoreText) {
+                        /*console.log('yyy', e.target.nodeType, e.target)
+                         if ( inputTypes.includes(e.target.nodeName) ) {
+                         return;
+                         }*/
+                        if (isTextBox(e.target)) {
+                            return;
+                        }
+                    }
+                    lastChars.push(char)
+                    function removeFirstChar() {
+                        lastChars.shift()
+                    }
+
+                    setTimeout(removeFirstChar, timeout)
+
+
+                    var falt = null
+                    if (lastChars.length >= match.length) {
+                        $.each(lastChars.reverse(), function (k, v) {
+                            var matchTo = match[k]
+                            if (k + 1 > match.length) {
+                                console.log('end too soon wrong', k + 1, match.length)
+                                return false;
+                            }
+
+                            if (matchTo != v) {
+                                console.log('wrong')
+                                falt = v;
+                                return false;
+                            }
+                        });
+
+                        if (falt == null) {
+                            console.log('success', lastChars, match)
+                            if (cfg.fx) cfg.fx()
+                        }
+                    }
+
+                    console.log('keys', lastChars, falt)
+                })
+            }
+
+        /*  u2.listForCode('rr', function ff(){
+         console.log('sdfsdf')
+         window.fxReload();
+         })*/
         gUtils.onClick = function onClick(jquery, fx, gY) {
 
             throwIfNull(fx, 'need a function for ' + jquery)
@@ -3590,6 +4236,10 @@ function defineUtils() {
         }
 
         uiUtils.getScrollPosition = function getScrollPosition(ui) {
+            if (ui == null) {
+                ui = 'html'
+                console.debug('used default html')
+            }
             var position = $(ui).prop('scrollHeight');
             var position = $(ui).scrollTop();
             return position;
@@ -3613,6 +4263,63 @@ function defineUtils() {
 
             return position;
         }
+
+        /*
+
+         uiUtils.scrollToBottom = function scrollToBottom(jq) {
+
+         var ui = $(jq)
+         //$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
+         $(jq).clearQueue();
+         $(jq).stop(true, true);
+         $(jq).animate({scrollTop: $(jq).prop("scrollHeight")}, 10);
+         console.log('scrollto', ui.prop('scrollHeight'), ui.scrollTop())
+         }
+
+         uiUtils.makeScrollable = function makeScrollaboe(div, height) {
+         div.css('overflow', 'auto')
+         div.css('max-height', height + 'px')
+         //debugger
+         }
+         uiUtils.scrollToTop = function scrollToTop(jq) {
+         //$("body").animate({ scrollTop: $('#messages').prop("scrollHeight")}, 200);
+         $(jq).clearQueue();
+         $(jq).stop(true, true);
+         $(jq).animate({scrollTop: 0}, 10);
+         }
+         */
+
+        uiUtils.scrollToElement = function scrollToElement(target, scrollIntoViewDivs, scrollBody) {
+            target = $(target);
+
+            console.log('scrollToElement', 'key')
+            if (self.data.autoScrollingEnabled == false) {
+                return;
+            }
+
+            // if (target.length) {
+            var scrollBody = $('html,body')
+
+            var scrollTop = target.offset().top - 200;
+
+            if (scrollIntoViewDivs != true) {
+                console.log('scroll to top', scrollTop, target.height(),
+                    scrollBody.scrollTop(), target.offset().top,
+                    target.offset().top, target.parent().offset().top)
+
+                scrollBody.clearQueue();
+                scrollBody.stop();
+                scrollBody.animate({
+                    scrollTop: scrollTop
+                }, 500);
+            } else {
+                target[0].scrollIntoView();
+            }
+            //return false;
+            //   }
+
+        }
+
 
     }
 

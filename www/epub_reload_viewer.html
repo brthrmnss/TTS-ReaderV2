@@ -14,9 +14,10 @@
     <script src="js/removeDiacritics.js"></script>
     <script src="js/speakHTMLText_CleanedV2.js"></script>
     <script src="js/contextMenu.js"></script>
+
     <script type="text/javascript" src="http://127.0.0.1:10110/g/js/reloaderGH.js"></script>
 
-    <script src="js/dropzone.js"></script>
+    <xscript src="js/dropzone.js"></xscript>
 
 
     <script src="js/list.js"></script>
@@ -24,10 +25,15 @@
 
     <link rel="stylesheet" type="text/css" href="/js/speak.css">
     <link rel="stylesheet" type="text/css" href="/js/contextMenu.css">
+    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+    <link rel='stylesheet' href='css/emoji.min.css'>
+
+
+    <!--    <span class='ec ec-sparkling-heart'></span>-->
 
     <style>
         .highlight {
-            background-color: #FFC619  !important;
+            background-color: #FFC619 !important;
             opacity: 0.3;
             opacity: 0.9;
         }
@@ -117,6 +123,23 @@
             text-align: left;
         }
 
+        .personQuoteSpeaker {
+            border-bottom: 4px lightblue solid;
+
+        }
+
+        .spanSentenceIndexNumber {
+            background-color: #B2DED4;
+            padding: 5px;
+            border: 1px solid #93C1B7;
+        }
+
+    </style>
+
+    <style>
+        .btn {
+            border-radius: 0px !important;
+        }
     </style>
 </head>
 <body style="text-align:left;">
@@ -142,7 +165,7 @@
 
     <textarea id="contextAddBookmark_txt"
               placeholder="important b/c ... inspires me to ..."
-              style="height: 200px; width: 150px; border: solid 1px white;"></textarea>
+              style="height: 200px; width: 100%; border: solid 1px white;"></textarea>
 
     <br/>
     <button id="btnAddNote">Add Notes</button>
@@ -157,11 +180,15 @@
         <br/>
         <button id="btnEpiphany">Epi</button>
         <button id="btnPainful">Pain</button>
+
+
+        <span class="ec ec-slightly-smiling-face"></span>
+
     </div>
 
     <span id="contextSentiments"></span>
     <br/>
-    <div id="txtAreaforBookMark" style="max-height: 100px; max-width: 150px; overflow: auto;">sdfsdf</div>
+    <div id="txtAreaforBookMark" style="max-height: 100px; xmax-width: 150px; overflow: auto;">sdfsdf</div>
 
 </div>
 
@@ -169,6 +196,28 @@
 <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
 <!--<link rel="stylesheet" type="text/css" href="dist/css/bootstrap-theme.min.css">-->
 <script src="js/lib/bootstrap.min.js"></script>
+<script src="http://localhost:10110/grid/grid/G:/Dropbox/projects/crypto/mp/GrammarHelperServer/sharedResourcesGrid/comps/UIComp.js"></script>
+<script src="http://localhost:10110/grid/grid/G:/Dropbox/projects/crypto/mp/GrammarHelperServer/sharedResourcesGrid/comps/user/Morpher.js"></script>
+
+<link rel='stylesheet'
+      href="http://localhost:10110/grid/grid/G:/Dropbox/projects/crypto/mp/GrammarHelperServer/sharedResourcesGrid/styles/quickUIService.css"/>
+<link rel='stylesheet'
+      href='http://localhost:10110/grid/grid/G:/Dropbox/projects/crypto/mp/GrammarHelperServer/sharedResourcesGrid/styles/humanreadable.css'/>
+<link rel='stylesheet'
+      href='http://localhost:10110/grid/grid/G:/Dropbox/projects/crypto/mp/GrammarHelperServer/sharedResourcesGrid/styles/layouts.css'/>
+
+
+<script src="http://localhost:10110/grid/grid/G:/Dropbox/projects/crypto/mp/GrammarHelperServer/sharedResourcesGrid/comps/SList.js"></script>
+<script src="http://localhost:10110/grid/grid/G:/Dropbox/projects/crypto/mp/GrammarHelperServer/sharedResourcesGrid/comps/SListInner.js"></script>
+
+<script src="js/uicomps/emoteDialog.js"></script>
+<script src="js/uicomps/audioOptionsDialog.js"></script>
+<!--<script>
+    var s = new SList()
+    var cfg = {};
+    s.init(cfg)
+</script>-->
+
 
 <div id="bookHolderContainerCloneContainere" class="flex-container">
     <div id="bookHolderContainerClone" class="col1">
@@ -181,31 +230,33 @@
         <div id="upload-widget" style="background-color: #d2d2d2; height: 20px; width:200px;"></div>
 
         <script>
-            var myDropzone = new Dropzone("#upload-widget", {
-                maxFilesize: 500,
-                url: "/upload"
-            });
-            myDropzone.on('success', function (file, resp) {
-                //...
-            });
-            myDropzone.on('addedfile', function (file, resp) {
-                console.error('asdfasdf', file)
-            });
-            myDropzone.on('sending', function (file, resp) {
-                console.error('asdfasdf', file)
-            });
-            myDropzone.on('success', function (file, data) {
-                //var response = $.parseJSON(data.xhr.response);
-                console.error(file, data)
-                //debugger
-                //window.location.href = "http://stackoverflow.com";
+            function setupDropUpoads() {
+                var myDropzone = new Dropzone("#upload-widget", {
+                    maxFilesize: 500,
+                    url: "/upload"
+                });
+                myDropzone.on('success', function (file, resp) {
+                    //...
+                });
+                myDropzone.on('addedfile', function (file, resp) {
+                    console.error('asdfasdf', file)
+                });
+                myDropzone.on('sending', function (file, resp) {
+                    console.error('asdfasdf', file)
+                });
+                myDropzone.on('success', function (file, data) {
+                    //var response = $.parseJSON(data.xhr.response);
+                    console.error(file, data)
+                    //debugger
+                    //window.location.href = "http://stackoverflow.com";
 
-                window.location.href = "/epub.html/" + file.name
-            });
-            myDropzone.on('error', function (file, data2, data) {
-                var response = $.parseJSON(data.xhr.response);
-                console.error('asdfasdf', file)
-            });
+                    window.location.href = "/epub.html/" + file.name
+                });
+                myDropzone.on('error', function (file, data2, data) {
+                    var response = $.parseJSON(data.xhr.response);
+                    console.error('asdfasdf', file)
+                });
+            }
         </script>
 
 
@@ -246,7 +297,7 @@
 
         </div>
 
-        <script src="js/dropzone2.js"></script>
+        <xscript src="js/dropzone2.js"></xscript>
 
         <div id="col2" class="colFLoating">
             <div id="col2_1"></div>
@@ -288,7 +339,7 @@
 
 
 </div>
-<div  id="bookHolderContainerClone"  style="padding:20px;" >
+<div id="bookHolderContainerClone" style="padding:20px;">
 
 </div>
 <div style="padding:20px;">
@@ -344,6 +395,14 @@
     function onReloader() {
 
 
+        var reload = uiUtils.getUrlVal('reload');
+        //debugger
+        if (reload == 'false') {
+            console.log('skipping reload')
+            return
+        }
+
+
         var href = window.location.toString();
         if (href.includes('?updrel=')) {
             href = href.split('?updrel=')[0];
@@ -366,11 +425,46 @@
         reloader.reloadWhen('bookCvert');
         reloader.reloadWhen('epub_reload_viewer');
         reloader.reloadWhen('speakHTMLText_CleanedV2');
+        reloader.reloadWhen('sharedResourcesGrid');
         reloader.reloadIgnoreIf('noreload');
+
+        reloader.fxFilterBasedOnFile = function ignoreHolder(classPath) {
+            if (classPath.includes('process_epub_offline')) {
+                return true;
+            }
+            if (classPath.includes('TTS-Read')) {
+                return false
+            }
+            if (classPath.includes('GrammarHelperServer')) {
+                return false
+            }
+            if (classPath.includes('bookCvert')) {
+                return false
+            }
+
+
+            return true;
+        };
+
+        reloader.reloadWhenFx('emoteDialog.html', function onTestOneJs(a, b, c) {
+            console.log('reload it', a, b, c);
+            window.EmoteDialog.retry()
+        })
+
+        reloader.fxTransformUrl = function fxTransformUrl(url, file2) {
+            var convertedUrl = url;
+            console.log('url', url)
+            if (url.startsWith('G:')) {
+                convertedUrl = 'http://localhost:10110/grid/grid/' + url;
+            }
+            return convertedUrl
+        }
+
+
         // reloader.reloadWhen('ArucoBaby.js');
         // reloader.reloadWhen('baby_lib');
 
-       // G:\Dropbox\projects\delegation\Reader\TTS-Reader\www\js\speakHTMLText_CleanedV2.js
+        // G:\Dropbox\projects\delegation\Reader\TTS-Reader\www\js\speakHTMLText_CleanedV2.js
         /*   reloader.reloadWhenFx('baby_rend2.js', function onTestOneJs(a, b, c) {
          console.log('reload it', a, b, c);
          })
@@ -398,13 +492,700 @@
     }
 
     function jumptopage(i) {
-        $('[sentence-index='+i+']')[0].scrollIntoView()
+        $('[sentence-index=' + i + ']')[0].scrollIntoView()
         var scrollTop = $(window).scrollTop()
-        $(window).scrollTop(scrollTop-260)
+        $(window).scrollTop(scrollTop - 260)
         //document.getElementById("containingDiv").scrollTop += 280;
+    }
+
+    function EpubReloadViewer() {
+        var self = this;
+        var p = self;
+        self.data = {};
+
+        p.init = function init(config) {
+            self.settings = config;
+            var loadBookFile = uiUtils.getUrlVal('loadBookFile');
+            self.data.loadBookFile = loadBookFile
+
+            self.data.keyBookLastPage = self.data.loadBookFile + "_lastpage"
+        }
+
+        p.createCharDialog = function createCharDialog() {
+            var panel = $('#debugCharactersDialog2')
+            panel.css('width', 'calc(100% - 450px)')
+        }
+
+        p.createPanel = function createCharDialog() {
+            var panel = uiUtils.tag('div')
+            //uiUtils.lastUI = panel;
+            uiUtils.id('container_bottomBlocker')
+            // return;
+            //panel.css('width', 'calc(100% - 350px)')
+            //debugger
+            uiUtils.makeFixed()
+            uiUtils.pos.br(null, 0, 0)
+            uiUtils.wH('100%', '120')
+            uiUtils.bg('#f2f2f2')
+            uiUtils.alpha(0.6)
+            panel.css('border-top', '1px solid #DDDDDD')
+            $('body').prepend(panel)
+        }
+        p.jumpToSentence = function jumpToSentence(sendId) {
+            var s = $('[sentence-index=' + sendId + ']')
+            uiUtils.scrollToElement(s)
+            s.addClass('highlight')
+            console.log('jumpToSentence', sendId)
+            window.sentenceHelper.onPlay2(null, true,
+                'setTo_' + sendId, false, true)
+            window.sentenceHelper.onPlay2UI(sendId, true)
+        }
+        p.goToLastSentence = function goToLastSentence() {
+            var sentNum = uiUtils.getVal(self.data.keyBookLastPage, true)
+            console.log('loding last key', sentNum)
+            if ($.isNumeric(sentNum) == false) {
+                console.warn('not numeric', sentNum)
+                return;
+            }
+            sentNum = parseInt(sentNum)
+            console.log('loding last key', sentNum)
+            self.jumpToSentence(sentNum)
+        }
+        p.storeBookLocation = function storeBookLocation(sendId) {
+            uiUtils.setVal(self.data.keyBookLastPage, sendId)
+        }
+        p.storeBookLocationSafe = function storeBookLocationSafe(sendId) {
+            self.data.countStoreBookLocation = sh.dv(self.data.countStoreBookLocation, 0)
+            self.data.countStoreBookLocation++
+            self.storeBookLocation(sendId)
+            if (self.data.countStoreBookLocation % 3 == 0) {
+                self.storeBookLocation(sendId)
+            }
+
+        }
+
+        p.getBookname = function getBookname() {
+            var loadBookFile = uiUtils.getUrlVal('loadBookFile')
+            loadBookFile = loadBookFile.replace('/epub_offline.html', '')
+            return loadBookFile;
+        }
+
+    }
+
+    var epv = new EpubReloadViewer();
+    window.epv = epv;
+
+    epv.init();
+    epv.createCharDialog();
+    epv.createPanel();
+    setTimeout(epv.createCharDialog, 1500)
+    setTimeout(epv.createCharDialog, 2500)
+    setTimeout(epv.createCharDialog, 3500)
+
+</script>
+<script>
+
+    function DictArray() {
+        var self = this;
+        var p = DictArray.prototype;
+        p = this;
+        self.data = {};
+        self.data.dict = {};
+
+
+        p.add = function addItemToDictionary(key, val) {
+            var arr = self.data.dict[key]
+            if (arr == null) {
+                arr = []
+            }
+            if (arr.indexOf(val) != -1) {
+                return;
+            }
+            arr.push(val)
+            self.data.dict[key] = arr;
+        }
+
+
+        p.getDictArrayKey = function getDictArrayKey(key, val) {
+            var arr = self.data.dict[key]
+            return arr;
+        }
+
+
+        p.describe = function decribeDict() {
+            sh.each(self.data.dict, function asdf(k, v) {
+                console.log(sh.t, k, v.length)
+            });
+        }
+    }
+
+    sh.DictArray = DictArray;
+
+    sh.each = $.each;
+</script>
+<script>
+    function loadBookContent() {
+
+        var loadBookFile = uiUtils.getUrlVal('loadBookFile');
+        //debugger
+        if (loadBookFile == null) {
+            loadBookRules()
+            return;
+        }
+
+
+        function LoadEpubBook() {
+            var p = this;
+            var self = this;
+            self.data = {};
+            self.data.blocks = [];
+            self.data.dictVoices = {};
+
+            p.init = function init(config) {
+                self.settings = config;
+                self.loadEpubPageHTML()
+            }
+
+            p.loadEpubPageHTML = function loadEpubPageHTML() {
+                //  self.data.currentPage
+                //  var pageTOCInfo = self.data.dictPageList[pageNumber]
+                var cfg = {}
+                //cfg.id = 'divResults'; // = $('#divLoad')
+                cfg.div = $('#bookHolderContainer2')
+                cfg.url = self.settings.loadBookFile;
+                cfg.fxDone = function on() {
+                    $('#debugCharactersDialog').remove()
+                    self.loadEpubPageJSON();
+                }
+                uiUtils.utils.loadPage(cfg)
+                // pageTOCInfo.pageLoaded = true;
+            }
+
+            p.loadEpubPageJSON = function loadEpubPageJSON() {
+                uiUtils.getUrl(self.settings.loadBookFileJSON, onGotPDFBookTOC)
+                function onGotPDFBookTOC(d) {
+
+                    window.sentences = d;
+                    function setTimeout2() {
+                        var sH = window.sentenceHelper;
+                        console.log('sh', sH)
+                        $.each(window.sentences, function reConsistute(k, v) {
+                            if (v.images == null) {
+                                v.images = []
+                            }
+                        });
+                        // debugger
+                        sH.sideLoadSentences(window.sentences)
+
+                        //$('#debugCharactersDialog').remove()
+                    }
+
+                    setTimeout(setTimeout2, 750)
+
+                    loadBookRules(self.settings.loadBookFileJSON2);
+                    loadBookRules_JSONSet(self.settings.loadBookFileJSON2)
+                }
+
+
+            }
+
+        }
+
+        //console.clear()
+
+        var scO = new LoadEpubBook()
+
+        var base = 'http://127.0.0.1:8080/uploads/extracted/'
+        //http://127.0.0.1:8080/uploads/extracted/Wilde_Oscar_The_Picture_Of_Do%20%20Unknownepub/txt.txt
+        loadBookFile = 'http://' + window.location.host + '/' +
+            'uploads/extracted/' + loadBookFile
+
+        //Wilde_Oscar_The_Picture_Of_Do Unknownepub/epub_offline.html
+
+
+        var d = {};
+        d.loadBookFile = loadBookFile;
+        d.loadBookFileJSON = loadBookFile + '.sentences.json';
+        d.loadBookFileJSON2 = loadBookFile + '.speaker.rules.json';
+        scO.init(d)
+        window.scO = scO
+
+
+        //  uiUtils.getUrl(loadBookFile, onGotContentX)
+
+
+    }
+    loadBookContent()
+
+    function loadBookRules(overrideRules) {
+        var base = '';
+        /* if (loadBookFile.startsWith('http') == false) {
+         base = 'http://' + window.location.host + '/'
+         loadBookFile = 'http://' + window.location.host + '/' + loadBookFile
+         }*/
+        var loadBookFile = 'http://' +
+            window.location.host + '/' +
+            'bookConvert/test.html.speaker.rules.json'
+
+        if (overrideRules) {
+            loadBookFile = overrideRules
+        }
+        uiUtils.getUrl(loadBookFile, onGotBookJSONFile)
+
+
+        function onGotBookJSONFile(d) {
+            function SpeakerConfigOverrides() {
+                var p = this;
+                var self = this;
+                self.data = {};
+                self.data.blocks = [];
+                self.data.dictVoices = {};
+                self.data.lockedSoundFx = {};
+
+                p.init = function init(config) {
+                    self.settings = config;
+                    self.data.flowIndex = new sh.DictArray()
+
+                    sh.each(self.settings.chapters, function eachChapter_(k, chapter) {
+                        //debugger
+                        var seenVoices = {};
+                        sh.each(chapter.mergeVoices,
+                            function reindexVoice(voiceName, voiceDef) {
+                                var seenIt = seenVoices[voiceDef.name]
+                                if (seenIt === true) {
+                                    return
+                                }
+                                seenVoices[voiceDef.name] = true
+                                /*if (sh.isArray(voiceDef)) {
+                                 voiceDef = {nounTags: voiceDef}
+                                 }
+                                 self.data.dictVoices[voiceName]*/
+                                if (voiceDef.annFlows) {
+                                    sh.each(voiceDef.annFlows, function okn(k, flow) {
+                                        if (k == 'sounds') {
+                                            //   debugger
+                                        }
+                                        self.addFlow('voicedef.anflow_chapter_' + k + voiceName, flow)
+                                    })
+                                }
+                                if (voiceDef.name) {
+                                    chapter.mergeVoices[voiceDef.name] = voiceDef
+                                }
+                            });
+                    })
+
+
+                    if (self.settings.annFlows) {
+                        sh.each(self.settings.annFlows, function okn(k, flow) {
+                            self.addFlow('global_' + k, flow)
+                        })
+                    }
+
+                    if (self.settings.allBookGlobalFlow) {
+                        var flow = self.settings.allBookGlobalFlow;
+                        self.addFlow('allBookGlobalFlow', flow)
+                    }
+
+                    // self.data.flows = self.data.flows.concat(self.settings.annFlows)
+
+                    self.mergeChapterFlows()
+                    self.mergeChapterFlow()
+                }
+
+
+                p.mergeChapterFlows = function mergeChapterFlows() {
+                    var chapterSettings = [];
+                    sh.each(self.settings.chapters, function asdf(k, chapterInfo) {
+                        chapterInfo.index = k;
+                        chapterSettings.push(chapterInfo)
+                        //debugger
+                        chapterInfo.inChapterRange = function icr(i) {
+                            if (i > chapterInfo.chapterStartsAtSI) {
+                                if (chapterInfo.chapterEndsAtSI) {
+                                    if (i < chapterInfo.chapterEndsAtSI) {
+                                        return true;
+                                    } else {
+                                        return false
+                                    }
+                                } else {
+                                    return true;
+                                }
+
+                            }
+                        }
+                        //  debugger
+                        if (chapterInfo.annFlows) {
+                            sh.each(self.settings.annFlows, function okn(k, flow) {
+                                self.addFlow('global_chapter_' + k, flow)
+                            })
+                        }
+
+                        var exportChapterInfo = eCI = sh.clone(chapterInfo)
+                        delete eCI.nounTags
+                        delete eCI.annFlows
+                        self.data.exportChapters = exportChapterInfo;
+
+                    })
+                    self.data.chapters = chapterSettings;
+                    self.data.current = chapterSettings[0]
+                    self.data.currentChapterIndex = 0
+                }
+
+                p.mergeChapterFlow = function mergeChapterFlow() {
+                    sh.each(self.settings.chapterFlow, function onMerge_Processes(k, flowElemArr) {
+                        var index = parseInt(k)
+                        sh.each(flowElemArr, function addToFlow(ky, flowElem) {
+                            flowElem.name = 'chapterflow';
+                            console.log('adding', index, flowElem)
+                            self.data.flowIndex.add(index, flowElem)
+                        })
+                    });
+                }
+
+
+                p.addFlow = function addFlow(flowname, flow) {
+                    sh.each(flow, function onMerge_Processes(k, flowElem) {
+                        var index = flowElem.sI;
+                        flowElem.name = flowname;
+                        self.data.flowIndex.add(index, flowElem)
+                    });
+                }
+
+                p.getFlowItemsForIndex = function getItemIndex(cfgSpk, cfgToSpk) {
+                    if (cfgSpk.data == null) {
+                        console.warn('data is null')
+                        return;
+                    }
+                    var ui = $(cfgSpk.data.ui2);
+                    var sI = ui.attr('sentence-index');
+                    var actions = self.data.flowIndex.getDictArrayKey(sI);
+                    var character = ui.attr('gspkname');
+                    var bookInfo = self.settings.bookInfo
+
+                    console.log('\n')
+                    var chapt = self.getSCOChapter(sI)
+                    if (character) {
+                        var char = self.getSCOCharacter(character);
+                        if (char.ttsVoice) {
+                            cfgToSpk.voice = char.ttsVoice
+                            //IVONA 2 Eric
+                        }
+
+                        if (char.ttsCharX) {
+                            cfgToSpk.reqDataForTTS = char.ttsCharX
+                        }
+                        //debugger
+
+                        if (bookInfo) {
+                            if (bookInfo.bookTTS) {
+                                cfgToSpk.reqDataForTTS =
+                                    uiUtils.addOrMergeIn(bookInfo.bookTTS,
+                                        cfgToSpk.reqDataForTTS)
+                            }
+                        }
+                        //debugger
+                        if (char) {
+                            $('#pic_char').attr('src',
+                                'http://127.0.0.1:8080/img/chars/' + char.pic)
+                            //debugger
+                            uiUtils.fadeIn({
+                                ui: $('#pic_char'),
+                                resetAlphaTo: 0.5, duration: 1000,
+                                resetAlpha: true
+                            })
+                        }
+                        else {
+                            console.log('no pic for ', character)
+                            uiUtils.fadeOut({ui: $('#pic_char'), duration: 1200})
+                        }
+                    } else {
+                        uiUtils.fadeOut({ui: $('#pic_char'), duration: 1200})
+                        if (bookInfo) {
+                            if (bookInfo.bookTTS) {
+                                cfgToSpk.reqDataForTTS =
+                                    uiUtils.addOrMergeIn(bookInfo.bookTTS,
+                                        cfgToSpk.reqDataForTTS)
+                            }
+                        }
+                    }
+
+                    uiUtils.addOrMergeIn(window.ttsAlwaysOptions,
+                        cfgToSpk.reqDataForTTS)
+
+                    if (cfgToSpk.reqDataForTTS)
+                        cfgToSpk.reqDataForTTS.sentenceIndex = sI
+
+
+                    if (sI == 162) {
+                       // debugger
+
+                    }
+
+                    //actions = sh.dv(actions, [])
+                    if ( actions ) {
+                        sh.each(actions, function ondf(k, action) {
+                            if (action.action == 'soundfx') {
+                                if (action.lock === true) {
+                                    self.data.lockedSoundFx[action.val] = true;
+                                }
+                                else if (action.lock === false) {
+                                    delete self.data.lockedSoundFx[action.val];
+                                } else {
+                                    cfgToSpk.reqDataForTTS[action.val] = true
+                                }
+                            }
+                        })
+                    }
+
+                    sh.each(self.data.lockedSoundFx, function addToX(type,val) {
+                        cfgToSpk.reqDataForTTS[type]=val
+                    })
+
+                    var voicing = ui.attr('voicing')
+                    if (actions) {
+                        //debugger
+                    }
+
+                    var nouns2 = cfgSpk.data.nouns2
+                    if (nouns2) {
+                        for (var i = 0; i < 10; i++) {
+                            $('#pic_' + i).attr('src', '')
+                        }
+                        $.each(nouns2, function asdf(k, noun) {
+                            var url = ['http://127.0.0.1:8080/image/dta/', noun, '/',
+                                noun + '0.jpg'].join('')
+                            $('#pic_' + k).attr('src', url)
+                        })
+
+
+                    }
+
+                    var arr = scO.data.flowIndex.data.dict[sI]
+                    if (arr) {
+                        $.each(arr, function onProceItem(k, item) {
+                            if (item.sound) {
+                                var url = ['http://127.0.0.1:8080/audio/', item.sound].join('')
+                                $('#audioPlayer').attr('src', url)
+                                $('#audioPlayer')[0].play()
+                            }
+                        })
+                    }
+
+                    console.log('in', sI, character, actions, char, cfgSpk)
+
+                    window.epv.storeBookLocationSafe(sI)
+                }
+
+                p.getSCOChapter = function getSCOChapter(newIndex, doNotSet) {
+                    if (self.data.currentChapter) {
+                        if (self.data.currentChapter.inChapterRange(newIndex)) {
+                            return self.data.currentChapter
+                        }
+                    }
+
+                    //debugger
+                    var currentChapter = null;
+                    var currentChapterKey = null;
+                    sh.each(self.settings.chapterFlow, function findChaptOnIndex(k, flowElem) {
+                        var index = parseInt(k)
+                        if (index < newIndex) {
+                            currentChapterKey = flowElem[0].chapterKey;
+                        }
+                        if (index > newIndex) {
+                            return false;
+                        }
+                    });
+                    currentChapter = self.settings.chapters[currentChapterKey]
+
+                    if (currentChapter == null) {
+                        console.warn('could not set a current chapter', newIndex)
+                        currentChapter = self.settings.chapters['1']
+                    }
+                    if (doNotSet != true) {
+                        self.data.currentChapter = currentChapter
+                    }
+                    return self.data.currentChapter
+                }
+
+                p.getSCOCharacter = function getSCOCharacter(charNameKey) {
+                    var ch = self.data.currentChapter;
+                    if (ch.mergeVoices) {
+                        var char = ch.mergeVoices[charNameKey]
+                    }
+                    if (char == null) {
+                        if (ch.globalCharacters) {
+                            char = ch.globalCharacters[charNameKey]
+                        }
+                    }
+                    return char;
+                }
+
+
+                p.addSpeakerTextBlockToSpeaker = function addSpeakerTextBlockToSpeaker(sTB) {
+                    self.data.blocks.push(sTB)
+                    sTB.markGlobalSpeaker(self)
+                }
+                p.getGSName = function getGSName(sTB) {
+                    return sh.join(self.data.globalSpeakerName, sh.paren(self.data.gsIndex))
+                }
+                p.getChapter = function getChapter(sTB) {
+                    //self.data.blocks.push(sTB)
+                    //sTB.markGlobalSpeaker(self)
+                    //debugger
+                    //if (self.data.blocks)
+
+                    if (self.data.current && self.data.current.ends) {
+                        console.log('bloc ktext', sTB.data.txtNorm)
+                        if (sTB.data.txtNorm.includes(self.data.current.ends)) {
+                            //    asdf.g
+                            self.data.currentChapterIndex++
+                            self.data.current = self.data.chapters[self.data.currentChapterIndex]
+                        }
+                    }
+
+                }
+
+                p.fixSpeaker = function fixSpeaker(sTB) {
+                    var speaker = sTB.data.globalSpeaker
+                    var current = self.data.current
+                    var replaceWith = null;
+                    if (current.mergeVoices) {
+                        sh.each(current.mergeVoices, function onMerge_Processes(voiceName, voiceDef) {
+                            if (sh.isArray(voiceDef)) {
+                                voiceDef = {nounTags: voiceDef}
+                            }
+
+                            self.data.dictVoices[voiceName]
+
+                            if (voiceDef.nounTags.includes(speaker)) {
+                                //debugger
+                                replaceWith = voiceName
+                                return false;
+                            }
+                            var grabSentences = voiceDef.grabSentences
+                            if (grabSentences) {
+                                var replaceWithGrabSentenceIndex = false;
+                                console.log('match', sTB.data.sentenceIndexes, sTB.data.txtNorm)
+                                sh.each(grabSentences, function checkIfHasSentence(k, v) {
+                                    if (sTB.hasSentenceIndex(v - 1)) {
+                                        replaceWithGrabSentenceIndex = voiceName
+                                        return false;
+                                        //asdf.g
+                                    }
+                                })
+                                if (replaceWithGrabSentenceIndex) {
+                                    replaceWith = replaceWithGrabSentenceIndex
+                                    return false;
+                                }
+                            }
+                        })
+                    }
+                    if (sTB.hasTxt('All what time')) {
+                        //asdf.g
+                    }
+                    /* if ( sTB.hasSentenceIndex('All what time') ) {
+                     asdf.g
+                     }*/
+                    if (replaceWith) {
+                        sTB.data.globalSpeaker = replaceWith;
+                        sTB.data.globalSpeakerOrig = speaker
+                    }
+
+                    // debugger
+                    return sTB.data.globalSpeaker;
+                    //self.data.blocks.push(sTB)
+                    //sTB.markGlobalSpeaker(self)
+                    //debugger
+                    //if (self.data.blocks)
+
+                    if (self.data.current && self.data.current.ends) {
+                        if (sTB.data.txt.includes(self.data.current.ends)) {
+                            asdf.g
+                            self.data.currentChapterIndex++
+                            self.data.current = self.data.chapters[self.data.currentChapterIndex]
+                        }
+                    }
+                }
+            }
+
+            //debugger
+            //console.clear()
+
+            var scO = new SpeakerConfigOverrides()
+            scO.init(d)
+            window.scO = scO
+
+            console.log('chap', scO.getSCOChapter(45))
+            console.log('chap', scO.getSCOChapter(-1))
+            console.log('chap', scO.getSCOChapter(120))
+
+
+            window.fx_tts_eachOutput = scO.getFlowItemsForIndex;
+
+            scO.makeDialog = function makeDialog() {
+
+                var panel = uiUtils.addDialog({})
+                u.pos.bl()
+
+                var btn = $('<button/>')
+                btn.text('close')
+                btn.attr('onclick', ' $("#debugCharactersDialog2").remove()')
+                panel.append(btn)
+
+
+                // u.table.makeTable()
+                // time = 56
+
+                //panel.append(uiUtils.lastTable)
+                panel.css('position', 'fixed')
+                panel.css('overflow-y', 'auto')
+                panel.css('max-height', '350px')
+                panel.css('z-index', '1001')
+                panel.attr('id', 'debugCharactersDialog2')
+
+                u.addBr()
+                u.addBr()
+                var img = u.tag('img')
+                u.height('200px', true)
+                u.id('pic_char')
+                panel.append(img)
+
+                for (var i = 0; i < 10; i++) {
+                    var img = u.tag('img')
+                    u.height('150', true)
+                    u.width('150', true)
+                    u.id('pic_' + i)
+                    panel.append(img)
+                }
+
+                //panel.css('right', '10px')
+                $('body').prepend(panel)
+            }
+
+            scO.makeDialog();
+
+            setTimeout(function onPLaysdf() {
+                //sentenceHelper.onPlay3(88)
+
+                // sentenceHelper.onPlay3(30)
+                //  return
+                //  window.epv.goToLastSentence()
+                //window.epv.jumpToSentence(3)
+                167
+                //sentenceHelper.onPlay3(162 - 40)
+                return;
+
+                sentenceHelper.onPlay3(35)
+                sentenceHelper.onPlay3(88)
+                //sentenceHelper.onPlay3(226+4)
+            }, 1500)
+            console.log('flow', scO.data.flowIndex.data.dict)
+            //when does chapter end?
+            return;
+        }
     }
 </script>
 
-
+<audio id="audioPlayer"></audio>
 </body>
 </html>

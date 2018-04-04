@@ -1,0 +1,41 @@
+<body class="home">
+
+<style>
+    .mini-panel {
+        background: #f2f2f2;
+        padding: 10px;
+        width: 50%;
+
+    }
+</style>
+
+<mini-panel fixed style="min-width:350px;">
+    <h3>Audio Dialog</h3>
+    <hr/>
+  <!--  this text should not ve removed....-->
+    <input type="checkbox" ng-click="onUseCachedAudio()" />
+    <span> Use Cached</span> <br />
+    <input type="checkbox" ng-click="onSaveAudio()" />
+    <span> Save audio</span> <br />
+    <span>txtstr:save_audio</span>
+<!--txtstr:save_audio-->
+
+    <div scrollheight150 id="txtContent"></div>
+    <br/>
+    <horizontal-layout>
+        <button btn ng-click="acceptEmoteDialog()">ok</button>
+        <button btn-secondary ng-click="closeEmoteDialog()">cancel</button>
+        <!--<button>asdf</button>-->
+        <button btn-secondary ng-click="onProccessFLows()" title="PRocess">
+            <glyph icon="random"></glyph>
+        </button>
+    </horizontal-layout>
+
+    <glyph icon="remove" finger tr abs glyph-remove ng-click="closeAudioOptionsDialog()"></glyph>
+</mini-panel>
+
+
+<div id="listEmotes_partial">
+    <span id="holderIcon">asdfsdf</span>
+</div>
+</body>
